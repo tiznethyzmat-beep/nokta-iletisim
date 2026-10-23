@@ -1,0 +1,39 @@
+// Firestore güvenlik kuralları
+// Firebase Console → Firestore Database → Kurallar sekmesine yapıştırıp "Yayınla" deyin.
+//
+// ÖNEMLİ: aşağıdaki ADMIN_E_POSTA_BURAYA yazısını, Firebase Authentication'da oluşturduğunuz
+// tekniker hesabının e-postasıyla değiştirin (küçük harfle). Birden fazla kişi için virgülle ekleyin.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email in ['ADMIN_E_POSTA_BURAYA'];
+    }
+
+    // Tam kayıtlar (ekran şifresi, maliyet, telefon...) -> yalnız yönetici
+    match /tickets/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // Servis kodu sayacı -> yalnız yönetici
+    match /meta/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // Müşterinin göreceği gizlenmiş özet:
+    // kodu bilen tek tek okuyabilir (get), ama liste alınamaz (list)
+    match /public/{id} {
+      allow get: if true;
+      allow list, write: if isAdmin();
+    }
+
+    // Telefon -> servis kodları. Telefonu bilen okuyabilir, liste alınamaz.
+    match /lookup/{id} {
+      allow get: if true;
+      allow list, write: if isAdmin();
+    }
+  }
+}

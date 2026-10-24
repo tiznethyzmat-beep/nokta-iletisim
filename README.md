@@ -69,3 +69,11 @@ rastgele ek (ör. `X101-7Q`) eklenebilir.
 
 Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle** geri yükler
 (bulut modunda aynı kodlu kayıtların üzerine yazar). Düzenli yedek almanız önerilir.
+
+## Yeni eklenenler
+- **Servis kodu** artık rastgele ek taşır (`TR2026-X101-7Q`): tahmin edilemez. Eski kodlar çalışmaya devam eder.
+- **Fişte QR kod**: okutulunca `siteniz/?kod=...` açılır ve cihaz durumu otomatik sorgulanır.
+- **Panel**: Bugün / Bu ay / Bu yıl / Hepsi + geçmiş yıl ve ay seçimi; yeni özet kartları.
+- **WhatsApp**: duruma göre hazır müşteri mesajı ("Teslime hazır" için ayrı metin).
+- **SEO / PWA**: `sitemap.xml`, `robots.txt`, Open Graph, yerel işletme verisi, `manifest.webmanifest` (ana ekrana eklenebilir).
+- `sitemap.xml`, `robots.txt` ve `index.html` içindeki `https://nokta-iletisim.vercel.app` adresini kendi alan adınızla değiştirin.

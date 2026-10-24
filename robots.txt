@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /panel
+
+Sitemap: https://nokta-iletisim.vercel.app/sitemap.xml

@@ -1052,7 +1052,7 @@ function printReceipt(id) {
 
   box.classList.remove('hidden');
   try {
-    if (window.QRCode) new QRCode(document.getElementById('receipt-qr'), { text: SITE_URL + '/?kod=' + encodeURIComponent(t.id), width: 96, height: 96, correctLevel: QRCode.CorrectLevel.M });
+    if (window.QRCode) new QRCode(document.getElementById('receipt-qr'), { text: SITE_URL + '/?kod=' + encodeURIComponent(t.id), width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
   } catch (e) {}
   setTimeout(() => { window.print(); box.classList.add('hidden'); }, 450);
 }

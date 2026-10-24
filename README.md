@@ -79,3 +79,6 @@ Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle
 - `sitemap.xml`, `robots.txt` ve `index.html` içindeki `https://nokta-iletisim.vercel.app` adresini kendi alan adınızla değiştirin.
 - **Kayıt tarihçesi**: her kayıtta saat simgeli düğme; durum, ücret, maliyet ve not değişiklikleri kim/ne zaman ile görünür.
 - Rastgele kod eki kapalıdır (`app.js` → `RANDOM_SUFFIX = false`). Açmak için `true` yapın.
+- **Bağlı cihazlar**: panelde tekniker oturumları (cihaz, giriş/çıkış saati, çevrimiçi durumu) ve uzaktan "Çıkar" düğmesi.
+- **IP ve şehir**: `api/whoami.js` (Vercel sunucu funksiyası) ile tekniker cihaz kaydında görünür.
+- **Ziyaretçi sayacı**: şu an online, bugün ve son 7 gün (anonim). `firestore.rules` içindeki `sessions`, `presence`, `visits` bölümlerini Firebase kurallarınıza ekleyip yayınlayın.

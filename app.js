@@ -191,6 +191,153 @@ function showHistory(id) {
   openModal('modal-history');
 }
 
+// ===== Bağlı cihazlar (tekniker oturumları) ve çevrimiçi ziyaretçi sayacı =====
+const ONLINE_MS = 3 * 60 * 1000, VISITOR_ONLINE_MS = 150 * 1000;
+let liveUnsubs = [], liveTimer = null, sessionsCache = [], presenceCache = [], visitsCache = [];
+
+function randId(n) { const c = 'abcdefghjkmnpqrstuvwxyz23456789'; let r = ''; for (let i = 0; i < n; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
+function getSid() { return localStorage.getItem('nokta_sid') || ''; }
+function newSid() { const s = 'S' + randId(14); localStorage.setItem('nokta_sid', s); return s; }
+function getVid() { let v = localStorage.getItem('nokta_vid'); if (!v) { v = randId(12); localStorage.setItem('nokta_vid', v); } return v; }
+function todayStr() { return new Date().toLocaleDateString('sv-SE'); }
+function fmtTime(ms) { return ms ? new Date(ms).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'; }
+
+function deviceInfo() {
+  const ua = navigator.userAgent;
+  let os = 'Bilinmeyen cihaz';
+  if (/Windows/.test(ua)) os = 'Windows'; else if (/Android/.test(ua)) os = 'Android'; else if (/iPhone|iPad|iPod/.test(ua)) os = 'iOS';
+  else if (/Mac OS X/.test(ua)) os = 'Mac'; else if (/Linux/.test(ua)) os = 'Linux';
+  let br = 'Tarayıcı';
+  if (/Edg\//.test(ua)) br = 'Edge'; else if (/OPR\/|Opera/.test(ua)) br = 'Opera'; else if (/Firefox\//.test(ua)) br = 'Firefox';
+  else if (/Chrome\//.test(ua)) br = 'Chrome'; else if (/Safari\//.test(ua)) br = 'Safari';
+  const type = /iPad/.test(ua) || (/Android/.test(ua) && !/Mobile/.test(ua)) ? 'tablet' : (/Mobile|iPhone|iPod/.test(ua) ? 'phone' : 'pc');
+  return { os, br, type };
+}
+
+// Ziyaretçi sayacı: anonim, kişisel veri tutmaz (rastgele kimlik + sayfa + cihaz türü)
+function trackVisit() {
+  const vid = getVid(), dev = deviceInfo().type, p = String(PAGE || 'x').slice(0, 20), today = todayStr();
+  const beat = () => { if (!document.hidden) fbDb.collection('presence').doc(vid).set({ t: Date.now(), p, dev }).catch(() => {}); };
+  beat(); setInterval(beat, 90000);
+  document.addEventListener('visibilitychange', beat);
+  if (localStorage.getItem('nokta_vday') !== today) {
+    localStorage.setItem('nokta_vday', today);
+    fbDb.collection('visits').doc(today + '_' + vid).set({ d: today, t: Date.now(), dev, p }).catch(() => {});
+  }
+}
+
+async function forceLogout(msg) {
+  stopLive();
+  try { await fbAuth.signOut(); } catch (e) {}
+  localStorage.removeItem('nokta_sid');
+  if (msg) alert(msg);
+}
+
+async function startLive() {
+  if (!USE_FIREBASE || liveUnsubs.length) return;
+  localStorage.setItem('nokta_staff', '1');
+  let sid = getSid() || newSid();
+  const ref = fbDb.collection('sessions').doc(sid), now = Date.now();
+  try {
+    const snap = await ref.get();
+    if (snap.exists && snap.data().revoked) { await forceLogout('Bu cihazın oturumu başka bir cihazdan kapatıldı.'); return; }
+    if (!snap.exists) { const d = deviceInfo(); await ref.set({ id: sid, os: d.os, br: d.br, type: d.type, loginAt: now, lastSeen: now, revoked: false, out: false }); }
+    else await ref.update({ lastSeen: now, out: false });
+  } catch (e) { console.warn('Oturum kaydı yazılamadı (firestore.rules güncellendi mi?)', e); }
+
+  // IP ve yaklaşık şehir (Vercel sunucu funksiyasından; yerelde/çevrimdışı çalışmaz, sorun değil)
+  fetch('/api/whoami', { cache: 'no-store' }).then(r => r.json()).then(g => {
+    if (g && g.ip) ref.update({ ip: String(g.ip).slice(0, 60), city: String(g.city || '').slice(0, 60), country: String(g.country || '').slice(0, 5) }).catch(() => {});
+  }).catch(() => {});
+  // 30 günden eski oturum kayıtlarını temizle
+  fbDb.collection('sessions').get().then(sn => sn.docs.forEach(d => { const x = d.data(); if ((x.lastSeen || 0) < Date.now() - 30 * 86400000) d.ref.delete().catch(() => {}); })).catch(() => {});
+
+  const onErr = err => console.warn('Canlı veri okunamadı:', err);
+  liveUnsubs.push(fbDb.collection('sessions').onSnapshot(snap => {
+    sessionsCache = snap.docs.map(x => x.data());
+    const me = sessionsCache.find(x => x.id === sid);
+    if (me && me.revoked) { forceLogout('Bu cihazın oturumu başka bir cihazdan kapatıldı.'); return; }
+    renderLive();
+  }, onErr));
+  liveUnsubs.push(fbDb.collection('presence').onSnapshot(snap => { presenceCache = snap.docs.map(x => Object.assign({ id: x.id }, x.data())); renderLive(); }, onErr));
+  const wk = new Date(Date.now() - 6 * 86400000).toLocaleDateString('sv-SE');
+  liveUnsubs.push(fbDb.collection('visits').where('d', '>=', wk).onSnapshot(snap => { visitsCache = snap.docs.map(x => x.data()); renderLive(); }, onErr));
+  fbDb.collection('presence').doc(getVid()).delete().catch(() => {});   // teknikerin kendisi ziyaretçi sayılmasın
+  liveTimer = setInterval(() => { ref.update({ lastSeen: Date.now() }).catch(() => {}); renderLive(); }, 60000);
+}
+
+function stopLive() {
+  liveUnsubs.forEach(u => { try { u(); } catch (e) {} }); liveUnsubs = [];
+  if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+  sessionsCache = []; presenceCache = []; visitsCache = [];
+  localStorage.removeItem('nokta_staff');
+}
+
+async function endSession() {   // Çıkış yapmadan önce çağrılır
+  const sid = getSid(); if (!USE_FIREBASE || !sid) return;
+  try { await fbDb.collection('sessions').doc(sid).update({ out: true, outAt: Date.now(), lastSeen: Date.now() }); } catch (e) {}
+}
+
+async function revokeSession(id) {
+  if (!confirm('Bu cihazın oturumu kapatılsın mı?')) return;
+  try { await fbDb.collection('sessions').doc(id).update({ revoked: true, revokedAt: Date.now() }); } catch (e) { dbFail(e); }
+}
+async function revokeOthers() {
+  const sid = getSid(), list = sessionsCache.filter(s => s.id !== sid && !s.revoked && !s.out);
+  if (!list.length) { alert('Kapatılacak başka oturum yok.'); return; }
+  if (!confirm(list.length + ' cihazın oturumu kapatılsın mı? (Bu cihaz hariç)')) return;
+  try { await Promise.all(list.map(s => fbDb.collection('sessions').doc(s.id).update({ revoked: true, revokedAt: Date.now() }))); } catch (e) { dbFail(e); }
+}
+async function deleteSessionRow(id) { try { await fbDb.collection('sessions').doc(id).delete(); } catch (e) { dbFail(e); } }
+
+function renderLive() {
+  const dBox = document.getElementById('devices-box'), vBox = document.getElementById('visitors-box');
+  if (!isAdminLoggedIn || !dBox || !vBox) return;
+  const now = Date.now(), sid = getSid();
+
+  // --- Bağlı cihazlar ---
+  const sess = sessionsCache.slice().sort((a, b) => (b.loginAt || 0) - (a.loginAt || 0));
+  const state = s => s.revoked ? 'revoked' : s.out ? 'out' : ((s.lastSeen || 0) > now - ONLINE_MS ? 'online' : 'idle');
+  const active = sess.filter(s => state(s) === 'online').length;
+  const label = { online: ['Çevrimiçi', 'bg-emerald-100 text-emerald-700 border-emerald-300'], idle: ['Çevrimdışı', 'bg-slate-100 text-slate-600 border-slate-300'], out: ['Çıkış yaptı', 'bg-slate-100 text-slate-500 border-slate-200'], revoked: ['Uzaktan kapatıldı', 'bg-rose-100 text-rose-700 border-rose-300'] };
+  const icon = { pc: 'fa-computer', phone: 'fa-mobile-screen', tablet: 'fa-tablet-screen-button' };
+  if (!document.getElementById('dev-list')) {
+    dBox.innerHTML = `<details class="glass-card p-4 sm:p-5"><summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-laptop-mobile text-sky-600 mr-2"></i>Bağlı cihazlar</span><span id="dev-sum" class="text-xs font-bold"></span></summary><div class="mt-3 flex justify-end"><button onclick="revokeOthers()" class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2"><i class="fa-solid fa-right-from-bracket mr-1"></i>Diğer hepsinden çıkar</button></div><ul id="dev-list" class="mt-2 divide-y divide-slate-100"></ul></details>`;
+  }
+  document.getElementById('dev-sum').innerHTML = `<span class="text-emerald-700">${active} aktif</span> · ${sess.length} kayıt`;
+  document.getElementById('dev-list').innerHTML = sess.slice(0, 25).map(s => {
+    const st = state(s), me = s.id === sid;
+    return `<li class="py-3 flex items-start justify-between gap-3">
+      <div class="min-w-0 flex gap-3"><div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0"><i class="fa-solid ${icon[s.type] || 'fa-computer'}"></i></div>
+      <div class="min-w-0"><div class="font-bold text-slate-900 text-sm">${esc(s.os)} · ${esc(s.br)} ${me ? '<span class="ml-1 text-[10px] font-bold bg-sky-100 text-sky-700 border border-sky-300 rounded-full px-2 py-0.5">Bu cihaz</span>' : ''}</div>
+      <div class="text-[11px] text-slate-500 font-medium leading-relaxed">${s.ip ? '<i class="fa-solid fa-location-dot mr-1"></i>' + esc(s.ip) + (s.city ? ' · ' + esc(s.city) + (s.country ? ', ' + esc(s.country) : '') : '') + '<br>' : ''}Giriş: ${fmtTime(s.loginAt)}<br>Son hareket: ${fmtTime(s.lastSeen)}${s.out ? '<br>Çıkış: ' + fmtTime(s.outAt) : ''}${s.revoked ? '<br>Kapatıldı: ' + fmtTime(s.revokedAt) : ''}</div>
+      <span class="inline-block mt-1 text-[10px] font-bold border rounded-full px-2 py-0.5 ${label[st][1]}">${label[st][0]}</span></div></div>
+      <div class="shrink-0">${(st === 'online' || st === 'idle') && !me ? `<button onclick="revokeSession('${esc(s.id)}')" class="text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-lg px-3 py-2">Çıkar</button>` : (st === 'out' || st === 'revoked') ? `<button onclick="deleteSessionRow('${esc(s.id)}')" class="text-slate-400 hover:text-red-600 px-2" title="Listeden sil"><i class="fa-solid fa-trash"></i></button>` : ''}</div></li>`;
+  }).join('') || '<li class="py-3 text-sm text-slate-500">Henüz kayıt yok.</li>';
+
+  // --- Ziyaretçiler ---
+  const on = presenceCache.filter(x => (x.t || 0) > now - VISITOR_ONLINE_MS);
+  const phone = on.filter(x => x.dev === 'phone').length, pc = on.filter(x => x.dev === 'pc').length, tab = on.length - phone - pc;
+  const pages = {}; on.forEach(x => { pages[x.p] = (pages[x.p] || 0) + 1; });
+  const pageNames = { sorgula: 'Cihaz Sorgula', randevu: 'Servis Talebi', iletisim: 'İletişim', sss: 'Sık Sorulanlar' };
+  const today = todayStr(), cnt = {}; visitsCache.forEach(v => { cnt[v.d] = (cnt[v.d] || 0) + 1; });
+  const days = []; for (let i = 0; i < 7; i++) { const dt = new Date(Date.now() - i * 86400000); days.push({ d: dt.toLocaleDateString('sv-SE'), n: dt.toLocaleDateString('tr-TR', { weekday: 'short' }) }); }
+  const todayN = cnt[today] || 0, weekN = days.reduce((s, x) => s + (cnt[x.d] || 0), 0), max = Math.max(1, ...days.map(x => cnt[x.d] || 0));
+  if (!document.getElementById('vis-body')) {
+    vBox.innerHTML = `<details class="glass-card p-4 sm:p-5" open><summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-users text-[#16a095] mr-2"></i>Sitede ziyaretçiler</span><span id="vis-sum" class="text-xs font-bold"></span></summary><div id="vis-body" class="mt-4"></div></details>`;
+  }
+  document.getElementById('vis-sum').innerHTML = `<span class="text-emerald-700">${on.length} online</span> · bugün ${todayN}`;
+  document.getElementById('vis-body').innerHTML = `
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-3"><div class="text-2xl font-extrabold text-emerald-700">${on.length}</div><div class="text-[11px] font-bold text-emerald-800 uppercase">Şu an online</div></div>
+      <div class="rounded-2xl bg-sky-50 border border-sky-200 p-3"><div class="text-2xl font-extrabold text-sky-700">${todayN}</div><div class="text-[11px] font-bold text-sky-800 uppercase">Bugün girdi</div></div>
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3"><div class="text-2xl font-extrabold text-slate-800">${weekN}</div><div class="text-[11px] font-bold text-slate-600 uppercase">Son 7 gün</div></div>
+    </div>
+    <div class="mt-3 text-xs text-slate-600 font-medium">${on.length ? `<i class="fa-solid fa-mobile-screen mr-1"></i>${phone} telefon · <i class="fa-solid fa-computer mx-1"></i>${pc} bilgisayar${tab ? ' · ' + tab + ' tablet' : ''}${Object.keys(pages).length ? '<br>Bakılan sayfalar: ' + Object.keys(pages).map(k => esc(pageNames[k] || k) + ' (' + pages[k] + ')').join(', ') : ''}` : 'Şu an sitede kimse yok.'}</div>
+    <div class="mt-4 flex items-end gap-2 h-20">${days.slice().reverse().map(x => `<div class="flex-1 text-center"><div class="text-[10px] font-bold text-slate-600">${cnt[x.d] || 0}</div><div class="mx-auto w-full max-w-[28px] rounded-t bg-[#16a095]/80" style="height:${Math.max(3, Math.round((cnt[x.d] || 0) / max * 48))}px"></div><div class="text-[10px] text-slate-500 mt-1">${x.n}</div></div>`).join('')}</div>
+    <p class="text-[10px] text-slate-400 mt-3">Sayım anonimdir: kişisel veri tutulmaz. "Bugün girdi" aynı cihazı bir kez sayar.</p>`;
+}
+
 // Panel kodunun senkron kullandığı güncel liste
 function getTickets() { return ticketsCache; }
 
@@ -228,9 +375,11 @@ const DB = {
     isAdminLoggedIn = Boolean(user);
     if (user) {
       DB.listen();
+      startLive();
       closeModal('modal-login');
     } else {
       if (stopListening) { stopListening(); stopListening = null; }
+      stopLive();
       ticketsCache = [];
       resetAdminUi();
       if (PAGE === 'admin') location.replace('index.html?giris=1');
@@ -409,6 +558,7 @@ window.onload = function () {
   if (kod && document.getElementById('search-input')) { document.getElementById('search-input').value = kod; setTimeout(performSearch, 700); }
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('sw.js').catch(() => {});
   if (new URLSearchParams(location.search).get('giris') && document.getElementById('modal-login')) checkAdminAccess();
+  if (USE_FIREBASE && PAGE !== 'admin' && !localStorage.getItem('nokta_staff')) trackVisit();
   if (isAdminLoggedIn) renderAdminTable();
 };
 
@@ -669,6 +819,7 @@ async function handleAdminLogin(e) {
   setBusy(btn, true);
   try {
     if (!USE_FIREBASE) throw Object.assign(new Error('no-firebase'), { code: 'app/no-firebase' });
+    newSid();   // her girişte yeni oturum kimliği
     await fbAuth.signInWithEmailAndPassword(u, p);
     loginGuardReset();
     form.reset();
@@ -722,7 +873,7 @@ function resetAdminUi() {
 }
 
 async function logoutAdmin() {
-  if (USE_FIREBASE) await fbAuth.signOut();   // onAuthChanged paneli temizler
+  if (USE_FIREBASE) { await endSession(); await fbAuth.signOut(); }   // onAuthChanged paneli temizler
   else { isAdminLoggedIn = false; resetAdminUi(); }
   switchTab('sorgula');
   alert('Tekniker panelinden çıkış yapıldı.');
@@ -835,6 +986,7 @@ function renderAdminTable() {
   // Özet kartlarını güncelle
   renderStats(tickets);
   renderOverdue(tickets);
+  renderLive();
   const totalCount = tickets.length;
 
   // Arama ve filtre

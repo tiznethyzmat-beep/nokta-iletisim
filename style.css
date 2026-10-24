@@ -190,3 +190,5 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
 .pchip-on, .pchip-on:hover { background:#0f6b67 !important; color:#fff !important; border-color:#0f6b67 !important; box-shadow:0 6px 16px -8px rgba(15,107,103,.7); }
 .pchip-sel { background:#ccfbf1 !important; color:#0f6b67 !important; border-color:#0f6b67 !important; font-weight:800; }
 .pchip-lbl { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; color:#64748b; }
+
+#search-result { scroll-margin-top: 90px; }

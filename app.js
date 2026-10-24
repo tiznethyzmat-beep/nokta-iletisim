@@ -216,7 +216,12 @@ function deviceInfo() {
 }
 
 // Ziyaretçi sayacı: anonim, kişisel veri tutmaz (rastgele kimlik + sayfa + cihaz türü)
+function isBotUA() {
+  return !!navigator.webdriver || /bot|crawl|spider|slurp|lighthouse|pagespeed|headless|preview|facebookexternalhit|whatsapp|telegram|google-read|bingpreview/i.test(navigator.userAgent);
+}
+
 function trackVisit() {
+  if (isBotUA()) return;   // arama motoru robotları ziyaretçi sayılmaz
   const vid = getVid(), dev = deviceInfo().type, p = String(PAGE || 'x').slice(0, 20), today = todayStr();
   const beat = () => { if (!document.hidden) fbDb.collection('presence').doc(vid).set({ t: Date.now(), p, dev }).catch(() => {}); };
   beat(); setInterval(beat, 90000);
@@ -276,7 +281,6 @@ function stopLive() {
   liveUnsubs.forEach(u => { try { u(); } catch (e) {} }); liveUnsubs = [];
   if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
   sessionsCache = []; presenceCache = []; visitsCache = [];
-  localStorage.removeItem('nokta_staff');
 }
 
 async function endSession() {   // Çıkış yapmadan önce çağrılır
@@ -348,8 +352,9 @@ function renderLive() {
       <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3"><div class="text-2xl font-extrabold text-slate-800">${weekN}</div><div class="text-[11px] font-bold text-slate-600 uppercase">Son 7 gün</div></div>
     </div>
     <div class="mt-3 text-xs text-slate-600 font-medium">${on.length ? `<i class="fa-solid fa-mobile-screen mr-1"></i>${phone} telefon · <i class="fa-solid fa-computer mx-1"></i>${pc} bilgisayar${tab ? ' · ' + tab + ' tablet' : ''}${Object.keys(pages).length ? '<br>Bakılan sayfalar: ' + Object.keys(pages).map(k => esc(pageNames[k] || k) + ' (' + pages[k] + ')').join(', ') : ''}` : 'Şu an sitede kimse yok.'}</div>
+    ${on.length ? '<ul class="mt-3 text-xs text-slate-600 divide-y divide-slate-100">' + on.slice().sort((a, b) => b.t - a.t).map(x => '<li class="py-1.5 flex justify-between gap-2"><span><i class="fa-solid ' + (x.dev === 'phone' ? 'fa-mobile-screen' : x.dev === 'tablet' ? 'fa-tablet-screen-button' : 'fa-computer') + ' mr-1.5 text-slate-400"></i>' + (x.dev === 'phone' ? 'Telefon' : x.dev === 'tablet' ? 'Tablet' : 'Bilgisayar') + ' · ' + esc(pageNames[x.p] || x.p) + '</span><span class="text-slate-400">' + Math.max(0, Math.round((now - x.t) / 1000)) + ' sn önce</span></li>').join('') + '</ul>' : ''}
     <div class="mt-4 flex items-end gap-2 h-20">${days.slice().reverse().map(x => `<div class="flex-1 text-center"><div class="text-[10px] font-bold text-slate-600">${cnt[x.d] || 0}</div><div class="mx-auto w-full max-w-[28px] rounded-t bg-[#16a095]/80" style="height:${Math.max(3, Math.round((cnt[x.d] || 0) / max * 48))}px"></div><div class="text-[10px] text-slate-500 mt-1">${x.n}</div></div>`).join('')}</div>
-    <p class="text-[10px] text-slate-400 mt-3">Sayım anonimdir: kişisel veri tutulmaz. "Bugün girdi" aynı cihazı bir kez sayar.</p>`;
+    <p class="text-[10px] text-slate-400 mt-3">Sayım anonimdir (kim olduğu bilinmez). Arama motoru robotları ve teknikerin kendi cihazları sayılmaz. "Bugün girdi" aynı cihazı bir kez sayar.</p>`;
 }
 
 // Panel kodunun senkron kullandığı güncel liste
@@ -569,9 +574,16 @@ window.onload = function () {
   if (document.getElementById('view-' + PAGE)) switchTab(PAGE);
   if (PAGE === 'admin' && !USE_FIREBASE) location.replace('index.html?giris=1');
   const kod = new URLSearchParams(location.search).get('kod');
-  if (kod && document.getElementById('search-input')) { document.getElementById('search-input').value = kod; setTimeout(performSearch, 700); }
+  if (kod && document.getElementById('search-input')) {
+    // QR / bağlantı ile gelen müşteri: afişi gizle, sorguyu çalıştır, sonuca otomatik kaydır
+    document.getElementById('search-input').value = kod;
+    const hero = document.getElementById('hero-banner'); if (hero) hero.classList.add('hidden');
+    const toResult = () => { const b = document.getElementById('search-result'); if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    setTimeout(async () => { const run = performSearch(); setTimeout(toResult, 80); await run; toResult(); setTimeout(toResult, 400); }, 500);
+  }
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('sw.js').catch(() => {});
   if (new URLSearchParams(location.search).get('giris') && document.getElementById('modal-login')) checkAdminAccess();
+  if (new URLSearchParams(location.search).get('staff') === '1') { localStorage.setItem('nokta_staff', '1'); setTimeout(() => alert('Bu cihaz ziyaretçi sayacından çıkarıldı.'), 300); }
   if (USE_FIREBASE && PAGE !== 'admin' && !localStorage.getItem('nokta_staff')) trackVisit();
   if (isAdminLoggedIn) renderAdminTable();
 };

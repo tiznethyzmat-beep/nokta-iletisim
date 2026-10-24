@@ -182,3 +182,11 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
 /* Fiş QR */
 .receipt-qr { display:flex; align-items:center; gap:12px; margin:10px 0; font-size:12px; }
 .receipt-qr img, .receipt-qr canvas { width:96px; height:96px; }
+
+/* Dönem seçici: seçili olan açıkça görünsün */
+#stats-period { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; }
+.pchip { padding:.5rem .9rem; border-radius:999px; font-size:.8rem; font-weight:700; border:2px solid #cbd5e1; background:#fff; color:#475569; cursor:pointer; line-height:1.2; }
+.pchip:hover { border-color:#16a095; color:#0f6b67; }
+.pchip-on, .pchip-on:hover { background:#0f6b67 !important; color:#fff !important; border-color:#0f6b67 !important; box-shadow:0 6px 16px -8px rgba(15,107,103,.7); }
+.pchip-sel { background:#ccfbf1 !important; color:#0f6b67 !important; border-color:#0f6b67 !important; font-weight:800; }
+.pchip-lbl { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; color:#64748b; }

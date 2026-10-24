@@ -902,6 +902,7 @@ function setFilter(v) { document.getElementById('admin-status-filter').value = v
 // Özet kartları: toplam, tamirde, hazır, gelir, gider, net kâr
 let statsPeriod = 'bugun'; // bugun | ay | yil | hepsi | secay | secyil
 let statsMonth = '';       // 'YYYY-MM'
+let statsDay = '';         // 'YYYY-MM-DD'
 let statsYear = 0;
 
 // "22.10.2026 - 13:00" -> {d, m, y}
@@ -912,12 +913,28 @@ function parseTrDate(str) {
 
 function setStatsPeriod(v) { statsPeriod = v; renderAdminTable(); }
 function setStatsMonth(v) { if (!v) return; statsMonth = v; statsPeriod = 'secay'; renderAdminTable(); }
+function setStatsDay(v) { if (!v) return; statsDay = v; statsPeriod = 'secgun'; renderAdminTable(); }
 function setStatsYear(v) { if (!v) return; statsYear = +v; statsPeriod = 'secyil'; renderAdminTable(); }
+
+const TR_MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+function periodLabel() {
+  const n = new Date(), tr = d => d.toLocaleDateString('tr-TR');
+  if (statsPeriod === 'bugun') return 'Bugün · ' + tr(n);
+  if (statsPeriod === 'dun') return 'Dün · ' + tr(new Date(Date.now() - 86400000));
+  if (statsPeriod === 'ay') return 'Bu ay · ' + TR_MONTHS[n.getMonth()] + ' ' + n.getFullYear();
+  if (statsPeriod === 'yil') return 'Bu yıl · ' + n.getFullYear();
+  if (statsPeriod === 'secyil') return 'Yıl · ' + statsYear;
+  if (statsPeriod === 'secay') { const [y, m] = statsMonth.split('-'); return 'Ay · ' + TR_MONTHS[m - 1] + ' ' + y; }
+  if (statsPeriod === 'secgun') { const [y, m, d] = statsDay.split('-'); return 'Gün · ' + d + '.' + m + '.' + y; }
+  return 'Hepsi · tüm kayıtlar';
+}
 
 function inStatsPeriod(dateStr) {
   if (statsPeriod === 'hepsi') return true;
   const now = new Date(), d = parseTrDate(dateStr);
   if (!d) return false;
+  if (statsPeriod === 'dun') { const y = new Date(Date.now() - 86400000); return d.y === y.getFullYear() && d.m === y.getMonth() + 1 && d.d === y.getDate(); }
+  if (statsPeriod === 'secgun') { const [y, m, dd] = statsDay.split('-').map(Number); return d.y === y && d.m === m && d.d === dd; }
   if (statsPeriod === 'yil') return d.y === now.getFullYear();
   if (statsPeriod === 'secyil') return d.y === statsYear;
   if (statsPeriod === 'secay') { const [y, m] = statsMonth.split('-').map(Number); return d.y === y && d.m === m; }
@@ -941,13 +958,13 @@ function renderStats(allTickets) {
   const years = new Set([now.getFullYear()]);
   allTickets.forEach(t => { const d = parseTrDate(t.date); if (d) years.add(d.y); });
   const yearList = [...years].sort((a, b) => b - a);
-  const labels = { bugun: 'Bugün', ay: 'Bu ay', yil: 'Bu yıl', hepsi: 'Hepsi' };
-  bar.innerHTML = Object.keys(labels).map(k =>
-    `<button type="button" onclick="setStatsPeriod('${k}')" class="chip ${statsPeriod === k ? 'chip-on' : ''}">${labels[k]}</button>`
-  ).join('')
-  + `<select onchange="setStatsYear(this.value)" class="chip ${statsPeriod === 'secyil' ? 'chip-on' : ''}"><option value="">Yıl seç</option>${yearList.map(y => `<option value="${y}" ${statsPeriod === 'secyil' && statsYear === y ? 'selected' : ''}>${y}</option>`).join('')}</select>`
-  + `<input type="month" value="${statsMonth}" onchange="setStatsMonth(this.value)" title="Geçmiş ay seç" class="chip ${statsPeriod === 'secay' ? 'chip-on' : ''}">`
-  + `<span class="text-[11px] text-slate-500 font-medium">Kayıt tarihine göre</span>`;
+  const labels = { bugun: 'Bugün', dun: 'Dün', ay: 'Bu ay', yil: 'Bu yıl', hepsi: 'Hepsi' };
+  const sel = k => statsPeriod === k;
+  bar.innerHTML = `<div class="w-full mb-1 text-sm font-extrabold text-[#0f6b67]"><i class="fa-regular fa-calendar-check mr-1"></i>Gösterilen dönem: <span class="text-slate-900">${periodLabel()}</span></div>`
+    + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
+    + `<label class="pchip-lbl">Gün <input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" class="pchip ${sel('secgun') ? 'pchip-sel' : ''}"></label>`
+    + `<label class="pchip-lbl">Ay <input type="month" value="${statsMonth}" onchange="setStatsMonth(this.value)" class="pchip ${sel('secay') ? 'pchip-sel' : ''}"></label>`
+    + `<label class="pchip-lbl">Yıl <select onchange="setStatsYear(this.value)" class="pchip ${sel('secyil') ? 'pchip-sel' : ''}"><option value="">Seç</option>${yearList.map(y => `<option value="${y}" ${sel('secyil') && statsYear === y ? 'selected' : ''}>${y}</option>`).join('')}</select></label>`;
 
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));
 

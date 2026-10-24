@@ -25,9 +25,9 @@ const OFFICIAL_WA = SHOP.whatsapp;
 const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve WhatsApp bağlantıları
 // Google yorum bağlantınız (Google Business Profile → yorum bağlantısı). Boşsa Maps araması açılır.
 const GOOGLE_REVIEW_URL = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
-// Tahmin edilemesin diye servis koduna rastgele ek (ör. TR2026-X101-7Q)
-const RANDOM_SUFFIX = true;    // yeni kodlar tahmin edilemez: TR2026-X101-7QK3M (false = TR2026-X101)
-function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 5; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
+// Tahmin edilemesin diye servis koduna rastgele ek (ör. X103-9A4U)
+const RANDOM_SUFFIX = true;    // yeni kodlar tahmin edilemez: X103-9A4U (false = X103)
+function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 
 /*
  * FIREBASE ANAHTARLARI
@@ -45,7 +45,7 @@ const FIREBASE_CONFIG = {
 };
 
 const STORAGE_KEY = 'nokta_servis_tickets_2026';
-const ID_PREFIX = 'TR2026-X';        // servis kodu: TR2026-X101, TR2026-X102 ...
+const ID_PREFIX = 'X';               // yeni servis kodu: X107-9A4U (eski kodlar TR2026-X101 de çalışır)
 const FIRST_ID_NUMBER = 100;          // ilk kayıt 101 olur
 
 // Onarım durumları (4 adım)
@@ -194,7 +194,7 @@ function showHistory(id) {
 // Panel kodunun senkron kullandığı güncel liste
 function getTickets() { return ticketsCache; }
 
-function idNumber(id) { return parseInt(String(id).split('-X')[1], 10) || 0; }
+function idNumber(id) { const m = String(id).match(/X(\d+)/); return m ? parseInt(m[1], 10) : 0; }
 
 function localLoad() {
   try { const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(d) ? d : []; }
@@ -320,12 +320,16 @@ const DB = {
 
   // Müşteri sorgusu: servis kodu veya telefon -> gizlenmiş kayıt özetleri (en yeni üstte)
   async publicLookup(raw) {
-    const q = String(raw).trim().toUpperCase();
+    // Boşluk, farklı tire karakterleri ve küçük harf hatası tolere edilir
+    const q = String(raw).trim().toUpperCase().replace(/[\u2010-\u2015\u2212]/g, '-').replace(/\s+/g, '-');
     const d = digits(q);
     const isPhone = d.length >= 10 && !/[A-Z]/.test(q);
+    // Aday kodlar: yazdığı gibi + eski biçim (TR2026-X101) için ön ek
+    const cands = [q];
+    if (/^X\d/.test(q)) cands.push('TR2026-' + q);
 
     if (!USE_FIREBASE) {
-      return ticketsCache.filter(t => t.id.toUpperCase() === q || (isPhone && phoneKey(t.phone) === d.slice(-10))).map(toPublic);
+      return ticketsCache.filter(t => cands.includes(t.id.toUpperCase()) || (isPhone && phoneKey(t.phone) === d.slice(-10))).map(toPublic);
     }
     if (q.includes('/')) return [];
     if (isPhone) {
@@ -334,8 +338,11 @@ const DB = {
       const docs = await Promise.all(codes.map(c => fbDb.collection('public').doc(c).get()));
       return docs.filter(x => x.exists).map(x => x.data()).sort((a, b) => idNumber(b.id) - idNumber(a.id));
     }
-    const snap = await fbDb.collection('public').doc(q).get();
-    return snap.exists ? [snap.data()] : [];
+    for (const c of cands) {
+      const snap = await fbDb.collection('public').doc(c).get();
+      if (snap.exists) return [snap.data()];
+    }
+    return [];
   }
 };
 
@@ -626,9 +633,36 @@ function checkAdminAccess() {
   }
 }
 
+// ===== Giriş koruması: üst üste hatalı denemede geçici kilit (15 dk, her turda 2 katı, en çok 24 saat) =====
+const LOGIN_MAX_FAILS = 5, LOGIN_LOCK_KEY = 'nokta_login_guard';
+function loginGuard() { try { return JSON.parse(localStorage.getItem(LOGIN_LOCK_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function loginGuardSave(s) { try { localStorage.setItem(LOGIN_LOCK_KEY, JSON.stringify(s)); } catch (e) {} }
+function loginLockLeft() { const s = loginGuard(); return s.until && s.until > Date.now() ? s.until - Date.now() : 0; }
+function loginLockText(ms) {
+  const m = Math.ceil(ms / 60000);
+  return 'Çok fazla hatalı giriş denemesi. Güvenlik için giriş geçici olarak kapatıldı. ' + (m >= 60 ? Math.ceil(m / 60) + ' saat' : m + ' dakika') + ' sonra tekrar deneyin.';
+}
+function loginRegisterFail(force) {
+  const s = loginGuard(); s.fails = (s.fails || 0) + 1;
+  if (force || s.fails >= LOGIN_MAX_FAILS) {
+    s.rounds = (s.rounds || 0) + 1; s.fails = 0;
+    s.until = Date.now() + Math.min(15 * 60000 * Math.pow(2, s.rounds - 1), 24 * 3600000);
+  }
+  loginGuardSave(s); return s;
+}
+function loginGuardReset() { try { localStorage.removeItem(LOGIN_LOCK_KEY); } catch (e) {} }
+
 async function handleAdminLogin(e) {
   e.preventDefault();
   const form = e.target;
+  const left = loginLockLeft();
+  if (left > 0) {
+    const c0 = document.getElementById('login-card'), er0 = document.getElementById('login-error');
+    document.getElementById('login-error-text').textContent = loginLockText(left);
+    er0.classList.remove('hidden');
+    c0.classList.remove('shake'); void c0.offsetWidth; c0.classList.add('shake');
+    return;
+  }
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
   const btn = form.querySelector('button[type="submit"]');
@@ -636,6 +670,7 @@ async function handleAdminLogin(e) {
   try {
     if (!USE_FIREBASE) throw Object.assign(new Error('no-firebase'), { code: 'app/no-firebase' });
     await fbAuth.signInWithEmailAndPassword(u, p);
+    loginGuardReset();
     form.reset();
     document.getElementById('login-error').classList.add('hidden');
     closeModal('modal-login');
@@ -643,7 +678,15 @@ async function handleAdminLogin(e) {
     renderAdminTable();
   } catch (err) {
     const c = document.getElementById('login-card'), er = document.getElementById('login-error');
-    document.getElementById('login-error-text').textContent = loginErrorText(err);
+    const code = (err && err.code) || '';
+    let extra = '';
+    if (USE_FIREBASE && code === 'auth/too-many-requests') { loginRegisterFail(true); }
+    else if (USE_FIREBASE && !/network|api-key|operation-not-allowed|unauthorized-domain/.test(code)) {
+      const st = loginRegisterFail(false);
+      if (loginLockLeft() > 0) extra = ' ' + loginLockText(loginLockLeft());
+      else extra = ' Kalan deneme: ' + (LOGIN_MAX_FAILS - st.fails) + '.';
+    }
+    document.getElementById('login-error-text').textContent = loginErrorText(err) + extra;
     er.classList.remove('hidden');
     c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
   } finally {

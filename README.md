@@ -77,3 +77,5 @@ Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle
 - **WhatsApp**: duruma göre hazır müşteri mesajı ("Teslime hazır" için ayrı metin).
 - **SEO / PWA**: `sitemap.xml`, `robots.txt`, Open Graph, yerel işletme verisi, `manifest.webmanifest` (ana ekrana eklenebilir).
 - `sitemap.xml`, `robots.txt` ve `index.html` içindeki `https://nokta-iletisim.vercel.app` adresini kendi alan adınızla değiştirin.
+- **Kayıt tarihçesi**: her kayıtta saat simgeli düğme; durum, ücret, maliyet ve not değişiklikleri kim/ne zaman ile görünür.
+- Rastgele kod eki kapalıdır (`app.js` → `RANDOM_SUFFIX = false`). Açmak için `true` yapın.

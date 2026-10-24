@@ -22,9 +22,12 @@ const SHOP = {
   whatsapp: '905422888288'          // başında + ve boşluk olmadan, ülke koduyla
 };
 const OFFICIAL_WA = SHOP.whatsapp;
-const SITE_URL = location.protocol.indexOf('http') === 0 ? location.origin : 'https://nokta-iletisim.vercel.app';
+const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve WhatsApp bağlantıları
+// Google yorum bağlantınız (Google Business Profile → "Yorum isteyin" bağlantısı). Boşsa Maps araması açılır.
+const GOOGLE_REVIEW_URL = '';
 // Tahmin edilemesin diye servis koduna rastgele ek (ör. TR2026-X101-7Q)
-function randCode() { const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 2; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
+const RANDOM_SUFFIX = false;   // true yaparsanız yeni kodlar TR2026-X101-7Q gibi olur
+function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 2; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 
 /*
  * FIREBASE ANAHTARLARI
@@ -132,6 +135,71 @@ function toPublic(t) {
   };
 }
 
+function nowTr() {
+  const n = new Date();
+  return n.toLocaleDateString('tr-TR') + ' - ' + n.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Kayıt tarihçesi: kim, ne zaman, neyi değiştirdi
+function buildHistory(ticket, prev) {
+  const h = Array.isArray(ticket.history) ? ticket.history.slice() : (prev && Array.isArray(prev.history) ? prev.history.slice() : []);
+  const by = (typeof fbAuth !== 'undefined' && fbAuth && fbAuth.currentUser && fbAuth.currentUser.email) || 'tekniker';
+  const when = nowTr();
+  const add = x => h.push({ d: when, by, x });
+  const num = v => Number(v) || 0;
+  if (!prev) add('Kayıt açıldı');
+  else {
+    if (ticket.status === 'hazir' && prev.status !== 'hazir' && (ticket.lockcode || ticket.simpin)) {
+      ticket.lockcode = ''; ticket.simpin = '';
+      add('Ekran şifresi ve SIM PIN kayıttan silindi (KVKK)');
+    }
+    if (prev.status !== ticket.status) add('Durum: ' + ((statusMap[prev.status] || {}).label || prev.status) + ' → ' + ((statusMap[ticket.status] || {}).label || ticket.status));
+    if (num(prev.price) !== num(ticket.price)) add('Ücret: ' + num(prev.price) + ' → ' + num(ticket.price) + ' TL');
+    if (num(prev.cost) !== num(ticket.cost)) add('Maliyet: ' + num(prev.cost) + ' → ' + num(ticket.cost) + ' TL');
+    if ((prev.note || '') !== (ticket.note || '')) add('Not: ' + (ticket.note || '(boş)'));
+  }
+  ticket.history = h.slice(-60);
+}
+
+// "Teslime hazır" olduğu günden beri geçen gün (tarihçeden, yoksa kayıt tarihinden)
+function daysReady(t) {
+  if (t.status !== 'hazir') return 0;
+  let src = t.date;
+  (t.history || []).forEach(e => { if (/→ 4\. Teslime Hazır/.test(e.x)) src = e.d; });
+  const d = parseTrDate(src); if (!d) return 0;
+  return Math.floor((Date.now() - new Date(d.y, d.m - 1, d.d).getTime()) / 86400000);
+}
+
+function reviewMsg(t) {
+  const link = GOOGLE_REVIEW_URL || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Nokta İletişim Kırklareli');
+  return `Sayın ${t.name}, bizi tercih ettiğiniz için teşekkür ederiz 🙏\nHizmetimizden memnun kaldıysanız Google'da kısa bir yorum yazarsanız çok seviniriz:\n${link}\nNokta İletişim`;
+}
+
+function renderOverdue(all) {
+  let box = document.getElementById('overdue-box');
+  if (!box) {
+    const bar = document.getElementById('stats-period'); if (!bar) return;
+    box = document.createElement('div'); box.id = 'overdue-box';
+    bar.insertAdjacentElement('beforebegin', box);
+  }
+  const late = all.filter(t => daysReady(t) >= 30);
+  box.innerHTML = late.length ? `<div class="mb-3 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 text-sm font-semibold"><i class="fa-solid fa-triangle-exclamation mr-2"></i><b>${late.length} cihaz 30 günden fazladır teslim alınmadı:</b> ${late.map(t => esc(t.id) + ' (' + esc(t.name) + ', ' + daysReady(t) + ' gün)').join(' · ')}</div>` : '';
+}
+
+function showHistory(id) {
+  const t = getTickets().find(x => x.id === id); if (!t) return;
+  let m = document.getElementById('modal-history');
+  if (!m) {
+    m = document.createElement('div'); m.id = 'modal-history';
+    m.className = 'fixed inset-0 z-50 bg-slate-900/70 hidden flex items-center justify-center p-4';
+    m.onclick = e => { if (e.target === m) closeModal('modal-history'); };
+    document.body.appendChild(m);
+  }
+  const rows = (t.history || []).slice().reverse().map(e => `<li class="py-2 border-b border-slate-100"><div class="text-[11px] font-bold text-slate-500">${esc(e.d)} · ${esc(e.by)}</div><div class="text-sm font-semibold text-slate-800">${esc(e.x)}</div></li>`).join('');
+  m.innerHTML = `<div class="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col shadow-2xl"><div class="p-4 border-b flex items-center justify-between"><h3 class="font-extrabold text-slate-900">Kayıt tarihçesi · ${esc(t.id)}</h3><button onclick="closeModal('modal-history')" class="text-slate-400 hover:text-slate-700 text-xl px-2">×</button></div><ul class="p-4 overflow-y-auto">${rows || '<li class="text-sm text-slate-500">Bu kayıt için tarihçe yok (eski kayıt).</li>'}</ul></div>`;
+  openModal('modal-history');
+}
+
 // Panel kodunun senkron kullandığı güncel liste
 function getTickets() { return ticketsCache; }
 
@@ -189,7 +257,7 @@ const DB = {
 
   // Yeni servis kodu üretir (çakışmasız)
   async nextId() {
-    if (!USE_FIREBASE) return ID_PREFIX + (Math.max(FIRST_ID_NUMBER, ...ticketsCache.map(t => idNumber(t.id))) + 1) + '-' + randCode();
+    if (!USE_FIREBASE) return ID_PREFIX + (Math.max(FIRST_ID_NUMBER, ...ticketsCache.map(t => idNumber(t.id))) + 1) + (RANDOM_SUFFIX ? '-' + randCode() : '');
     const ref = fbDb.collection('meta').doc('counter');
     const n = await fbDb.runTransaction(async tx => {
       const snap = await tx.get(ref);
@@ -197,11 +265,12 @@ const DB = {
       tx.set(ref, { n: next });
       return next;
     });
-    return ID_PREFIX + n + '-' + randCode();
+    return ID_PREFIX + n + (RANDOM_SUFFIX ? '-' + randCode() : '');
   },
 
   // Kaydı ekler veya günceller. prev: düzenlemeden önceki hali (telefon değiştiyse eski kaydı temizlemek için)
   async save(ticket, prev) {
+    buildHistory(ticket, prev);
     if (!USE_FIREBASE) {
       const i = ticketsCache.findIndex(x => x.id === ticket.id);
       if (i >= 0) ticketsCache[i] = ticket; else ticketsCache.unshift(ticket);
@@ -646,6 +715,17 @@ function setStatsPeriod(v) { statsPeriod = v; renderAdminTable(); }
 function setStatsMonth(v) { if (!v) return; statsMonth = v; statsPeriod = 'secay'; renderAdminTable(); }
 function setStatsYear(v) { if (!v) return; statsYear = +v; statsPeriod = 'secyil'; renderAdminTable(); }
 
+function inStatsPeriod(dateStr) {
+  if (statsPeriod === 'hepsi') return true;
+  const now = new Date(), d = parseTrDate(dateStr);
+  if (!d) return false;
+  if (statsPeriod === 'yil') return d.y === now.getFullYear();
+  if (statsPeriod === 'secyil') return d.y === statsYear;
+  if (statsPeriod === 'secay') { const [y, m] = statsMonth.split('-').map(Number); return d.y === y && d.m === m; }
+  if (d.y !== now.getFullYear() || d.m !== now.getMonth() + 1) return false;
+  return statsPeriod === 'ay' || d.d === now.getDate();
+}
+
 function renderStats(allTickets) {
   const statsBox = document.getElementById('admin-stats-box');
   if (!statsBox) return;
@@ -670,16 +750,7 @@ function renderStats(allTickets) {
   + `<input type="month" value="${statsMonth}" onchange="setStatsMonth(this.value)" title="Geçmiş ay seç" class="chip ${statsPeriod === 'secay' ? 'chip-on' : ''}">`
   + `<span class="text-[11px] text-slate-500 font-medium">Kayıt tarihine göre</span>`;
 
-  const tickets = allTickets.filter(t => {
-    if (statsPeriod === 'hepsi') return true;
-    const d = parseTrDate(t.date);
-    if (!d) return false;
-    if (statsPeriod === 'yil') return d.y === now.getFullYear();
-    if (statsPeriod === 'secyil') return d.y === statsYear;
-    if (statsPeriod === 'secay') { const [y, m] = statsMonth.split('-').map(Number); return d.y === y && d.m === m; }
-    if (d.y !== now.getFullYear() || d.m !== now.getMonth() + 1) return false;
-    return statsPeriod === 'ay' || d.d === now.getDate();
-  });
+  const tickets = allTickets.filter(t => inStatsPeriod(t.date));
 
   const total = tickets.length;
   const tamirde = tickets.filter(t => t.status === 'tamir').length;
@@ -728,6 +799,7 @@ function renderAdminTable() {
 
   // Özet kartlarını güncelle
   renderStats(tickets);
+  renderOverdue(tickets);
   const totalCount = tickets.length;
 
   // Arama ve filtre
@@ -769,7 +841,7 @@ function renderAdminTable() {
 
     rows.push(`
       <tr class="hover:bg-slate-50 transition-all">
-        <td data-label="Servis Kod" class="py-3.5 px-4 font-black text-sky-700 font-mono whitespace-nowrap"><div class="cv">${esc(t.id)}</div></td>
+        <td data-label="Servis Kod" class="py-3.5 px-4 font-black text-sky-700 font-mono whitespace-nowrap"><div class="cv">${esc(t.id)}${daysReady(t) >= 30 ? ' <span class="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 rounded-full px-2 py-0.5 font-sans">' + daysReady(t) + ' gün alınmadı</span>' : ''}</div></td>
         <td data-label="Kayıt Tarihi" class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap"><div class="cv"><i class="fa-regular fa-clock text-sky-600 mr-1"></i>${esc(t.date || '22.10.2026 - 13:00')}</div></td>
         <td data-label="Müşteri / Tel" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="font-bold text-slate-800">${esc(t.name)}</span>${(phoneCount[digits(t.phone).slice(-10)] || 1) > 1 ? ` <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full px-2 py-0.5" title="Aynı numaradan toplam kayıt">Eski müşteri · ${phoneCount[digits(t.phone).slice(-10)]}</span>` : ''}<br><small class="text-slate-400">${esc(t.phone)}</small></div></td>
         <td data-label="Cihaz / Seri No" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="text-slate-700 font-medium">${esc(t.device)}</span><br><small class="text-slate-400">SN: ${esc(t.serino || '-')}</small></div></td>
@@ -792,6 +864,8 @@ function renderAdminTable() {
           <button onclick="printReceipt('${esc(t.id)}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Servis fişi yazdır"><i class="fa-solid fa-print"></i><span class="act-label">Fiş</span></button>
           <button onclick="openEditModal('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-sky-700 p-2 rounded-lg text-xs transition-all border border-slate-200"><i class="fa-solid fa-pen"></i> Düzenle</button>
           <button onclick="deleteTicket('${esc(t.id)}')" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs transition-all border border-red-200"><i class="fa-solid fa-trash"></i> Sil</button>
+          ${t.status === 'hazir' ? `<a href="https://wa.me/${waPhone}?text=${encodeURIComponent(reviewMsg(t))}" target="_blank" class="bg-amber-50 hover:bg-amber-100 text-amber-700 p-2 rounded-lg text-xs border border-amber-200 inline-block" title="Google yorumu iste"><i class="fa-solid fa-star"></i><span class="act-label"> Yorum iste</span></a>` : ''}
+          <button onclick="showHistory('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Kayıt tarihçesi"><i class="fa-solid fa-clock-rotate-left"></i><span class="act-label"> Tarihçe</span></button>
         </td>
       </tr>`);
   });
@@ -976,8 +1050,8 @@ function printReceipt(id) {
         <b>Arıza:</b> ${esc(t.problem)}<br>
         <b>Tahmini ücret:</b> ${Number(t.price) || 0} TL
       </p>
-      <div class="receipt-qr"><div id="receipt-qr"></div><span>Cihaz durumunu görmek için telefonunuzla QR kodu okutun.</span></div>
-      <p class="receipt-note">Cihaz durumunu servis koduyla web sitemizden takip edebilirsiniz. Teslim alırken bu fiş gereklidir.</p>
+      <div class="receipt-qr"><div id="receipt-qr"></div><span>Cihaz durumunu görmek için telefonunuzla QR kodu okutun.<br><b>${SITE_URL}</b></span></div>
+      <p class="receipt-note">Cihaz durumunu servis koduyla web sitemizden takip edebilirsiniz. Teslim alırken bu fiş gereklidir.<br>Kişisel verileriniz 6698 sayılı KVKK kapsamında işlenir; aydınlatma metni: ${SITE_URL}/kvkk</p>
       <div class="receipt-terms">
         <b>SERVİS ŞARTLARI</b>
         <ol>${terms}</ol>

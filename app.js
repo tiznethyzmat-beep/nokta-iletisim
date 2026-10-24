@@ -193,11 +193,12 @@ function showHistory(id) {
 
 // ===== Bağlı cihazlar (tekniker oturumları) ve çevrimiçi ziyaretçi sayacı =====
 const ONLINE_MS = 3 * 60 * 1000, VISITOR_ONLINE_MS = 150 * 1000;
-let liveUnsubs = [], liveTimer = null, sessionsCache = [], presenceCache = [], visitsCache = [];
+let liveError = '', liveUnsubs = [], liveTimer = null, sessionsCache = [], presenceCache = [], visitsCache = [];
 
 function randId(n) { const c = 'abcdefghjkmnpqrstuvwxyz23456789'; let r = ''; for (let i = 0; i < n; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 function getSid() { return localStorage.getItem('nokta_sid') || ''; }
 function newSid() { const s = 'S' + randId(14); localStorage.setItem('nokta_sid', s); return s; }
+function getDid() { let v = localStorage.getItem('nokta_did'); if (!v) { v = 'D' + randId(12); localStorage.setItem('nokta_did', v); } return v; }
 function getVid() { let v = localStorage.getItem('nokta_vid'); if (!v) { v = randId(12); localStorage.setItem('nokta_vid', v); } return v; }
 function todayStr() { return new Date().toLocaleDateString('sv-SE'); }
 function fmtTime(ms) { return ms ? new Date(ms).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'; }
@@ -241,9 +242,9 @@ async function startLive() {
   try {
     const snap = await ref.get();
     if (snap.exists && snap.data().revoked) { await forceLogout('Bu cihazın oturumu başka bir cihazdan kapatıldı.'); return; }
-    if (!snap.exists) { const d = deviceInfo(); await ref.set({ id: sid, os: d.os, br: d.br, type: d.type, loginAt: now, lastSeen: now, revoked: false, out: false }); }
+    if (!snap.exists) { const d = deviceInfo(); await ref.set({ id: sid, did: getDid(), os: d.os, br: d.br, type: d.type, loginAt: now, lastSeen: now, revoked: false, out: false }); }
     else await ref.update({ lastSeen: now, out: false });
-  } catch (e) { console.warn('Oturum kaydı yazılamadı (firestore.rules güncellendi mi?)', e); }
+  } catch (e) { console.warn('Oturum kaydı yazılamadı (firestore.rules güncellendi mi?)', e); liveError = (e && e.code) || 'error'; }
 
   // IP ve yaklaşık şehir (Vercel sunucu funksiyasından; yerelde/çevrimdışı çalışmaz, sorun değil)
   fetch('/api/whoami', { cache: 'no-store' }).then(r => r.json()).then(g => {
@@ -252,9 +253,14 @@ async function startLive() {
   // 30 günden eski oturum kayıtlarını temizle
   fbDb.collection('sessions').get().then(sn => sn.docs.forEach(d => { const x = d.data(); if ((x.lastSeen || 0) < Date.now() - 30 * 86400000) d.ref.delete().catch(() => {}); })).catch(() => {});
 
-  const onErr = err => console.warn('Canlı veri okunamadı:', err);
+  const onErr = err => { console.warn('Canlı veri okunamadı:', err); liveError = (err && err.code) || 'error'; renderLive(); };
   liveUnsubs.push(fbDb.collection('sessions').onSnapshot(snap => {
+    liveError = '';
     sessionsCache = snap.docs.map(x => x.data());
+    // Aynı tarayıcının eski oturumlarını temizle (her giriş yeni kayıt açtığı için listede tekrar görünmesin)
+    const did = getDid();
+    sessionsCache.filter(x => x.did === did && x.id !== sid).forEach(x => fbDb.collection('sessions').doc(x.id).delete().catch(() => {}));
+    sessionsCache = sessionsCache.filter(x => !(x.did === did && x.id !== sid));
     const me = sessionsCache.find(x => x.id === sid);
     if (me && me.revoked) { forceLogout('Bu cihazın oturumu başka bir cihazdan kapatıldı.'); return; }
     renderLive();
@@ -294,6 +300,14 @@ function renderLive() {
   const dBox = document.getElementById('devices-box'), vBox = document.getElementById('visitors-box');
   if (!isAdminLoggedIn || !dBox || !vBox) return;
   const now = Date.now(), sid = getSid();
+
+  if (liveError) {
+    const msg = liveError === 'permission-denied'
+      ? '<b>İzin yok.</b> Firebase kuralları güncellenmemiş. Firebase Console → Firestore Database → Kurallar sekmesine <code>sessions</code>, <code>presence</code> ve <code>visits</code> bölümlerini ekleyip <b>Yayınla</b> deyin (README / firestore.rules dosyasında hazır).'
+      : 'Canlı veri okunamadı (' + esc(liveError) + '). İnternetinizi kontrol edip sayfayı yenileyin.';
+    const w = '<div class="glass-card p-4 border-2 border-rose-300 bg-rose-50 text-rose-800 text-sm font-semibold"><i class="fa-solid fa-triangle-exclamation mr-2"></i>' + msg + '</div>';
+    dBox.innerHTML = w; vBox.innerHTML = ''; return;
+  }
 
   // --- Bağlı cihazlar ---
   const sess = sessionsCache.slice().sort((a, b) => (b.loginAt || 0) - (a.loginAt || 0));

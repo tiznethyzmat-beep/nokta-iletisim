@@ -23,8 +23,8 @@ const SHOP = {
 };
 const OFFICIAL_WA = SHOP.whatsapp;
 const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve WhatsApp bağlantıları
-// Google yorum bağlantınız (Google Business Profile → "Yorum isteyin" bağlantısı). Boşsa Maps araması açılır.
-const GOOGLE_REVIEW_URL = '';
+// Google yorum bağlantınız (Google Business Profile → yorum bağlantısı). Boşsa Maps araması açılır.
+const GOOGLE_REVIEW_URL = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
 // Tahmin edilemesin diye servis koduna rastgele ek (ör. TR2026-X101-7Q)
 const RANDOM_SUFFIX = false;   // true yaparsanız yeni kodlar TR2026-X101-7Q gibi olur
 function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 2; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
@@ -149,10 +149,6 @@ function buildHistory(ticket, prev) {
   const num = v => Number(v) || 0;
   if (!prev) add('Kayıt açıldı');
   else {
-    if (ticket.status === 'hazir' && prev.status !== 'hazir' && (ticket.lockcode || ticket.simpin)) {
-      ticket.lockcode = ''; ticket.simpin = '';
-      add('Ekran şifresi ve SIM PIN kayıttan silindi (KVKK)');
-    }
     if (prev.status !== ticket.status) add('Durum: ' + ((statusMap[prev.status] || {}).label || prev.status) + ' → ' + ((statusMap[ticket.status] || {}).label || ticket.status));
     if (num(prev.price) !== num(ticket.price)) add('Ücret: ' + num(prev.price) + ' → ' + num(ticket.price) + ' TL');
     if (num(prev.cost) !== num(ticket.cost)) add('Maliyet: ' + num(prev.cost) + ' → ' + num(ticket.cost) + ' TL');
@@ -168,11 +164,6 @@ function daysReady(t) {
   (t.history || []).forEach(e => { if (/→ 4\. Teslime Hazır/.test(e.x)) src = e.d; });
   const d = parseTrDate(src); if (!d) return 0;
   return Math.floor((Date.now() - new Date(d.y, d.m - 1, d.d).getTime()) / 86400000);
-}
-
-function reviewMsg(t) {
-  const link = GOOGLE_REVIEW_URL || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Nokta İletişim Kırklareli');
-  return `Sayın ${t.name}, bizi tercih ettiğiniz için teşekkür ederiz 🙏\nHizmetimizden memnun kaldıysanız Google'da kısa bir yorum yazarsanız çok seviniriz:\n${link}\nNokta İletişim`;
 }
 
 function renderOverdue(all) {
@@ -782,7 +773,8 @@ function buildNotifyMsg(t, st) {
   const link = SITE_URL + '/?kod=' + encodeURIComponent(t.id);
   if (t.status === 'hazir') {
     const u = Number(t.price) || 0;
-    return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız *teslime hazırdır* ✅\nServis fişinizle mağazamızdan teslim alabilirsiniz.${u ? '\nÜcret: ' + u + ' TL' : ''}\nNokta İletişim · ${SHOP.phoneDisplay}`;
+    const rev = GOOGLE_REVIEW_URL || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Nokta İletişim Kırklareli');
+    return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız *teslime hazırdır* ✅\nServis fişinizle mağazamızdan teslim alabilirsiniz.${u ? '\nÜcret: ' + u + ' TL' : ''}\n\nGoogle'da kısa bir yorum yazarsanız çok seviniriz 🙏\n${rev}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
   }
   return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınızın durumu: *${st.label}*.${t.note ? '\nNot: ' + t.note : ''}\nCanlı takip: ${link}\nNokta İletişim`;
 }
@@ -864,7 +856,6 @@ function renderAdminTable() {
           <button onclick="printReceipt('${esc(t.id)}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Servis fişi yazdır"><i class="fa-solid fa-print"></i><span class="act-label">Fiş</span></button>
           <button onclick="openEditModal('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-sky-700 p-2 rounded-lg text-xs transition-all border border-slate-200"><i class="fa-solid fa-pen"></i> Düzenle</button>
           <button onclick="deleteTicket('${esc(t.id)}')" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs transition-all border border-red-200"><i class="fa-solid fa-trash"></i> Sil</button>
-          ${t.status === 'hazir' ? `<a href="https://wa.me/${waPhone}?text=${encodeURIComponent(reviewMsg(t))}" target="_blank" class="bg-amber-50 hover:bg-amber-100 text-amber-700 p-2 rounded-lg text-xs border border-amber-200 inline-block" title="Google yorumu iste"><i class="fa-solid fa-star"></i><span class="act-label"> Yorum iste</span></a>` : ''}
           <button onclick="showHistory('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Kayıt tarihçesi"><i class="fa-solid fa-clock-rotate-left"></i><span class="act-label"> Tarihçe</span></button>
         </td>
       </tr>`);
@@ -909,7 +900,7 @@ function readyMessage(t) {
 
 function copyReadyMessage(id, btn) {
   const t = getTickets().find(x => x.id === id);
-  if (t) copyText(readyMessage(t), btn);
+  if (t) copyText(t.status === 'hazir' ? buildNotifyMsg(t, statusMap.hazir) : readyMessage(t), btn);
 }
 
 function showCreated(t) {
@@ -1051,7 +1042,7 @@ function printReceipt(id) {
         <b>Tahmini ücret:</b> ${Number(t.price) || 0} TL
       </p>
       <div class="receipt-qr"><div id="receipt-qr"></div><span>Cihaz durumunu görmek için telefonunuzla QR kodu okutun.<br><b>${SITE_URL}</b></span></div>
-      <p class="receipt-note">Cihaz durumunu servis koduyla web sitemizden takip edebilirsiniz. Teslim alırken bu fiş gereklidir.<br>Kişisel verileriniz 6698 sayılı KVKK kapsamında işlenir; aydınlatma metni: ${SITE_URL}/kvkk</p>
+      <p class="receipt-note">Cihaz durumunu servis koduyla web sitemizden takip edebilirsiniz. Teslim alırken bu fiş gereklidir.</p>
       <div class="receipt-terms">
         <b>SERVİS ŞARTLARI</b>
         <ol>${terms}</ol>

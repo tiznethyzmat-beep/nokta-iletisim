@@ -1074,16 +1074,15 @@ function renderAdminTable() {
         <td data-label="Servis Kod" class="py-3.5 px-4 font-black text-sky-700 font-mono whitespace-nowrap"><div class="cv">${esc(t.id)}${daysReady(t) >= 30 ? ' <span class="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 rounded-full px-2 py-0.5 font-sans">' + daysReady(t) + ' gün alınmadı</span>' : ''}</div></td>
         <td data-label="Kayıt Tarihi" class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap"><div class="cv"><i class="fa-regular fa-clock text-sky-600 mr-1"></i>${esc(t.date || '22.10.2026 - 13:00')}</div></td>
         <td data-label="Müşteri / Tel" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="font-bold text-slate-800">${esc(t.name)}</span>${(phoneCount[digits(t.phone).slice(-10)] || 1) > 1 ? ` <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full px-2 py-0.5" title="Aynı numaradan toplam kayıt">Eski müşteri · ${phoneCount[digits(t.phone).slice(-10)]}</span>` : ''}<br><small class="text-slate-400">${esc(t.phone)}</small></div></td>
-        <td data-label="Cihaz / Seri No" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="text-slate-700 font-medium">${esc(t.device)}</span><br><small class="text-slate-400">SN: ${esc(t.serino || '-')}</small></div></td>
+        <td data-label="Cihaz / Seri No" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="text-slate-700 font-medium">${esc(t.device)}</span>${t.serino ? '<br><small class="text-slate-400">SN: ' + esc(t.serino) + '</small>' : ''}</div></td>
         <td data-label="Cihaz & SIM Kodu" class="py-3.5 px-4 text-xs font-mono whitespace-nowrap"><div class="cv">
-          <span class="text-slate-700">Ekran: <b>${esc(t.lockcode || '-')}</b></span><br>
-          <span class="text-slate-500">SIM PIN: <b>${esc(t.simpin || '-')}</b></span>
+          ${t.lockcode || t.simpin ? (t.lockcode ? '<span class="text-slate-700">Ekran: <b>' + esc(t.lockcode) + '</b></span>' : '') + (t.lockcode && t.simpin ? '<br>' : '') + (t.simpin ? '<span class="text-slate-500">SIM PIN: <b>' + esc(t.simpin) + '</b></span>' : '') : '<span class="text-slate-300">—</span>'}
         </div></td>
-        <td data-label="Üzerinde Gelenler" class="py-3.5 px-4 text-xs font-medium text-amber-800 whitespace-nowrap"><div class="cv">${esc(t.gelenler || 'Yok')}</div></td>
+        <td data-label="Üzerinde Gelenler" class="py-3.5 px-4 text-xs font-medium text-amber-800 whitespace-nowrap"><div class="cv">${t.gelenler ? esc(t.gelenler) : '<span class="text-slate-400">Yok</span>'}</div></td>
         <td data-label="Arıza / Beyan" class="py-3.5 px-4 text-slate-700 text-xs max-w-xs truncate"><div class="cv">${esc(t.problem)}</div></td>
         <td data-label="Ücret / Maliyet" class="py-3.5 px-4 text-xs font-semibold whitespace-nowrap"><div class="cv">
-          <span class="text-emerald-600">+${gelirVal} TL</span> / <span class="text-red-500">-${giderVal} TL</span><br>
-          <small class="text-sky-700 font-bold">Kâr: ${karVal} TL</small>
+          <span class="text-emerald-600 font-extrabold">${gelirVal} TL</span>
+          ${giderVal > 0 ? '<br><small class="text-slate-500 font-semibold">Maliyet ' + giderVal + ' · <span class="text-sky-700 font-bold">Kâr ' + karVal + '</span></small>' : ''}
         </div></td>
         <td data-label="Durum" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="px-3 py-1 rounded-full text-xs font-bold border ${st.color} inline-block whitespace-nowrap">${st.label}</span></div></td>
         <td data-label="İşlem" class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">

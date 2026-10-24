@@ -192,3 +192,24 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
 .pchip-lbl { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; color:#64748b; }
 
 #search-result { scroll-margin-top: 90px; }
+
+/* ===== Panel: kompakt özet kartları (simge solda, yazı sağda) ===== */
+.stat { display:grid; grid-template-columns:auto 1fr; column-gap:.75rem; align-items:center; padding:.7rem .9rem .7rem 1.05rem; }
+.stat-ico { grid-row:span 2; margin-bottom:0; width:2.2rem; height:2.2rem; font-size:.9rem; }
+.stat-lbl { font-size:.62rem; align-self:end; }
+.stat-val { font-size:1.3rem; margin-top:0; align-self:start; }
+#admin-stats-box { gap:.6rem; }
+@media (min-width:640px){
+  #admin-stats-box { grid-template-columns:repeat(3,1fr); }
+  .stat-net, .stat-hazir { grid-column:span 1; }
+}
+@media (min-width:1024px){ #admin-stats-box { grid-template-columns:repeat(6,1fr); } }
+
+/* Kayıt tablosu: kelimeler ortadan bölünmesin */
+@media (min-width:768px){
+  #admin-table-body td { overflow-wrap:break-word !important; word-break:normal !important; }
+  #admin-table-body td[data-label="Müşteri / Tel"] { min-width:120px; }
+  #admin-table-body td[data-label="Cihaz / Seri No"] { min-width:90px; }
+  #admin-table-body td[data-label="Arıza / Beyan"] { min-width:90px; }
+  #admin-table-body td[data-label="Durum"] { min-width:120px; }
+}

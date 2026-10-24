@@ -26,8 +26,8 @@ const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve
 // Google yorum bağlantınız (Google Business Profile → yorum bağlantısı). Boşsa Maps araması açılır.
 const GOOGLE_REVIEW_URL = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
 // Tahmin edilemesin diye servis koduna rastgele ek (ör. TR2026-X101-7Q)
-const RANDOM_SUFFIX = false;   // true yaparsanız yeni kodlar TR2026-X101-7Q gibi olur
-function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 2; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
+const RANDOM_SUFFIX = true;    // yeni kodlar tahmin edilemez: TR2026-X101-7QK3M (false = TR2026-X101)
+function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 5; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 
 /*
  * FIREBASE ANAHTARLARI

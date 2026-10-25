@@ -343,7 +343,7 @@ function renderLive() {
   const days = []; for (let i = 0; i < 7; i++) { const dt = new Date(Date.now() - i * 86400000); days.push({ d: dt.toLocaleDateString('sv-SE'), n: dt.toLocaleDateString('tr-TR', { weekday: 'short' }) }); }
   const todayN = cnt[today] || 0, weekN = days.reduce((s, x) => s + (cnt[x.d] || 0), 0), max = Math.max(1, ...days.map(x => cnt[x.d] || 0));
   if (!document.getElementById('vis-body')) {
-    vBox.innerHTML = `<details class="glass-card p-4 sm:p-5" open><summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-users text-[#16a095] mr-2"></i>Sitede ziyaretçiler</span><span id="vis-sum" class="text-xs font-bold"></span></summary><div id="vis-body" class="mt-4"></div></details>`;
+    vBox.innerHTML = `<details class="glass-card p-4 sm:p-5"><summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-users text-[#16a095] mr-2"></i>Sitede ziyaretçiler</span><span id="vis-sum" class="text-xs font-bold"></span></summary><div id="vis-body" class="mt-4"></div></details>`;
   }
   document.getElementById('vis-sum').innerHTML = `<span class="text-emerald-700">${on.length} online</span> · bugün ${todayN}`;
   document.getElementById('vis-body').innerHTML = `
@@ -993,6 +993,7 @@ function renderStats(allTickets) {
   const total = tickets.length;
   const tamirde = tickets.filter(t => t.status === 'tamir').length;
   const hazir = tickets.filter(t => t.status === 'hazir').length;
+  const teslimN = tickets.filter(t => t.status === 'teslim').length;
 
   // Gelir, gider ve net kâr
   let totalGelir = 0;
@@ -1012,6 +1013,7 @@ function renderStats(allTickets) {
     <div class="stat stat-cihaz"><div class="stat-ico"><i class="fa-solid fa-mobile-screen"></i></div><div class="stat-lbl">Toplam Cihaz</div><div class="stat-val">${total}</div></div>
     <div class="stat stat-tamir"><div class="stat-ico"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="stat-lbl">Tamirde</div><div class="stat-val">${tamirde}</div></div>
     <div class="stat stat-hazir"><div class="stat-ico"><i class="fa-solid fa-circle-check"></i></div><div class="stat-lbl">Teslime Hazır</div><div class="stat-val">${hazir}</div></div>
+<div class="stat stat-teslim"><div class="stat-ico"><i class="fa-solid fa-hand-holding"></i></div><div class="stat-lbl">Teslim Edildi</div><div class="stat-val">${teslimN}</div></div>
   `;
 }
 

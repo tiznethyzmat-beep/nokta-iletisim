@@ -209,9 +209,9 @@ function showHistory(id) {
   #print-area .receipt-sub { font-size: 17px; }
   #print-area .receipt-info { font-size: 17.5px; line-height: 1.62; margin: 10px 0; }
   #print-area .receipt-qr { gap: 22px; margin: 14px 0; font-size: 15px; }
-  #print-area .receipt-qr img, #print-area .receipt-qr canvas { width: 150px !important; height: 150px !important; }
+  #print-area .receipt-qr img, #print-area .receipt-qr canvas { width: 120px !important; height: 120px !important; }
   #print-area .receipt-note { font-size: 15px; }
-  #print-area .receipt-terms { font-size: 12.8px; margin-top: 12px; padding-top: 10px; }
+  #print-area .receipt-terms { font-size: 13.2px; margin-top: 12px; padding-top: 10px; }
   #print-area .receipt-terms ol { padding-left: 22px; line-height: 1.5; }
   #print-area .receipt-terms li { margin-bottom: 3px; }
   #print-area .receipt-sign { margin-top: auto; padding-top: 28px; font-size: 18px; }
@@ -1360,7 +1360,7 @@ function printReceipt(id) {
 
   box.classList.remove('hidden');
   try {
-    if (window.QRCode) new QRCode(document.getElementById('receipt-qr'), { text: SITE_URL + '/?kod=' + encodeURIComponent(t.id), width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+    if (window.QRCode) new QRCode(document.getElementById('receipt-qr'), { text: SITE_URL + '/?kod=' + encodeURIComponent(t.id), width: 120, height: 120, correctLevel: QRCode.CorrectLevel.M });
   } catch (e) {}
   setTimeout(() => { window.print(); box.classList.add('hidden'); }, 450);
 }

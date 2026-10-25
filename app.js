@@ -192,6 +192,33 @@ function showHistory(id) {
   openModal('modal-history');
 }
 
+// ===== Servis fişi çıktı düzeni (A4'ü doldurur). CSS dosyasına bağlı değildir; eski/önbellekteki style.css olsa da çalışır. =====
+(function () {
+  const st = document.createElement('style');
+  st.id = 'receipt-print-style';
+  st.textContent = `
+@page { size: A4; margin: 10mm; }
+@media print {
+  html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body > *:not(#print-area) { display: none !important; }
+  #print-area { display: block !important; margin: 0 !important; padding: 0 !important; }
+  #print-area .receipt { max-width: none !important; width: 100% !important; box-sizing: border-box !important; margin: 0 !important; padding: 8mm 10mm !important; min-height: 258mm; display: flex; flex-direction: column; break-inside: avoid; page-break-inside: avoid; }
+  #print-area .receipt-head { gap: 20px; margin-bottom: 16px; }
+  #print-area .receipt-logo { width: 110px !important; height: 110px !important; }
+  #print-area .receipt h2 { font-size: 30px; }
+  #print-area .receipt-sub { font-size: 17px; }
+  #print-area .receipt-info { font-size: 17.5px; line-height: 1.62; margin: 10px 0; }
+  #print-area .receipt-qr { gap: 22px; margin: 14px 0; font-size: 15px; }
+  #print-area .receipt-qr img, #print-area .receipt-qr canvas { width: 150px !important; height: 150px !important; }
+  #print-area .receipt-note { font-size: 15px; }
+  #print-area .receipt-terms { font-size: 12.8px; margin-top: 12px; padding-top: 10px; }
+  #print-area .receipt-terms ol { padding-left: 22px; line-height: 1.5; }
+  #print-area .receipt-terms li { margin-bottom: 3px; }
+  #print-area .receipt-sign { margin-top: auto; padding-top: 28px; font-size: 18px; }
+}`;
+  document.head.appendChild(st);
+})();
+
 // ===== Bağlı cihazlar (tekniker oturumları) ve çevrimiçi ziyaretçi sayacı =====
 const ONLINE_MS = 3 * 60 * 1000, VISITOR_ONLINE_MS = 150 * 1000;
 let liveError = '', liveUnsubs = [], liveTimer = null, sessionsCache = [], presenceCache = [], visitsCache = [];

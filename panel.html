@@ -40,7 +40,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body data-page="admin" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -120,6 +120,7 @@
         <!-- js/admin-dashboard.js ile doldurulur -->
       </div>
 
+      <div id="ready-box" class="mb-3"></div>
       <div id="devices-box" class="mb-3"></div>
       <div id="visitors-box" class="mb-3"></div>
 
@@ -135,8 +136,9 @@
           <button class="chip" data-v="tespit" onclick="setFilter('tespit')">Arıza tespiti</button>
           <button class="chip" data-v="tamir" onclick="setFilter('tamir')">Tamirde</button>
           <button class="chip" data-v="hazir" onclick="setFilter('hazir')">Teslime hazır</button>
+          <button class="chip" data-v="teslim" onclick="setFilter('teslim')">Teslim edildi</button>
         </div>
-        <select id="admin-status-filter" class="hidden"><option value="all"></option><option value="kayit"></option><option value="tespit"></option><option value="tamir"></option><option value="hazir"></option></select>
+        <select id="admin-status-filter" class="hidden"><option value="all"></option><option value="kayit"></option><option value="tespit"></option><option value="tamir"></option><option value="hazir"></option><option value="teslim"></option></select>
       </div>
 
       <!-- Kayıt tablosu -->
@@ -282,6 +284,7 @@
             <option value="tespit">2. Arıza Tespiti</option>
             <option value="tamir">3. Tamirde</option>
             <option value="hazir">4. Teslime Hazır</option>
+            <option value="teslim">5. Teslim Edildi</option>
           </select>
         </div>
 
@@ -320,6 +323,7 @@
             <option value="tespit">2. Arıza Tespiti</option>
             <option value="tamir">3. Tamirde</option>
             <option value="hazir">4. Teslime Hazır</option>
+            <option value="teslim">5. Teslim Edildi</option>
           </select>
         </div>
 
@@ -403,6 +407,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

@@ -53,7 +53,8 @@ const statusMap = {
   kayit:  { label: '1. Kayıt Alındı',  color: 'bg-sky-100 text-sky-800 border-sky-300' },
   tespit: { label: '2. Arıza Tespiti', color: 'bg-sky-100 text-sky-800 border-sky-300' },
   tamir:  { label: '3. Tamirde',       color: 'bg-amber-100 text-amber-800 border-amber-300' },
-  hazir:  { label: '4. Teslime Hazır', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' }
+  hazir:  { label: '4. Teslime Hazır', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' },
+  teslim: { label: '5. Teslim Edildi', color: 'bg-slate-200 text-slate-700 border-slate-400' }
 };
 
 // Servis fişinin altında basılan şartlar (HTML kullanılabilir)
@@ -709,7 +710,7 @@ function ticketCardHtml(match) {
   const stInfo = statusMap[match.status] || statusMap.kayit;
 
   // Adım seviyeleri (1-4)
-  const stepLevels = { kayit: 1, tespit: 2, tamir: 3, hazir: 4 };
+  const stepLevels = { kayit: 1, tespit: 2, tamir: 3, hazir: 4, teslim: 4 };
   const currentStep = stepLevels[match.status] || 1;
   const progressPercent = ((currentStep - 1) / 3) * 100;
 
@@ -770,7 +771,9 @@ function ticketCardHtml(match) {
         </div>
       </div>
 
-      ${match.status === 'hazir'
+      ${match.status === 'teslim'
+        ? `<div class="bg-slate-100 border border-slate-300 text-slate-800 p-4 rounded-xl text-xs font-medium leading-relaxed"><i class="fa-solid fa-circle-check mr-1"></i> <strong>Cihazınız teslim edilmiştir.</strong> Bizi tercih ettiğiniz için teşekkür ederiz.</div>`
+        : match.status === 'hazir'
         ? `<div class="bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-xl text-xs font-medium leading-relaxed"><i class="fa-solid fa-store mr-1"></i> <strong>Cihazınız hazır!</strong> Mağazamıza gelip servis fişinizle teslim alabilirsiniz (kapanış 20:00). Adrese gönderim yapılmamaktadır.</div>`
         : `<div class="bg-slate-50 border border-slate-200 text-slate-600 p-3 rounded-xl text-[11px] leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i> Cihaz hazır olunca mağazadan kendiniz teslim alırsınız; kargo/adrese teslim yoktur.</div>`}
 
@@ -1005,6 +1008,29 @@ function renderStats(allTickets) {
   `;
 }
 
+// Satırdan hızlı durum değiştirme (Düzenle penceresini açmadan)
+async function quickStatus(id, v) {
+  const t = getTickets().find(x => x.id === id);
+  if (!t || t.status === v) return;
+  if (v === 'teslim' && !confirm(id + ' kodlu cihaz "Teslim edildi" olarak işaretlensin mi?')) { renderAdminTable(); return; }
+  try { await DB.save(Object.assign({}, t, { status: v }), t); } catch (e) { dbFail(e); renderAdminTable(); }
+}
+
+// Teslim bekleyen (hazır) cihazlar listesi
+let readyOpen = true;
+function renderReadyBox(all) {
+  const box = document.getElementById('ready-box');
+  if (!box || !isAdminLoggedIn) return;
+  const list = all.filter(t => t.status === 'hazir').sort((a, b) => daysReady(b) - daysReady(a));
+  if (!list.length) { box.innerHTML = ''; return; }
+  box.innerHTML = `<details class="glass-card p-4 sm:p-5" ${readyOpen ? 'open' : ''} ontoggle="readyOpen = this.open">
+    <summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-box-open text-emerald-600 mr-2"></i>Teslim bekleyen cihazlar</span><span class="text-xs font-bold text-emerald-700">${list.length} cihaz</span></summary>
+    <ul class="mt-3 divide-y divide-slate-100">${list.slice(0, 12).map(t => `<li class="py-2.5 flex items-center justify-between gap-3 flex-wrap">
+      <div class="min-w-0"><div class="font-bold text-slate-900 text-sm"><span class="font-mono text-emerald-700">${esc(t.id)}</span> · ${esc(t.name)}</div><div class="text-[11px] text-slate-500 font-medium">${esc(t.device)} · ${daysReady(t)} gündür bekliyor${daysReady(t) >= 30 ? ' <b class="text-amber-700">⚠ 30+ gün</b>' : ''}</div></div>
+      <div class="flex gap-2 shrink-0"><a href="https://wa.me/${waNumber(t.phone)}?text=${encodeURIComponent(buildNotifyMsg(t, statusMap.hazir))}" target="_blank" class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2"><i class="fa-brands fa-whatsapp"></i> Haber ver</a><button onclick="quickStatus('${esc(t.id)}','teslim')" class="text-xs font-bold text-white bg-slate-700 hover:bg-slate-900 rounded-lg px-3 py-2"><i class="fa-solid fa-hand-holding"></i> Teslim edildi</button></div></li>`).join('')}</ul>
+    ${list.length > 12 ? '<p class="text-[11px] text-slate-400 mt-2">İlk 12 cihaz gösteriliyor.</p>' : ''}</details>`;
+}
+
 // Müşteriye gidecek WhatsApp metni (duruma göre)
 function buildNotifyMsg(t, st) {
   const link = SITE_URL + '/?kod=' + encodeURIComponent(t.id);
@@ -1029,6 +1055,7 @@ function renderAdminTable() {
   // Özet kartlarını güncelle
   renderStats(tickets);
   renderOverdue(tickets);
+  renderReadyBox(tickets);
   renderLive();
   const totalCount = tickets.length;
 
@@ -1084,7 +1111,7 @@ function renderAdminTable() {
           <span class="text-emerald-600 font-extrabold">${gelirVal} TL</span>
           ${giderVal > 0 ? '<br><small class="text-slate-500 font-semibold">Maliyet ' + giderVal + ' · <span class="text-sky-700 font-bold">Kâr ' + karVal + '</span></small>' : ''}
         </div></td>
-        <td data-label="Durum" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="px-3 py-1 rounded-full text-xs font-bold border ${st.color} inline-block whitespace-nowrap">${st.label}</span></div></td>
+        <td data-label="Durum" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><select onchange="quickStatus('${esc(t.id)}', this.value)" class="px-2.5 py-1.5 rounded-full text-xs font-bold border ${st.color} cursor-pointer max-w-full" title="Durumu değiştir">${Object.keys(statusMap).map(k => `<option value="${k}" ${k === t.status ? 'selected' : ''}>${statusMap[k].label}</option>`).join('')}</select></div></td>
         <td data-label="İşlem" class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
           <a href="https://wa.me/${waPhone}?text=${encodeURIComponent(notifyMsg)}" target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2 rounded-lg text-xs transition-all border border-emerald-200 inline-block" title="Müşteriye WhatsApp Gönder">
             <i class="fa-brands fa-whatsapp text-sm"></i><span class="act-label">WhatsApp</span>

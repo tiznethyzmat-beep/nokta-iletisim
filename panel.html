@@ -38,6 +38,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
   <link rel="stylesheet" href="style.css?v=4">
@@ -100,18 +101,17 @@
       <!-- Panel üst çubuğu -->
       <div class="rounded-3xl p-5 sm:p-6 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-5" style="background: radial-gradient(500px 220px at 100% 0%, rgba(22,160,149,.4), transparent 60%), #0e1a2c;">
         <div class="flex items-center gap-4">
-          <img src="logo.png" alt="Nokta İletişim" class="w-14 h-14 rounded-full bg-white shadow-lg object-cover">
           <div>
             <h2 class="text-xl sm:text-2xl font-extrabold">Servis paneli</h2>
             <p class="text-sm text-slate-300">Kayıtları, gelir-gideri ve müşteri bildirimlerini buradan yönetin.</p>
             <span id="db-mode-badge"></span>
           </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="openNewRecordModal()" class="bg-[#ff5a36] hover:bg-[#ee4a27] text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#ff5a36]/30 flex items-center gap-2"><i class="fa-solid fa-plus"></i> Yeni servis kaydı</button>
-          <button onclick="exportBackup()" class="bg-white/10 hover:bg-white/20 border border-white/15 text-white px-4 py-3 rounded-xl text-sm font-semibold" title="Kayıtları dosyaya yedekle"><i class="fa-solid fa-download mr-1"></i> Yedekle</button>
-          <label class="bg-white/10 hover:bg-white/20 border border-white/15 text-white px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer" title="Yedek dosyasını geri yükle"><i class="fa-solid fa-upload mr-1"></i> Yükle<input type="file" accept=".json" class="hidden" onchange="importBackup(event)"></label>
-          <button onclick="logoutAdmin()" class="bg-white/10 hover:bg-red-500 border border-white/15 text-white px-4 py-3 rounded-xl text-sm font-semibold" title="Çıkış yap"><i class="fa-solid fa-right-from-bracket mr-1"></i> Çıkış</button>
+        <div class="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2">
+          <button onclick="openNewRecordModal()" class="col-span-3 sm:col-span-1 justify-center bg-[#ff5a36] hover:bg-[#ee4a27] text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#ff5a36]/30 flex items-center gap-2"><i class="fa-solid fa-plus"></i> Yeni servis kaydı</button>
+          <button onclick="exportBackup()" class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Kayıtları dosyaya yedekle"><i class="fa-solid fa-download mr-1"></i> Yedekle</button>
+          <label class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold cursor-pointer" title="Yedek dosyasını geri yükle"><i class="fa-solid fa-upload mr-1"></i> Yükle<input type="file" accept=".json" class="hidden" onchange="importBackup(event)"></label>
+          <button onclick="logoutAdmin()" class="text-center bg-white/10 hover:bg-red-500 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Çıkış yap"><i class="fa-solid fa-right-from-bracket mr-1"></i> Çıkış</button>
         </div>
       </div>
 
@@ -150,9 +150,7 @@
                 <th class="py-3.5 px-4 whitespace-nowrap">Servis Kod</th>
                 <th class="py-3.5 px-4 whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Kayıt Tarihi</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Müşteri / Tel</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Cihaz / Seri No</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Cihaz & SIM Kodu</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Üzerinde Gelenler</th>
+                <th class="py-3.5 px-4 whitespace-nowrap">Cihaz</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Arıza / Beyan</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Ücret / Maliyet</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Durum</th>

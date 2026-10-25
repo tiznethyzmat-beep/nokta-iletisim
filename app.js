@@ -369,6 +369,9 @@ function localLoad() {
 }
 function localPersist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(ticketsCache)); }
 
+// Firebase App Check (bot / sahte istek koruması). Firebase Console > App Check > reCAPTCHA v3 site anahtarını (herkese açık anahtar) buraya yazın.
+const APPCHECK_SITE_KEY = '';
+
 const DB = {
   get mode() { return USE_FIREBASE ? 'firebase' : 'local'; },
 
@@ -376,7 +379,11 @@ const DB = {
   init() {
     if (USE_FIREBASE) {
       try {
+        if (APPCHECK_SITE_KEY && location.hostname === 'localhost') self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
         firebase.initializeApp(FIREBASE_CONFIG);
+        if (APPCHECK_SITE_KEY && firebase.appCheck) {
+          try { firebase.appCheck().activate(APPCHECK_SITE_KEY, true); } catch (e) { console.warn('App Check başlatılamadı:', e); }
+        }
         fbDb = firebase.firestore();
         fbAuth = firebase.auth();
         fbAuth.onAuthStateChanged(DB.onAuthChanged);
@@ -725,7 +732,7 @@ function ticketCardHtml(match) {
       <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-4 gap-2">
         <div>
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">SERVİS FİŞ KODU</span>
-          <h3 class="text-2xl font-black text-sky-700 tracking-wide">${esc(match.id)}</h3>
+          <div class="flex items-center gap-2 flex-wrap"><h3 class="text-2xl font-black text-sky-700 tracking-wide">${esc(match.id)}</h3><button onclick="copyText('${esc(match.id)}', this)" class="text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-2.5 py-1.5" title="Servis kodunu kopyala"><i class="fa-regular fa-copy mr-1"></i> Kopyala</button></div>
           <p class="text-[11px] text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> Kabul Tarihi: ${esc(match.date || 'Bugün')}</p>
         </div>
         <span class="px-4 py-1.5 rounded-full text-xs font-extrabold border ${stInfo.color} flex items-center gap-1.5 shadow-sm whitespace-nowrap">
@@ -976,10 +983,10 @@ function renderStats(allTickets) {
   const labels = { bugun: 'Bugün', dun: 'Dün', ay: 'Bu ay', yil: 'Bu yıl', hepsi: 'Hepsi' };
   const sel = k => statsPeriod === k;
   bar.innerHTML = `<div class="w-full mb-1 text-sm font-extrabold text-[#0f6b67]"><i class="fa-regular fa-calendar-check mr-1"></i>Gösterilen dönem: <span class="text-slate-900">${periodLabel()}</span></div>`
-    + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
+    + '<div class="pscroll">' + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
     + `<label class="pchip-lbl">Gün <input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" class="pchip ${sel('secgun') ? 'pchip-sel' : ''}"></label>`
     + `<label class="pchip-lbl">Ay <input type="month" value="${statsMonth}" onchange="setStatsMonth(this.value)" class="pchip ${sel('secay') ? 'pchip-sel' : ''}"></label>`
-    + `<label class="pchip-lbl">Yıl <select onchange="setStatsYear(this.value)" class="pchip ${sel('secyil') ? 'pchip-sel' : ''}"><option value="">Seç</option>${yearList.map(y => `<option value="${y}" ${sel('secyil') && statsYear === y ? 'selected' : ''}>${y}</option>`).join('')}</select></label>`;
+    + `<label class="pchip-lbl">Yıl <select onchange="setStatsYear(this.value)" class="pchip ${sel('secyil') ? 'pchip-sel' : ''}"><option value="">Seç</option>${yearList.map(y => `<option value="${y}" ${sel('secyil') && statsYear === y ? 'selected' : ''}>${y}</option>`).join('')}</select></label></div>`;
 
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));
 
@@ -1077,10 +1084,22 @@ function renderAdminTable() {
     tickets = tickets.filter(t => t.status === statusFilter);
   }
 
+  // Dönem süzgeci: arama/durum süzgeci yokken seçili dönemdeki kayıtlar + devam eden işler (teslim edilmeyenler)
+  const periodActive = !searchQuery && statusFilter === 'all' && statsPeriod !== 'hepsi';
+  if (periodActive) tickets = tickets.filter(t => inStatsPeriod(t.date) || t.status !== 'teslim');
+  let note = document.getElementById('list-note');
+  if (!note) {
+    const sc = document.getElementById('admin-search-input')?.closest('.glass-card');
+    if (sc) { note = document.createElement('div'); note.id = 'list-note'; sc.insertAdjacentElement('afterend', note); }
+  }
+  if (note) note.innerHTML = periodActive
+    ? `<div class="px-1 py-2 text-xs font-semibold text-slate-600"><i class="fa-regular fa-calendar mr-1 text-[#16a095]"></i>${tickets.length} kayıt: <b>${periodLabel()}</b> + devam eden işler · <button onclick="setStatsPeriod('hepsi')" class="text-sky-700 underline font-bold">Hepsini göster</button></div>`
+    : `<div class="px-1 py-2 text-xs font-semibold text-slate-500">${tickets.length} kayıt gösteriliyor${searchQuery || statusFilter !== 'all' ? ' (arama / durum süzgeci tüm kayıtlarda çalışır)' : ''}</div>`;
+
   if (tickets.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" class="py-12 text-center"><div class="w-full text-center">${totalCount === 0
+    tbody.innerHTML = `<tr><td colspan="8" class="py-12 text-center"><div class="w-full text-center">${totalCount === 0
       ? '<i class="fa-solid fa-inbox text-3xl text-slate-300 mb-3 block"></i><p class="text-sm text-slate-500 mb-4">Henüz servis kaydı yok.</p><button onclick="openNewRecordModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold"><i class="fa-solid fa-plus-circle mr-1"></i> İlk servis kaydını ekle</button>'
-      : '<p class="text-xs text-slate-400">Arama kriterlerinize uygun kayıt bulunamadı.</p>'}</div></td></tr>`;
+      : '<p class="text-xs text-slate-400">Bu süzgece uygun kayıt bulunamadı.' + (periodActive ? ' <button onclick="setStatsPeriod(\'hepsi\')" class="text-sky-700 underline font-bold">Hepsini göster</button>' : '') + '</p>'}</div></td></tr>`;
     return;
   }
 
@@ -1098,14 +1117,10 @@ function renderAdminTable() {
 
     rows.push(`
       <tr class="hover:bg-slate-50 transition-all">
-        <td data-label="Servis Kod" class="py-3.5 px-4 font-black text-sky-700 font-mono whitespace-nowrap"><div class="cv">${esc(t.id)}${daysReady(t) >= 30 ? ' <span class="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 rounded-full px-2 py-0.5 font-sans">' + daysReady(t) + ' gün alınmadı</span>' : ''}</div></td>
-        <td data-label="Kayıt Tarihi" class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap"><div class="cv"><i class="fa-regular fa-clock text-sky-600 mr-1"></i>${esc(t.date || '22.10.2026 - 13:00')}</div></td>
+        <td data-label="Servis Kod" class="py-3.5 px-4 font-black text-sky-700 font-mono whitespace-nowrap"><div class="cv">${esc(t.id)} <button onclick="copyText('${esc(t.id)}', this)" class="ml-1 text-slate-400 hover:text-sky-700 text-xs font-sans font-semibold" title="Servis kodunu kopyala"><i class="fa-regular fa-copy"></i></button>${daysReady(t) >= 30 ? ' <span class="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 rounded-full px-2 py-0.5 font-sans">' + daysReady(t) + ' gün alınmadı</span>' : ''}</div></td>
+        <td data-label="Kayıt Tarihi" class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap"><div class="cv"><i class="fa-regular fa-clock text-sky-600 mr-1"></i>${esc(String(t.date || '').split(' - ')[0])}${String(t.date || '').includes(' - ') ? '<br><small class="text-slate-400 font-medium">' + esc(String(t.date).split(' - ')[1]) + '</small>' : ''}</div></td>
         <td data-label="Müşteri / Tel" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="font-bold text-slate-800">${esc(t.name)}</span>${(phoneCount[digits(t.phone).slice(-10)] || 1) > 1 ? ` <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full px-2 py-0.5" title="Aynı numaradan toplam kayıt">Eski müşteri · ${phoneCount[digits(t.phone).slice(-10)]}</span>` : ''}<br><small class="text-slate-400">${esc(t.phone)}</small></div></td>
-        <td data-label="Cihaz / Seri No" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><span class="text-slate-700 font-medium">${esc(t.device)}</span>${t.serino ? '<br><small class="text-slate-400">SN: ' + esc(t.serino) + '</small>' : ''}</div></td>
-        <td data-label="Cihaz & SIM Kodu" class="py-3.5 px-4 text-xs font-mono whitespace-nowrap"><div class="cv">
-          ${t.lockcode || t.simpin ? (t.lockcode ? '<span class="text-slate-700">Ekran: <b>' + esc(t.lockcode) + '</b></span>' : '') + (t.lockcode && t.simpin ? '<br>' : '') + (t.simpin ? '<span class="text-slate-500">SIM PIN: <b>' + esc(t.simpin) + '</b></span>' : '') : '<span class="text-slate-300">—</span>'}
-        </div></td>
-        <td data-label="Üzerinde Gelenler" class="py-3.5 px-4 text-xs font-medium text-amber-800 whitespace-nowrap"><div class="cv">${t.gelenler ? esc(t.gelenler) : '<span class="text-slate-400">Yok</span>'}</div></td>
+        <td data-label="Cihaz" class="py-3.5 px-4"><div class="cv"><span class="text-slate-800 font-semibold">${esc(t.device)}</span>${t.serino ? '<br><small class="text-slate-400">SN: ' + esc(t.serino) + '</small>' : ''}${t.lockcode ? '<br><small class="font-mono text-slate-700">Ekran: <b>' + esc(t.lockcode) + '</b></small>' : ''}${t.simpin ? '<br><small class="font-mono text-slate-500">SIM PIN: <b>' + esc(t.simpin) + '</b></small>' : ''}${t.gelenler ? '<br><small class="text-amber-800 font-medium">Üzerinde: ' + esc(t.gelenler) + '</small>' : ''}</div></td>
         <td data-label="Arıza / Beyan" class="py-3.5 px-4 text-slate-700 text-xs max-w-xs truncate"><div class="cv">${esc(t.problem)}</div></td>
         <td data-label="Ücret / Maliyet" class="py-3.5 px-4 text-xs font-semibold whitespace-nowrap"><div class="cv">
           <span class="text-emerald-600 font-extrabold">${gelirVal} TL</span>
@@ -1118,8 +1133,8 @@ function renderAdminTable() {
           </a>
           <button onclick="copyReadyMessage('${esc(t.id)}', this)" class="bg-slate-100 hover:bg-sky-100 text-sky-700 p-2 rounded-lg text-xs border border-slate-200" title="Hazır mesajı kopyala"><i class="fa-regular fa-copy"></i><span class="act-label">Kopyala</span></button>
           <button onclick="printReceipt('${esc(t.id)}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Servis fişi yazdır"><i class="fa-solid fa-print"></i><span class="act-label">Fiş</span></button>
-          <button onclick="openEditModal('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-sky-700 p-2 rounded-lg text-xs transition-all border border-slate-200"><i class="fa-solid fa-pen"></i> Düzenle</button>
-          <button onclick="deleteTicket('${esc(t.id)}')" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs transition-all border border-red-200"><i class="fa-solid fa-trash"></i> Sil</button>
+          <button onclick="openEditModal('${esc(t.id)}')" title="Düzenle" class="bg-slate-100 hover:bg-sky-100 text-sky-700 p-2 rounded-lg text-xs transition-all border border-slate-200"><i class="fa-solid fa-pen"></i><span class="act-label"> Düzenle</span></button>
+          <button onclick="deleteTicket('${esc(t.id)}')" title="Sil" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs transition-all border border-red-200"><i class="fa-solid fa-trash"></i><span class="act-label"> Sil</span></button>
           <button onclick="showHistory('${esc(t.id)}')" class="bg-slate-100 hover:bg-sky-100 text-slate-700 p-2 rounded-lg text-xs border border-slate-200" title="Kayıt tarihçesi"><i class="fa-solid fa-clock-rotate-left"></i><span class="act-label"> Tarihçe</span></button>
         </td>
       </tr>`);

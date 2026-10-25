@@ -213,3 +213,17 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
   #admin-table-body td[data-label="Arıza / Beyan"] { min-width:90px; }
   #admin-table-body td[data-label="Durum"] { min-width:120px; }
 }
+
+/* Kayıt tablosu: işlem düğmeleri tek satır, simge */
+@media (min-width:768px){
+  #admin-table-body td[data-label="İşlem"] { white-space:nowrap !important; min-width:0 !important; text-align:right; }
+  #admin-table-body td[data-label="İşlem"] > * { margin:0 .1rem 0 0 !important; padding:.45rem .55rem !important; }
+  #admin-table-body td[data-label="Cihaz"] { min-width:110px; }
+  #admin-table-body td[data-label="Kayıt Tarihi"] { white-space:normal !important; }
+}
+
+/* Dönem çubuğu: tek satır, yatay kaydırma */
+#stats-period { display:block; }
+.pscroll { display:flex; gap:.5rem; align-items:center; overflow-x:auto; padding:.15rem .1rem .45rem; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+.pscroll > * { flex-shrink:0; }
+@media (min-width:1100px){ .pscroll { flex-wrap:wrap; overflow:visible; } }

@@ -218,3 +218,12 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
 body[data-page="admin"] .wa-fab { display:none !important; }
 
 
+
+/* Kayıt tablosu: dar ekranda sağ düğmeler kesilmesin */
+@media (min-width:768px){
+  #admin-table-body td { padding-left:.45rem !important; padding-right:.45rem !important; }
+  #view-admin thead th { padding-left:.45rem !important; padding-right:.45rem !important; }
+  #admin-table-body td[data-label="İşlem"] > * { padding:.35rem .4rem !important; font-size:.72rem !important; }
+  #admin-table-body td[data-label="Durum"] { min-width:0; }
+  #admin-table-body td[data-label="Durum"] select { font-size:.7rem; padding:.3rem .4rem; }
+}

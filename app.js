@@ -1028,8 +1028,8 @@ function renderStats(allTickets) {
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));
 
   const total = tickets.length;
-  const tamirde = tickets.filter(t => t.status === 'tamir').length;
-  const hazir = tickets.filter(t => t.status === 'hazir').length;
+  const tamirde = allTickets.filter(t => t.status === 'tamir').length;     // şu an tamirde olanlar (hangi tarihte açılmış olursa olsun)
+  const hazir = allTickets.filter(t => t.status === 'hazir').length;      // şu an teslim bekleyenler
   const teslimN = allTickets.filter(t => t.status === 'teslim' && inStatsPeriod(deliveredAt(t))).length;
 
   // Gelir, gider ve net kâr
@@ -1047,9 +1047,9 @@ function renderStats(allTickets) {
     <div class="stat stat-net"><div class="stat-ico"><i class="fa-solid fa-wallet"></i></div><div class="stat-lbl">Net Kazanç</div><div class="stat-val">${netKar} TL</div></div>
     <div class="stat stat-gelir"><div class="stat-ico"><i class="fa-solid fa-arrow-trend-up"></i></div><div class="stat-lbl">Gelir</div><div class="stat-val">${totalGelir} TL</div></div>
     <div class="stat stat-gider"><div class="stat-ico"><i class="fa-solid fa-arrow-trend-down"></i></div><div class="stat-lbl">Gider</div><div class="stat-val">${totalGider} TL</div></div>
-    <div class="stat stat-cihaz"><div class="stat-ico"><i class="fa-solid fa-mobile-screen"></i></div><div class="stat-lbl">Toplam Cihaz</div><div class="stat-val">${total}</div></div>
-    <div class="stat stat-tamir"><div class="stat-ico"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="stat-lbl">Tamirde</div><div class="stat-val">${tamirde}</div></div>
-    <div class="stat stat-hazir"><div class="stat-ico"><i class="fa-solid fa-circle-check"></i></div><div class="stat-lbl">Teslime Hazır</div><div class="stat-val">${hazir}</div></div>
+    <div class="stat stat-cihaz"><div class="stat-ico"><i class="fa-solid fa-mobile-screen"></i></div><div class="stat-lbl">Yeni Kayıt</div><div class="stat-val">${total}</div></div>
+    <div class="stat stat-tamir"><div class="stat-ico"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="stat-lbl">Tamirde (şu an)</div><div class="stat-val">${tamirde}</div></div>
+    <div class="stat stat-hazir"><div class="stat-ico"><i class="fa-solid fa-circle-check"></i></div><div class="stat-lbl">Teslime Hazır (şu an)</div><div class="stat-val">${hazir}</div></div>
 <div class="stat stat-teslim"><div class="stat-ico"><i class="fa-solid fa-hand-holding"></i></div><div class="stat-lbl">Teslim Edildi</div><div class="stat-val">${teslimN}</div></div>
   `;
 }

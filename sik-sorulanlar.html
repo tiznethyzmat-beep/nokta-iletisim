@@ -40,9 +40,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body data-page="sss" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -110,7 +111,7 @@
           <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-route text-sky-600"></i> Sistem nasıl çalışır?</h2>
           <ol class="mt-4 space-y-4 text-sm text-slate-700">
             <li class="flex gap-3"><span class="w-8 h-8 shrink-0 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center">1</span><div><strong>Cihazı mağazaya getirin.</strong> Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli. İsterseniz önce "Servis Talebi Gönder" bölümünden arızayı WhatsApp ile yazabilirsiniz; bu bir randevu değil, ön bilgidir.</div></li>
-            <li class="flex gap-3"><span class="w-8 h-8 shrink-0 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center">2</span><div><strong>Servis kaydı ve fiş.</strong> Teknisyenimiz cihazınızı kayda alır, size bir <strong>servis kodu</strong> (örn. X104-7QK3) ve servis fişi verir. Kod WhatsApp'tan da gönderilebilir.</div></li>
+            <li class="flex gap-3"><span class="w-8 h-8 shrink-0 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center">2</span><div><strong>Servis kaydı ve fiş.</strong> Teknisyenimiz cihazınızı kayda alır, size bir <strong>servis kodu</strong> (örn. X104-7K3M) ve servis fişi verir. Kod WhatsApp'tan da gönderilebilir.</div></li>
             <li class="flex gap-3"><span class="w-8 h-8 shrink-0 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center">3</span><div><strong>Durumu takip edin.</strong> "Cihaz Sorgula" sayfasına servis kodunuzu veya kayıtlı telefon numaranızı yazıp <em>Sorgula</em> tuşuna basın.</div></li>
             <li class="flex gap-3"><span class="w-8 h-8 shrink-0 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center">4</span><div><strong>"Teslime Hazır" olunca gelip alın.</strong> Cihazınızı mağazamızdan, servis fişiyle birlikte kendiniz teslim alırsınız.</div></li>
           </ol>
@@ -141,7 +142,7 @@
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Cihazımı kargoyla gönderebilir miyim?</summary><p class="mt-2 text-slate-600">Hayır. Kargo, kurye veya adresten alma hizmetimiz yoktur. Cihazı mağazamıza kendiniz getirmeniz gerekir.</p></details>
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Onarım bitince cihaz adresime gelir mi?</summary><p class="mt-2 text-slate-600">Hayır, adrese teslim yapmıyoruz. Cihaz "Teslime Hazır" olunca mağazadan kendiniz teslim alırsınız.</p></details>
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Servis kodumu kaybettim, ne yapmalıyım?</summary><p class="mt-2 text-slate-600">Sorgulama kutusuna kayıt sırasında verdiğiniz telefon numarasını (05XX...) yazın. Aynı numaraya ait tüm kayıtlarınız listelenir.</p></details>
-            <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Sorgulamada kaydım bulunamıyor.</summary><p class="mt-2 text-slate-600">Kodu tam yazdığınızdan emin olun (örn. X104-7QK3). Cihazı yeni bıraktıysanız kayıt birkaç dakika içinde girilir. Hâlâ bulunamazsa WhatsApp'tan bize yazın.</p></details>
+            <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Sorgulamada kaydım bulunamıyor.</summary><p class="mt-2 text-slate-600">Kodu tam yazdığınızdan emin olun (örn. X104-7K3M). Cihazı yeni bıraktıysanız kayıt birkaç dakika içinde girilir. Hâlâ bulunamazsa WhatsApp'tan bize yazın.</p></details>
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">"Servis Talebi Gönder" ne işe yarar?</summary><p class="mt-2 text-slate-600">Formu doldurup gönderince WhatsApp açılır ve arızanızı bize yazılı iletirsiniz. Bu bir randevu veya kayıt değildir; kayıt, cihaz mağazaya teslim edildiğinde açılır.</p></details>
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Onarım ücretini nereden öğrenirim?</summary><p class="mt-2 text-slate-600">Arıza tespitinden sonra ücret kaydınıza işlenir ve sorgulama sayfasında "Tahmini Onarım Ücreti" olarak görünür. Kesin bilgi için mağazamızdan veya WhatsApp'tan sorabilirsiniz.</p></details>
             <details class="group p-3"><summary class="cursor-pointer font-semibold text-slate-900">Cihazımı teslim alırken ne gerekli?</summary><p class="mt-2 text-slate-600">Servis fişiniz (veya servis kodunuz) ve kimliğiniz yanınızda olsun. Cihaz yalnızca kayıt sahibine teslim edilir.</p></details>
@@ -386,7 +387,7 @@
   </div>
 
   <!-- Sabit WhatsApp düğmesi -->
-  <a href="https://wa.me/905422888288?text=Merhaba,%20teknik%20servisiniz%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="fixed bottom-20 md:bottom-6 right-5 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center pulse-green">
+  <a href="https://wa.me/905422888288?text=Merhaba,%20teknik%20servisiniz%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="wa-fab fixed bottom-20 md:bottom-6 right-5 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center pulse-green">
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
 
@@ -397,6 +398,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

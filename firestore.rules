@@ -1,31 +1,26 @@
-// Firestore güvenlik kuralları
-// Firebase Console → Firestore Database → Kurallar sekmesine yapıştırıp "Yayınla" deyin.
-//
-// ÖNEMLİ: aşağıdaki ADMIN_E_POSTA_BURAYA yazısını, Firebase Authentication'da oluşturduğunuz
-// tekniker hesabının e-postasıyla değiştirin (küçük harfle). Birden fazla kişi için virgülle ekleyin.
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
       return request.auth != null
-          && request.auth.token.email in ['ADMIN_E_POSTA_BURAYA'];
+          && request.auth.token.email in ['noktailetisim39@gmail.com'];
     }
 
-    // Tam kayıtlar (ekran şifresi, maliyet, telefon...) -> yalnız yönetici
     match /tickets/{id} {
       allow read, write: if isAdmin();
     }
 
-    // Servis kodu sayacı -> yalnız yönetici
     match /meta/{id} {
       allow read, write: if isAdmin();
     }
 
-    // Müşterinin göreceği gizlenmiş özet:
-    // kodu bilen tek tek okuyabilir (get), ama liste alınamaz (list)
     match /public/{id} {
+      allow get: if true;
+      allow list, write: if isAdmin();
+    }
+
+    match /lookup/{id} {
       allow get: if true;
       allow list, write: if isAdmin();
     }
@@ -44,6 +39,7 @@ service cloud.firestore {
         && request.resource.data.dev is string && request.resource.data.dev.size() < 10;
       allow read, delete: if isAdmin();
     }
+
     match /visits/{vid} {
       allow create: if vid.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}_[A-Za-z0-9]{6,20}$')
         && request.resource.data.keys().hasOnly(['d', 't', 'dev', 'p'])
@@ -52,12 +48,6 @@ service cloud.firestore {
         && request.resource.data.dev is string && request.resource.data.dev.size() < 10
         && request.resource.data.p is string && request.resource.data.p.size() < 30;
       allow read, delete: if isAdmin();
-    }
-
-    // Telefon -> servis kodları. Telefonu bilen okuyabilir, liste alınamaz.
-    match /lookup/{id} {
-      allow get: if true;
-      allow list, write: if isAdmin();
     }
   }
 }

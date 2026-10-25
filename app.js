@@ -27,7 +27,7 @@ const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve
 const GOOGLE_REVIEW_URL = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
 // Tahmin edilemesin diye servis koduna rastgele ek (ör. X103-9A4U)
 const RANDOM_SUFFIX = true;    // yeni kodlar tahmin edilemez: X103-9A4U (false = X103)
-function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
+function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 
 /*
  * FIREBASE ANAHTARLARI
@@ -136,6 +136,15 @@ function toPublic(t) {
   };
 }
 
+function dateToInput(dateStr) { const d = parseTrDate(dateStr); return d ? d.y + '-' + String(d.m).padStart(2, '0') + '-' + String(d.d).padStart(2, '0') : todayStr(); }
+function inputToTr(v, timePart) { const [y, m, d] = String(v).split('-'); return d + '.' + m + '.' + y + ' - ' + (timePart || '12:00'); }
+// Cihazın "Teslim edildi" yapıldığı tarih (tarihçeden); yoksa kayıt tarihi
+function deliveredAt(t) {
+  let src = t.date;
+  (t.history || []).forEach(e => { if (/→ 5\. Teslim Edildi/.test(e.x)) src = e.d; });
+  return src;
+}
+
 function nowTr() {
   const n = new Date();
   return n.toLocaleDateString('tr-TR') + ' - ' + n.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
@@ -150,6 +159,7 @@ function buildHistory(ticket, prev) {
   const num = v => Number(v) || 0;
   if (!prev) add('Kayıt açıldı');
   else {
+    if ((prev.date || '') !== (ticket.date || '')) add('Kayıt tarihi: ' + (prev.date || '-') + ' → ' + (ticket.date || '-'));
     if (prev.status !== ticket.status) add('Durum: ' + ((statusMap[prev.status] || {}).label || prev.status) + ' → ' + ((statusMap[ticket.status] || {}).label || ticket.status));
     if (num(prev.price) !== num(ticket.price)) add('Ücret: ' + num(prev.price) + ' → ' + num(ticket.price) + ' TL');
     if (num(prev.cost) !== num(ticket.cost)) add('Maliyet: ' + num(prev.cost) + ' → ' + num(ticket.cost) + ' TL');
@@ -1020,7 +1030,7 @@ function renderStats(allTickets) {
   const total = tickets.length;
   const tamirde = tickets.filter(t => t.status === 'tamir').length;
   const hazir = tickets.filter(t => t.status === 'hazir').length;
-  const teslimN = tickets.filter(t => t.status === 'teslim').length;
+  const teslimN = allTickets.filter(t => t.status === 'teslim' && inStatsPeriod(deliveredAt(t))).length;
 
   // Gelir, gider ve net kâr
   let totalGelir = 0;
@@ -1114,15 +1124,15 @@ function renderAdminTable() {
   }
 
   // Dönem süzgeci: arama/durum süzgeci yokken seçili dönemdeki kayıtlar + devam eden işler (teslim edilmeyenler)
-  const periodActive = !searchQuery && statusFilter === 'all' && statsPeriod !== 'hepsi';
-  if (periodActive) tickets = tickets.filter(t => inStatsPeriod(t.date) || t.status !== 'teslim');
+  const periodActive = !searchQuery && statsPeriod !== 'hepsi' && (statusFilter === 'all' || statusFilter === 'teslim');
+  if (periodActive) tickets = tickets.filter(t => t.status !== 'teslim' || inStatsPeriod(deliveredAt(t)));
   let note = document.getElementById('list-note');
   if (!note) {
     const sc = document.getElementById('admin-search-input')?.closest('.glass-card');
     if (sc) { note = document.createElement('div'); note.id = 'list-note'; sc.insertAdjacentElement('afterend', note); }
   }
   if (note) note.innerHTML = periodActive
-    ? `<div class="px-1 py-2 text-xs font-semibold text-slate-600"><i class="fa-regular fa-calendar mr-1 text-[#16a095]"></i>${tickets.length} kayıt: <b>${periodLabel()}</b> + devam eden işler · <button onclick="setStatsPeriod('hepsi')" class="text-sky-700 underline font-bold">Hepsini göster</button></div>`
+    ? `<div class="px-1 py-2 text-xs font-semibold text-slate-600"><i class="fa-regular fa-calendar mr-1 text-[#16a095]"></i>${tickets.length} kayıt: <b>${periodLabel()}</b>${statusFilter === 'all' ? ' + devam eden işler' : ''} (teslim edilenler teslim tarihine göre) · <button onclick="setStatsPeriod('hepsi')" class="text-sky-700 underline font-bold">Hepsini göster</button></div>`
     : `<div class="px-1 py-2 text-xs font-semibold text-slate-500">${tickets.length} kayıt gösteriliyor${searchQuery || statusFilter !== 'all' ? ' (arama / durum süzgeci tüm kayıtlarda çalışır)' : ''}</div>`;
 
   if (tickets.length === 0) {
@@ -1177,6 +1187,7 @@ function renderAdminTable() {
 
 function openNewRecordModal() {
   const rb = document.getElementById('returning-box'); if (rb) { rb.classList.add('hidden'); rb.innerHTML = ''; }
+  const dt = document.getElementById('admin-add-date'); if (dt) dt.value = todayStr();   // varsayılan: bugün (değiştirilebilir)
   openModal('modal-new-ticket');
 }
 
@@ -1232,10 +1243,13 @@ async function handleAdminCreateTicket(e) {
   setBusy(btn, true);
   try {
     const now = new Date();
+    const timeNow = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    const chosen = document.getElementById('admin-add-date').value || todayStr();
+    const [cy, cm, cd] = chosen.split('-').map(Number);
     const ticket = {
       id: await DB.nextId(),
-      ts: now.getTime(),
-      date: now.toLocaleDateString('tr-TR') + ' - ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      ts: new Date(cy, cm - 1, cd, now.getHours(), now.getMinutes()).getTime(),
+      date: inputToTr(chosen, timeNow),
       name: document.getElementById('admin-add-name').value.trim(),
       phone: document.getElementById('admin-add-phone').value.trim(),
       device: document.getElementById('admin-add-device').value.trim(),
@@ -1273,6 +1287,7 @@ function openEditModal(id) {
   document.getElementById('admin-edit-cost').value = item.cost || 0;
   document.getElementById('admin-edit-gelenler').value = item.gelenler || '';
   document.getElementById('admin-edit-note').value = item.note || '';
+  document.getElementById('admin-edit-date').value = dateToInput(item.date);
   openModal('modal-edit-ticket');
 }
 
@@ -1295,6 +1310,12 @@ async function handleAdminUpdateTicket(e) {
       note: document.getElementById('admin-edit-note').value
     });
     ['name', 'phone', 'device', 'problem'].forEach(k => next[k] = document.getElementById('admin-edit-' + k).value.trim());
+    const nd = document.getElementById('admin-edit-date').value;
+    if (nd && nd !== dateToInput(prev.date)) {
+      next.date = inputToTr(nd, String(prev.date || '').split(' - ')[1]);
+      const [ey, em, ed] = nd.split('-').map(Number); const pt = new Date(prev.ts || Date.now());
+      next.ts = new Date(ey, em - 1, ed, pt.getHours(), pt.getMinutes()).getTime();
+    }
     await DB.save(next, prev);
     renderAdminTable();
     closeModal('modal-edit-ticket');

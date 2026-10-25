@@ -41,7 +41,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body data-page="admin" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -224,6 +224,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input type="text" id="admin-add-name" required placeholder="Müşteri Ad Soyad *" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
             <input type="tel" id="admin-add-phone" required oninput="checkReturning()" placeholder="GSM / Telefon No *" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
+            <label class="sm:col-span-2 block"><span class="block text-[11px] font-bold text-slate-500 mb-1 uppercase">Kayıt tarihi (gerekirse değiştirin)</span><input type="date" id="admin-add-date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm"></label>
           </div>
           <div id="returning-box" class="hidden bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-lg p-3 text-xs space-y-1"></div>
         </div>
@@ -313,6 +314,7 @@
           <input type="tel" id="admin-edit-phone" required placeholder="Telefon" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
           <input type="text" id="admin-edit-device" required placeholder="Cihaz" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
           <input type="text" id="admin-edit-problem" required placeholder="Arıza" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+          <label class="sm:col-span-2 block"><span class="block text-[11px] font-bold text-slate-500 mb-1 uppercase">Kayıt tarihi (gerekirse değiştirin)</span><input type="date" id="admin-edit-date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm"></label>
         </div>
         
         <div>
@@ -406,6 +408,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

@@ -120,10 +120,9 @@ a.glass-card:hover, div.glass-card.hover-lift:hover { transform: translateY(-3px
   #admin-table-body td[data-label="Müşteri / Tel"] span { font-size: 1rem; font-weight: 700; }
   #admin-table-body td[data-label="Kayıt Tarihi"] { color: #64748b; font-size: .82rem !important; }
   /* Düğmeler: büyük ve yazılı */
-  #admin-table-body td[data-label="İşlem"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; border-bottom: 0; padding-top: .9rem !important; }
+  #admin-table-body td[data-label="İşlem"] { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; border-bottom: 0; padding-top: .9rem !important; }
   #admin-table-body td[data-label="İşlem"]::before { display: none; }
   #admin-table-body td[data-label="İşlem"] > * { display: flex; align-items: center; justify-content: center; gap: .4rem; min-height: 44px; padding: .5rem !important; margin: 0 !important; font-size: .85rem !important; font-weight: 600; border-radius: .75rem !important; }
-  #admin-table-body td[data-label="İşlem"] > :nth-child(4) { grid-column: span 2; }
   .act-label { display: inline; }
 }
 

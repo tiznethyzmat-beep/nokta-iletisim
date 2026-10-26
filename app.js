@@ -159,6 +159,7 @@ function buildHistory(ticket, prev) {
   const num = v => Number(v) || 0;
   if (!prev) add('Kayıt açıldı');
   else {
+    if ((prev.payMethod || '') !== (ticket.payMethod || '') && ticket.payMethod !== undefined) add('Ödeme: ' + (ticket.payMethod ? PAY[ticket.payMethod].label : 'Ödenmedi'));
     if ((prev.date || '') !== (ticket.date || '')) add('Kayıt tarihi: ' + (prev.date || '-') + ' → ' + (ticket.date || '-'));
     if (prev.status !== ticket.status) add('Durum: ' + ((statusMap[prev.status] || {}).label || prev.status) + ' → ' + ((statusMap[ticket.status] || {}).label || ticket.status));
     if (num(prev.price) !== num(ticket.price)) add('Ücret: ' + num(prev.price) + ' → ' + num(ticket.price) + ' TL');
@@ -225,6 +226,24 @@ function showHistory(id) {
   #print-area .receipt-terms ol { padding-left: 22px; line-height: 1.5; }
   #print-area .receipt-terms li { margin-bottom: 3px; }
   #print-area .receipt-sign { margin-top: auto; padding-top: 28px; font-size: 18px; }
+  #print-area .report { font-family: Inter, Arial, sans-serif; color: #000; font-size: 11.5px; }
+  #print-area .report-head { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #0f6b67; padding-bottom: 10px; margin-bottom: 12px; }
+  #print-area .report-head img { width: 70px; height: 70px; border-radius: 50%; }
+  #print-area .report h1 { font-size: 22px; margin: 0; }
+  #print-area .report .rsub { font-size: 13px; color: #444; margin-top: 3px; }
+  #print-area .report .sum { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 10px 0; }
+  #print-area .report .sum.sum4 { grid-template-columns: repeat(4, 1fr); }
+  #print-area .report .sum div { border: 1.5px solid #0f6b67; border-radius: 8px; padding: 6px 9px; background: #f2faf9; }
+  #print-area .report .sum span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #444; font-weight: 700; }
+  #print-area .report .sum b { font-size: 16px; }
+  #print-area .report .rnote { font-size: 10.5px; color: #555; margin: 4px 0 10px; }
+  #print-area .report table { width: 100%; border-collapse: collapse; }
+  #print-area .report th, #print-area .report td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
+  #print-area .report th { background: #e8f1f0; font-size: 10.5px; text-transform: uppercase; }
+  #print-area .report thead { display: table-header-group; }
+  #print-area .report tr { page-break-inside: avoid; }
+  #print-area .report td.r { text-align: right; white-space: nowrap; }
+  #print-area .report tfoot td { font-weight: 800; background: #f3f3f3; }
 }`;
   document.head.appendChild(st);
 })();
@@ -1054,12 +1073,121 @@ function renderStats(allTickets) {
   `;
 }
 
+// ===== Ödeme (nakit / kart / havale) =====
+const PAY = {
+  nakit:  { label: 'Nakit',  icon: 'fa-money-bill-wave',   tile: 'paytile-nakit',  badge: 'bg-emerald-100 text-emerald-800 border-emerald-300' },
+  kart:   { label: 'Kart',   icon: 'fa-credit-card',       tile: 'paytile-kart',   badge: 'bg-indigo-100 text-indigo-800 border-indigo-300' },
+  havale: { label: 'Havale', icon: 'fa-building-columns',  tile: 'paytile-havale', badge: 'bg-sky-100 text-sky-800 border-sky-300' }
+};
+const money = n => (Number(n) || 0).toLocaleString('tr-TR') + ' TL';
+// Ödenmemiş: hazır/teslim edilmiş, ücreti var, ödeme şekli açıkça boş. (Eski kayıtlarda alan hiç yoktur: onlar sayılmaz.)
+function isUnpaid(t) { return (t.status === 'hazir' || t.status === 'teslim') && (Number(t.price) || 0) > 0 && t.payMethod === ''; }
+function payBadge(t) {
+  if (t.payMethod && PAY[t.payMethod]) return '<br><span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ' + PAY[t.payMethod].badge + '"><i class="fa-solid ' + PAY[t.payMethod].icon + ' mr-1"></i>' + PAY[t.payMethod].label + '</span>';
+  if (isUnpaid(t)) return '<br><span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold border bg-amber-100 text-amber-800 border-amber-300"><i class="fa-solid fa-hourglass-half mr-1"></i>Ödenmedi</span>';
+  return '';
+}
+
+// "Ödeme nasıl alındı?" penceresi. Sonuç: 'nakit' | 'kart' | 'havale' | '' (henüz ödenmedi) | null (vazgeç)
+function askPayment(t) {
+  return new Promise(resolve => {
+    let m = document.getElementById('modal-pay');
+    if (!m) {
+      m = document.createElement('div'); m.id = 'modal-pay';
+      m.className = 'fixed inset-0 z-[60] bg-slate-900/70 hidden flex items-center justify-center p-4';
+      m.onclick = e => { if (e.target === m) window.__payPick(null); };
+      document.body.appendChild(m);
+    }
+    window.__payPick = v => { closeModal('modal-pay'); resolve(v); };
+    const btn = k => '<button onclick="__payPick(\'' + k + '\')" class="paypick paypick-' + k + '"><i class="fa-solid ' + PAY[k].icon + ' text-2xl mb-1"></i><span>' + PAY[k].label + '</span></button>';
+    m.innerHTML = '<div class="bg-white rounded-3xl w-full max-w-sm p-5 shadow-2xl">'
+      + '<div class="text-center"><div class="text-xs font-bold text-slate-500 uppercase tracking-wide">Teslim edilirken</div>'
+      + '<h3 class="text-xl font-extrabold text-slate-900 mt-1">Ödeme nasıl alındı?</h3>'
+      + '<p class="text-sm text-slate-600 mt-1"><span class="font-mono font-bold text-emerald-700">' + esc(t.id) + '</span> · ' + esc(t.name) + '</p>'
+      + '<p class="text-2xl font-black text-emerald-600 mt-1">' + money(t.price) + '</p></div>'
+      + '<div class="grid grid-cols-3 gap-2 mt-4">' + btn('nakit') + btn('kart') + btn('havale') + '</div>'
+      + '<button onclick="__payPick(\'\')" class="w-full mt-3 py-3 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 font-bold text-sm"><i class="fa-solid fa-hourglass-half mr-1"></i> Henüz ödenmedi (sonra alınacak)</button>'
+      + '<button onclick="__payPick(null)" class="w-full mt-2 py-2 text-slate-500 font-semibold text-sm">Vazgeç</button></div>';
+    openModal('modal-pay');
+  });
+}
+
 // Satırdan hızlı durum değiştirme (Düzenle penceresini açmadan)
 async function quickStatus(id, v) {
   const t = getTickets().find(x => x.id === id);
   if (!t || t.status === v) return;
-  if (v === 'teslim' && !confirm(id + ' kodlu cihaz "Teslim edildi" olarak işaretlensin mi?')) { renderAdminTable(); return; }
-  try { await DB.save(Object.assign({}, t, { status: v }), t); } catch (e) { dbFail(e); renderAdminTable(); }
+  let pay = t.payMethod, paidAt = t.paidAt;
+  if (v === 'teslim') {
+    if ((Number(t.price) || 0) > 0 && !t.payMethod) {
+      const r = await askPayment(t);
+      if (r === null) { renderAdminTable(); return; }
+      pay = r; paidAt = r ? nowTr() : '';
+    } else if (!confirm(id + ' kodlu cihaz "Teslim edildi" olarak işaretlensin mi?')) { renderAdminTable(); return; }
+  }
+  const next = Object.assign({}, t, { status: v });
+  if (pay !== undefined) { next.payMethod = pay; next.paidAt = paidAt || ''; }
+  try { await DB.save(next, t); } catch (e) { dbFail(e); renderAdminTable(); }
+}
+
+// ===== Tahsilat kutusu (nakit / kart / havale / alacak) =====
+function payTotals(all) {
+  const o = { nakit: { n: 0, sum: 0 }, kart: { n: 0, sum: 0 }, havale: { n: 0, sum: 0 }, unpaid: { n: 0, sum: 0 } };
+  all.forEach(t => {
+    if (t.payMethod && o[t.payMethod] && inStatsPeriod(t.paidAt || t.date)) { o[t.payMethod].n++; o[t.payMethod].sum += Number(t.price) || 0; }
+    if (isUnpaid(t)) { o.unpaid.n++; o.unpaid.sum += Number(t.price) || 0; }
+  });
+  return o;
+}
+function renderPayBox(all) {
+  const box = document.getElementById('pay-box');
+  if (!box || !isAdminLoggedIn) return;
+  const o = payTotals(all), total = o.nakit.sum + o.kart.sum + o.havale.sum;
+  const tile = k => `<div class="paytile ${PAY[k].tile}"><div class="paytile-ico"><i class="fa-solid ${PAY[k].icon}"></i></div><div><div class="paytile-lbl">${PAY[k].label}</div><div class="paytile-val">${money(o[k].sum)}</div><div class="paytile-sub">${o[k].n} ödeme</div></div></div>`;
+  box.innerHTML = `<div class="flex items-center justify-between mb-2 px-1"><div class="text-sm font-extrabold text-slate-800"><i class="fa-solid fa-wallet text-[#16a095] mr-1.5"></i>Tahsilat · ${periodLabel()}</div><div class="text-xs font-bold text-slate-500">Toplam alınan: <span class="text-emerald-700">${money(total)}</span></div></div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5">${tile('nakit')}${tile('kart')}${tile('havale')}
+    <button type="button" onclick="setFilter('unpaid')" class="paytile paytile-alacak text-left"><div class="paytile-ico"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="paytile-lbl">Alacak (ödenmemiş)</div><div class="paytile-val">${money(o.unpaid.sum)}</div><div class="paytile-sub">${o.unpaid.n} kayıt · göster</div></div></button></div>`;
+}
+
+// ===== Rapor (A4 çıktı) ve Excel (CSV) =====
+function periodTickets(all) { return all.filter(t => statsPeriod === 'hepsi' || inStatsPeriod(t.date) || (t.status === 'teslim' && inStatsPeriod(deliveredAt(t)))); }
+
+function printReport() {
+  const all = getTickets(), box = document.getElementById('print-area');
+  if (!box) return;
+  const reg = all.filter(t => inStatsPeriod(t.date)).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  const gelir = reg.reduce((s, t) => s + (Number(t.price) || 0), 0), gider = reg.reduce((s, t) => s + (Number(t.cost) || 0), 0);
+  const teslimN = all.filter(t => t.status === 'teslim' && inStatsPeriod(deliveredAt(t))).length;
+  const o = payTotals(all), tahsil = o.nakit.sum + o.kart.sum + o.havale.sum;
+  const sum = (l, v) => '<div><span>' + l + '</span><b>' + v + '</b></div>';
+  const rows = reg.map(t => '<tr><td>' + esc(t.id) + '</td><td>' + esc(String(t.date).split(' - ')[0]) + '</td><td>' + esc(t.name) + '</td><td>' + esc(t.device) + '</td><td>' + esc(t.problem) + '</td><td class="r">' + (Number(t.price) || 0) + '</td><td class="r">' + (Number(t.cost) || 0) + '</td><td>' + (t.payMethod && PAY[t.payMethod] ? PAY[t.payMethod].label : (isUnpaid(t) ? 'Ödenmedi' : '-')) + '</td><td>' + esc((statusMap[t.status] || {}).label ? statusMap[t.status].label.replace(/^\d\.\s*/, '') : '') + '</td></tr>').join('');
+  box.innerHTML = '<div class="report">'
+    + '<div class="report-head"><img src="' + document.getElementById('site-logo').src + '" alt=""><div><h1>' + SHOP.name + ' · Dönem Raporu</h1><div class="rsub">' + esc(periodLabel()) + ' · Çıktı: ' + esc(nowTr()) + '</div></div></div>'
+    + '<div class="sum">' + sum('Yeni kayıt', reg.length) + sum('Teslim edilen', teslimN) + sum('Gelir', money(gelir)) + sum('Gider', money(gider)) + sum('Net kazanç', money(gelir - gider)) + '</div>'
+    + '<div class="sum sum4">' + sum('Nakit', money(o.nakit.sum)) + sum('Kart', money(o.kart.sum)) + sum('Havale', money(o.havale.sum)) + sum('Alacak (ödenmemiş)', money(o.unpaid.sum)) + '</div>'
+    + '<div class="rnote">Tahsil edilen toplam: <b>' + money(tahsil) + '</b> · Gelir/gider kayıt tarihine, tahsilat ödeme tarihine, teslim sayısı teslim tarihine göre hesaplanır.</div>'
+    + '<table><thead><tr><th>Kod</th><th>Tarih</th><th>Müşteri</th><th>Cihaz</th><th>Arıza</th><th>Ücret</th><th>Maliyet</th><th>Ödeme</th><th>Durum</th></tr></thead><tbody>' + (rows || '<tr><td colspan="9">Bu dönemde kayıt yok.</td></tr>') + '</tbody>'
+    + '<tfoot><tr><td colspan="5">TOPLAM (' + reg.length + ' kayıt)</td><td class="r">' + gelir + '</td><td class="r">' + gider + '</td><td colspan="2">Net: ' + (gelir - gider) + ' TL</td></tr></tfoot></table></div>';
+  box.classList.remove('hidden');
+  setTimeout(() => { window.print(); box.classList.add('hidden'); }, 350);
+}
+
+function csvCell(v, isText) {
+  let s = String(v === undefined || v === null ? '' : v);
+  if (isText && /^[=+\-@\t\r]/.test(s)) s = "'" + s;       // Excel formül enjeksiyonuna karşı
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function exportCsv() {
+  const list = periodTickets(getTickets()).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  const head = ['Servis Kodu', 'Kayıt Tarihi', 'Teslim Tarihi', 'Müşteri', 'Telefon', 'Cihaz', 'Seri No', 'Üzerinde Gelenler', 'Arıza', 'Durum', 'Ücret (TL)', 'Maliyet (TL)', 'Kâr (TL)', 'Ödeme Şekli', 'Ödeme Tarihi'];
+  const lines = [head.join(';')].concat(list.map(t => {
+    const price = Number(t.price) || 0, cost = Number(t.cost) || 0;
+    return [csvCell(t.id, 1), csvCell(t.date, 1), csvCell(t.status === 'teslim' ? deliveredAt(t) : '', 1), csvCell(t.name, 1), csvCell(t.phone, 1), csvCell(t.device, 1), csvCell(t.serino, 1), csvCell(t.gelenler, 1), csvCell(t.problem, 1),
+      csvCell((statusMap[t.status] || {}).label || t.status, 1), price, cost, price - cost, csvCell(t.payMethod && PAY[t.payMethod] ? PAY[t.payMethod].label : (isUnpaid(t) ? 'Ödenmedi' : ''), 1), csvCell(t.paidAt, 1)].join(';');
+  }));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'nokta-kayitlar-' + periodLabel().replace(/[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]+/g, '-').replace(/^-|-$/g, '') + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 // Teslim bekleyen (hazır) cihazlar listesi
@@ -1100,6 +1228,7 @@ function renderAdminTable() {
 
   // Özet kartlarını güncelle
   renderStats(tickets);
+  renderPayBox(tickets);
   renderOverdue(tickets);
   renderReadyBox(tickets);
   renderLive();
@@ -1119,7 +1248,9 @@ function renderAdminTable() {
     );
   }
 
-  if (statusFilter !== 'all') {
+  if (statusFilter === 'unpaid') {
+    tickets = tickets.filter(isUnpaid);
+  } else if (statusFilter !== 'all') {
     tickets = tickets.filter(t => t.status === statusFilter);
   }
 
@@ -1162,7 +1293,7 @@ function renderAdminTable() {
         <td data-label="Cihaz" class="py-3.5 px-4"><div class="cv"><span class="text-slate-800 font-semibold">${esc(t.device)}</span>${t.serino ? '<br><small class="text-slate-400">SN: ' + esc(t.serino) + '</small>' : ''}${t.lockcode ? '<br><small class="font-mono text-slate-700">Ekran: <b>' + esc(t.lockcode) + '</b></small>' : ''}${t.simpin ? '<br><small class="font-mono text-slate-500">SIM PIN: <b>' + esc(t.simpin) + '</b></small>' : ''}${t.gelenler ? '<br><small class="text-amber-800 font-medium">Üzerinde: ' + esc(t.gelenler) + '</small>' : ''}</div></td>
         <td data-label="Arıza / Beyan" class="py-3.5 px-4 text-slate-700 text-xs max-w-xs truncate"><div class="cv">${esc(t.problem)}</div></td>
         <td data-label="Ücret / Maliyet" class="py-3.5 px-4 text-xs font-semibold whitespace-nowrap"><div class="cv">
-          <span class="text-emerald-600 font-extrabold">${gelirVal} TL</span>
+          <span class="text-emerald-600 font-extrabold">${gelirVal} TL</span>${payBadge(t)}
           ${giderVal > 0 ? '<br><small class="text-slate-500 font-semibold">Maliyet ' + giderVal + ' · <span class="text-sky-700 font-bold">Kâr ' + karVal + '</span></small>' : ''}
         </div></td>
         <td data-label="Durum" class="py-3.5 px-4 whitespace-nowrap"><div class="cv"><select onchange="quickStatus('${esc(t.id)}', this.value)" class="px-2.5 py-1.5 rounded-full text-xs font-bold border ${st.color} cursor-pointer max-w-full" title="Durumu değiştir">${Object.keys(statusMap).map(k => `<option value="${k}" ${k === t.status ? 'selected' : ''}>${statusMap[k].label}</option>`).join('')}</select></div></td>
@@ -1187,7 +1318,8 @@ function renderAdminTable() {
 
 function openNewRecordModal() {
   const rb = document.getElementById('returning-box'); if (rb) { rb.classList.add('hidden'); rb.innerHTML = ''; }
-  const dt = document.getElementById('admin-add-date'); if (dt) dt.value = todayStr();   // varsayılan: bugün (değiştirilebilir)
+  const dt = document.getElementById('admin-add-date'); if (dt) dt.value = todayStr();
+  const ap = document.getElementById('admin-add-pay'); if (ap) ap.value = '';   // varsayılan: bugün (değiştirilebilir)
   openModal('modal-new-ticket');
 }
 
@@ -1261,6 +1393,8 @@ async function handleAdminCreateTicket(e) {
       price: Number(document.getElementById('admin-add-price').value) || 0,
       cost: Number(document.getElementById('admin-add-cost').value) || 0,
       status: document.getElementById('admin-add-status').value,
+      payMethod: document.getElementById('admin-add-pay').value,
+      paidAt: document.getElementById('admin-add-pay').value ? inputToTr(chosen, timeNow) : '',
       note: document.getElementById('admin-add-note').value || 'Kayıt açıldı.'
     };
     await DB.save(ticket, null);
@@ -1288,6 +1422,10 @@ function openEditModal(id) {
   document.getElementById('admin-edit-gelenler').value = item.gelenler || '';
   document.getElementById('admin-edit-note').value = item.note || '';
   document.getElementById('admin-edit-date').value = dateToInput(item.date);
+  const ep = document.getElementById('admin-edit-pay');
+  [...ep.querySelectorAll('option[value="__old"]')].forEach(o => o.remove());
+  if (item.payMethod === undefined) { ep.insertAdjacentHTML('afterbegin', '<option value="__old">Bilinmiyor (eski kayıt)</option>'); ep.value = '__old'; }
+  else ep.value = item.payMethod || '';
   openModal('modal-edit-ticket');
 }
 
@@ -1310,6 +1448,11 @@ async function handleAdminUpdateTicket(e) {
       note: document.getElementById('admin-edit-note').value
     });
     ['name', 'phone', 'device', 'problem'].forEach(k => next[k] = document.getElementById('admin-edit-' + k).value.trim());
+    const pv = document.getElementById('admin-edit-pay').value;
+    if (pv !== '__old') {
+      next.payMethod = pv;
+      next.paidAt = pv ? (prev.payMethod === pv && prev.paidAt ? prev.paidAt : nowTr()) : '';
+    }
     const nd = document.getElementById('admin-edit-date').value;
     if (nd && nd !== dateToInput(prev.date)) {
       next.date = inputToTr(nd, String(prev.date || '').split(' - ')[1]);

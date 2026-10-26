@@ -227,3 +227,19 @@ body[data-page="admin"] .wa-fab { display:none !important; }
   #admin-table-body td[data-label="Durum"] { min-width:0; }
   #admin-table-body td[data-label="Durum"] select { font-size:.7rem; padding:.3rem .4rem; }
 }
+
+/* ===== Tahsilat kutucukları ===== */
+.paytile { display:flex; align-items:center; gap:.75rem; background:#fff; border:1px solid #e2e8f0; border-radius:1rem; padding:.75rem .9rem; box-shadow:0 1px 2px rgba(15,35,52,.04),0 10px 24px -16px rgba(15,35,52,.25); --c:#0f172a; --bg:#f1f5f9; }
+.paytile-ico { width:2.4rem; height:2.4rem; flex:0 0 2.4rem; border-radius:.8rem; display:flex; align-items:center; justify-content:center; background:var(--bg); color:var(--c); font-size:1rem; }
+.paytile-lbl { font-size:.62rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#64748b; }
+.paytile-val { font-family:'Bricolage Grotesque','Inter',sans-serif; font-size:1.2rem; font-weight:800; color:var(--c); line-height:1.15; }
+.paytile-sub { font-size:.68rem; font-weight:600; color:#94a3b8; }
+.paytile-nakit { --c:#047857; --bg:#d1fae5; } .paytile-kart { --c:#4338ca; --bg:#e0e7ff; } .paytile-havale { --c:#0369a1; --bg:#e0f2fe; }
+.paytile-alacak { --c:#b45309; --bg:#fef3c7; border:2px dashed #fbbf24; background:#fffbeb; cursor:pointer; width:100%; }
+.paytile-alacak:hover { background:#fef3c7; }
+/* Ödeme seçme penceresi */
+.paypick { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:.9rem .4rem; border-radius:1rem; border:2px solid #cbd5e1; font-weight:800; font-size:.85rem; background:#fff; color:#334155; cursor:pointer; }
+.paypick:active { transform:scale(.97); }
+.paypick-nakit { border-color:#6ee7b7; background:#ecfdf5; color:#047857; }
+.paypick-kart { border-color:#a5b4fc; background:#eef2ff; color:#4338ca; }
+.paypick-havale { border-color:#7dd3fc; background:#f0f9ff; color:#0369a1; }

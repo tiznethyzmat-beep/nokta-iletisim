@@ -243,3 +243,19 @@ body[data-page="admin"] .wa-fab { display:none !important; }
 .paypick-nakit { border-color:#6ee7b7; background:#ecfdf5; color:#047857; }
 .paypick-kart { border-color:#a5b4fc; background:#eef2ff; color:#4338ca; }
 .paypick-havale { border-color:#7dd3fc; background:#f0f9ff; color:#0369a1; }
+
+/* ===== Panel sekmeleri ===== */
+#panel-tabs { margin-bottom:.9rem; }
+.ptab { display:flex; align-items:center; justify-content:center; gap:.45rem; padding:.7rem .5rem; border-radius:.85rem; font-weight:800; font-size:.85rem; color:#64748b; background:transparent; }
+.ptab:hover { background:#f1f5f9; color:#0f6b67; }
+.ptab-on, .ptab-on:hover { background:#0e1a2c; color:#fff; box-shadow:0 8px 18px -10px rgba(14,26,44,.8); }
+
+/* ===== Telefon: kayıt kartları daha kompakt ===== */
+@media (max-width: 767px) {
+  #admin-table-body tr { margin:.6rem .5rem !important; padding:.65rem .8rem .8rem !important; }
+  #admin-table-body td { padding:.28rem 0 !important; font-size:.84rem !important; }
+  #admin-table-body td::before { font-size:.62rem !important; flex:0 0 5.2rem !important; }
+  #admin-table-body td[data-label="Servis Kod"] { font-size:1.1rem !important; }
+  #admin-table-body td[data-label="İşlem"] { grid-template-columns:repeat(3,1fr) !important; gap:.35rem !important; padding-top:.6rem !important; }
+  #admin-table-body td[data-label="İşlem"] > * { min-height:40px !important; padding:.35rem .2rem !important; font-size:.72rem !important; gap:.25rem !important; white-space:nowrap !important; }
+}

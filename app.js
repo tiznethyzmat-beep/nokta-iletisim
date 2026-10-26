@@ -649,6 +649,7 @@ window.onload = function () {
   if (new URLSearchParams(location.search).get('giris') && document.getElementById('modal-login')) checkAdminAccess();
   if (new URLSearchParams(location.search).get('staff') === '1') { localStorage.setItem('nokta_staff', '1'); setTimeout(() => alert('Bu cihaz ziyaretçi sayacından çıkarıldı.'), 300); }
   if (USE_FIREBASE && PAGE !== 'admin' && !localStorage.getItem('nokta_staff')) trackVisit();
+  if (document.getElementById('tab-ozet')) { let pt = 'ozet'; try { pt = localStorage.getItem('nokta_ptab') || 'ozet'; } catch (e) {} setPanelTab(pt); }
   if (isAdminLoggedIn) renderAdminTable();
 };
 
@@ -975,7 +976,16 @@ async function logoutAdmin() {
 // 7. TEKNİKER PANELİ: ÖZET VE TABLO
 // ======================================================================
 
-function setFilter(v) { document.getElementById('admin-status-filter').value = v; renderAdminTable(); }
+function setFilter(v) { document.getElementById('admin-status-filter').value = v; if (document.getElementById('tab-kayit')) setPanelTab('kayit'); renderAdminTable(); }
+
+// Panel sekmeleri: Özet / Kayıtlar / Sistem
+function setPanelTab(t) {
+  if (!document.getElementById('tab-ozet')) return;
+  if (!['ozet', 'kayit', 'sistem'].includes(t)) t = 'ozet';
+  ['ozet', 'kayit', 'sistem'].forEach(k => document.getElementById('tab-' + k).classList.toggle('hidden', k !== t));
+  document.querySelectorAll('#panel-tabs .ptab').forEach(b => b.classList.toggle('ptab-on', b.dataset.ptab === t));
+  try { localStorage.setItem('nokta_ptab', t); } catch (e) {}
+}
 
 // Özet kartları: toplam, tamirde, hazır, gelir, gider, net kâr
 let statsPeriod = 'bugun'; // bugun | ay | yil | hepsi | secay | secyil

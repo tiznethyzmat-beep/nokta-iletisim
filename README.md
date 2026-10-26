@@ -82,3 +82,7 @@ Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle
 - **Bağlı cihazlar**: panelde tekniker oturumları (cihaz, giriş/çıkış saati, çevrimiçi durumu) ve uzaktan "Çıkar" düğmesi.
 - **IP ve şehir**: `api/whoami.js` (Vercel sunucu funksiyası) ile tekniker cihaz kaydında görünür.
 - **Ziyaretçi sayacı**: şu an online, bugün ve son 7 gün (anonim). `firestore.rules` içindeki `sessions`, `presence`, `visits` bölümlerini Firebase kurallarınıza ekleyip yayınlayın.
+- **Ödeme şekli** (nakit / kart / havale): kayıt açarken, düzenlerken veya "Teslim edildi" derken seçilir. Panelde Tahsilat kutusu ve "Ödenmemiş" süzgeci vardır.
+- **Rapor** (A4 çıktı) ve **Excel** (CSV) düğmeleri seçili döneme göre çalışır.
+- **Dükan suraty**: `dukan.webp` / `dukan.jpg` (baş sahypa, İletişim sahypasy, paylaşma resmi `og-image.png`). Suraty değiştirmek için aynı adla yenisini koyun.
+- **Panel sekmeleri**: Özet / Kayıtlar / Sistem.

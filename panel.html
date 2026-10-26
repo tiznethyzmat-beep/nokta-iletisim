@@ -41,7 +41,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body data-page="admin" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -117,6 +117,14 @@
         </div>
       </div>
 
+      <!-- Panel sekmeleri -->
+      <div id="panel-tabs" class="grid grid-cols-3 gap-1.5 p-1.5 bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <button type="button" data-ptab="ozet" onclick="setPanelTab('ozet')" class="ptab"><i class="fa-solid fa-chart-pie"></i><span>Özet</span></button>
+        <button type="button" data-ptab="kayit" onclick="setPanelTab('kayit')" class="ptab"><i class="fa-solid fa-list-check"></i><span>Kayıtlar</span></button>
+        <button type="button" data-ptab="sistem" onclick="setPanelTab('sistem')" class="ptab"><i class="fa-solid fa-gear"></i><span>Sistem</span></button>
+      </div>
+
+      <div id="tab-ozet" class="space-y-3">
       <!-- Özet kartları (gelir / gider / net kâr) -->
       <div id="admin-stats-box">
         <!-- js/admin-dashboard.js ile doldurulur -->
@@ -126,6 +134,9 @@
 
       <div id="ready-box" class="mb-3"></div>
 
+      </div>
+
+      <div id="tab-kayit" class="hidden space-y-3">
       <!-- Arama ve durum filtresi -->
       <div class="glass-card p-4 flex flex-col lg:flex-row gap-3 lg:items-center justify-between">
         <div class="relative w-full lg:w-96">
@@ -165,8 +176,12 @@
         </div>
       </div>
 
+      </div>
+
+      <div id="tab-sistem" class="hidden space-y-3">
       <div id="devices-box" class="mt-4"></div>
       <div id="visitors-box" class="mt-3"></div>
+      </div>
     </section>
 
 
@@ -431,6 +446,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

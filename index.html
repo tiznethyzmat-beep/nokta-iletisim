@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=10">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobilePhoneStore", "name": "Nokta İletişim", "description": "Kırklareli telefon ve tablet teknik servisi; sıfır ve 2. el cihaz alım satım.", "image": "https://nokta-iletisim.vercel.app/og-image.png", "logo": "https://nokta-iletisim.vercel.app/logo.png", "url": "https://nokta-iletisim.vercel.app", "telephone": "+905422888288", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}, "areaServed": {"@type": "City", "name": "Kırklareli"}, "knowsAbout": ["Telefon tamiri", "Tablet tamiri", "Ekran değişimi", "Batarya değişimi", "Şarj soketi tamiri", "Sıvı teması tamiri"]}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Kırklareli’nde telefon tamiri nerede yapılır?", "acceptedAnswer": {"@type": "Answer", "text": "Nokta İletişim, Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli adresinde cep telefonu ve tablet teknik servisi hizmeti verir. Telefon veya WhatsApp ile +90 542 288 82 88 numarasından ulaşabilirsiniz."}}, {"@type": "Question", "name": "Cihazımın tamir durumunu nasıl öğrenirim?", "acceptedAnswer": {"@type": "Answer", "text": "Cihaz teslim alındığında size bir servis kodu verilir. Bu kodu veya telefon numaranızı sitemizdeki “Cihaz Sorgula” bölümüne yazarak kayıt alındı, arıza tespiti, tamirde ve teslime hazır aşamalarını canlı takip edebilirsiniz."}}, {"@type": "Question", "name": "Hangi telefon ve tablet markalarının tamiri yapılıyor?", "acceptedAnswer": {"@type": "Answer", "text": "iPhone, Samsung, Xiaomi, Redmi, Poco, Tecno, Oppo, Huawei gibi birçok marka ve modelde ekran değişimi, batarya değişimi, şarj soketi tamiri ve sıvı teması onarımı yapılır. Modeliniz için mağazamızı arayabilirsiniz."}}, {"@type": "Question", "name": "Kargo ile cihaz gönderebilir miyim?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Nokta İletişim cihazı adresten almaz ve adrese göndermez; cihazınızı mağazaya kendiniz getirir, tamir bitince kendiniz teslim alırsınız."}}, {"@type": "Question", "name": "Servis talebini nasıl oluştururum?", "acceptedAnswer": {"@type": "Answer", "text": "Sitedeki “Servis Talebi” sayfasındaki formu doldurup WhatsApp ile bize gönderebilirsiniz. Resmi servis kaydı cihaz mağazaya geldiğinde açılır."}}, {"@type": "Question", "name": "Ekran değişimi, batarya ve şarj soketi tamiri yapıyor musunuz?", "acceptedAnswer": {"@type": "Answer", "text": "Evet. Ekran değişimi, batarya yenileme, şarj soketi tamiri, sıvı teması onarımı ve yazılım işlemleri servisimizde yapılan işlemler arasındadır."}}]}</script>
 </head>
@@ -96,19 +96,19 @@
   </header>
 
   <!-- Üst afiş -->
-  <div id="hero-banner" class="text-white py-9 md:py-16 border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-5 items-center gap-10">
-      <div class="md:col-span-3 space-y-5 text-center md:text-left">
-        <div class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-sky-200 border border-white/15">
+  <div id="hero-banner" class="text-white py-6 md:py-16 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-5 items-center gap-6 md:gap-10">
+      <div class="md:col-span-3 space-y-3 md:space-y-5 text-center md:text-left">
+        <div class="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-sky-200 border border-white/15">
           <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 pulse-green"></span> Hızlı & güvenilir teknik servis
         </div>
-        <h1 class="font-display text-[2rem] leading-tight sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]">Telefonunuz tamirde,<br>durumu <span class="text-[#ff5a36]">cebinizden</span> izleyin.<span class="sr-only"> Kırklareli telefon tamiri ve teknik servis – Nokta İletişim</span></h1>
-        <p class="text-slate-300 text-base max-w-xl mx-auto md:mx-0 leading-relaxed">Kırklareli telefon & tablet teknik servis: ekran değişimi, batarya yenileme, şarj soketi ve sıvı teması tamiri. Servis kodunuzla cihazınızı canlı takip edin.</p>
-        <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-          <button onclick="switchTab('randevu')" class="bg-[#ff5a36] hover:bg-[#ee4a27] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#ff5a36]/30 hover:-translate-y-0.5">
+        <h1 class="font-display text-[1.7rem] leading-tight sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]">Telefonunuz tamirde,<br>durumu <span class="text-[#ff5a36]">cebinizden</span> izleyin.<span class="sr-only"> Kırklareli telefon tamiri ve teknik servis – Nokta İletişim</span></h1>
+        <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto md:mx-0 leading-relaxed">Kırklareli telefon & tablet teknik servis: ekran değişimi, batarya yenileme, şarj soketi ve sıvı teması tamiri. Servis kodunuzla cihazınızı canlı takip edin.</p>
+        <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 pt-1">
+          <button onclick="switchTab('randevu')" class="bg-[#ff5a36] hover:bg-[#ee4a27] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#ff5a36]/30 hover:-translate-y-0.5">
             <i class="fa-solid fa-wrench mr-2"></i> Tamir kaydı oluştur
           </button>
-          <a href="https://wa.me/905422888288?text=Merhaba,%20teknik%20servis%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-xl text-sm font-semibold flex items-center">
+          <a href="https://wa.me/905422888288?text=Merhaba,%20teknik%20servis%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-semibold flex items-center">
             <i class="fa-brands fa-whatsapp text-lg mr-2 text-emerald-400"></i> WhatsApp danışma
           </a>
         </div>
@@ -195,6 +195,18 @@
         <div class="mt-6 flex flex-wrap gap-3">
           <a href="servis-talebi.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-brands fa-whatsapp mr-1"></i> Servis talebi gönder</a>
           <a href="iletisim.html" class="bg-slate-900 hover:bg-slate-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-location-dot mr-1"></i> Adres ve harita</a>
+        </div>
+      </div>
+      <div class="glass-card p-5 sm:p-6 grid md:grid-cols-5 gap-5 items-center">
+        <img src="dukan.webp" width="720" height="938" loading="lazy" alt="Nokta İletişim Kırklareli mağazası: sıfır ve ikinci el cep telefonu alım satım, teknik servis" class="md:col-span-2 w-full max-h-80 md:max-h-[26rem] object-cover rounded-2xl border border-slate-200 shadow-md" style="object-position:50% 20%">
+        <div class="md:col-span-3">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Mağazamız: Kırklareli Merkez</h2>
+          <p class="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">Sıfır ve ikinci el cep telefonu alım satım merkezi ve teknik servis. Cihazınızı mağazamıza getirin; servis kodunuzla onarım durumunu bu siteden takip edin.</p>
+          <p class="text-sm text-slate-700 mt-3"><i class="fa-solid fa-location-dot text-sky-600 mr-1.5"></i><strong>Karakaş Mah. Hasan Paşa Cd. No:35/A</strong>, Merkez / Kırklareli</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-diamond-turn-right mr-1"></i> Yol tarifi al</a>
+            <a href="tel:+905422888288" class="bg-slate-900 hover:bg-slate-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-phone mr-1"></i> Ara: 0542 288 82 88</a>
+          </div>
         </div>
       </div>
       <div class="glass-card p-6 sm:p-8">
@@ -449,6 +461,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

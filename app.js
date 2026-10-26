@@ -1046,13 +1046,12 @@ function renderStats(allTickets) {
   const years = new Set([now.getFullYear()]);
   allTickets.forEach(t => { const d = parseTrDate(t.date); if (d) years.add(d.y); });
   const yearList = [...years].sort((a, b) => b - a);
-  const labels = { bugun: 'Bugün', dun: 'Dün', ay: 'Bu ay', yil: 'Bu yıl', hepsi: 'Hepsi' };
+  const labels = { bugun: 'Bugün', dun: 'Dün', ay: 'Bu ay', hepsi: 'Hepsi' };
   const sel = k => statsPeriod === k;
   bar.innerHTML = `<div class="w-full mb-1 text-sm font-extrabold text-[#0f6b67]"><i class="fa-regular fa-calendar-check mr-1"></i>Gösterilen dönem: <span class="text-slate-900">${periodLabel()}</span></div>`
     + '<div class="pscroll">' + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
     + `<label class="pchip-lbl">Gün <input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" class="pchip ${sel('secgun') ? 'pchip-sel' : ''}"></label>`
-    + `<label class="pchip-lbl">Ay <input type="month" value="${statsMonth}" onchange="setStatsMonth(this.value)" class="pchip ${sel('secay') ? 'pchip-sel' : ''}"></label>`
-    + `<label class="pchip-lbl">Yıl <select onchange="setStatsYear(this.value)" class="pchip ${sel('secyil') ? 'pchip-sel' : ''}"><option value="">Seç</option>${yearList.map(y => `<option value="${y}" ${sel('secyil') && statsYear === y ? 'selected' : ''}>${y}</option>`).join('')}</select></label></div>`;
+    + '</div>';
 
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));
 
@@ -1077,8 +1076,8 @@ function renderStats(allTickets) {
     <div class="stat stat-gelir"><div class="stat-ico"><i class="fa-solid fa-arrow-trend-up"></i></div><div class="stat-lbl">Gelir</div><div class="stat-val">${totalGelir} TL</div></div>
     <div class="stat stat-gider"><div class="stat-ico"><i class="fa-solid fa-arrow-trend-down"></i></div><div class="stat-lbl">Gider</div><div class="stat-val">${totalGider} TL</div></div>
     <div class="stat stat-cihaz"><div class="stat-ico"><i class="fa-solid fa-mobile-screen"></i></div><div class="stat-lbl">Yeni Kayıt</div><div class="stat-val">${total}</div></div>
-    <div class="stat stat-tamir"><div class="stat-ico"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="stat-lbl">Tamirde (şu an)</div><div class="stat-val">${tamirde}</div></div>
-    <div class="stat stat-hazir"><div class="stat-ico"><i class="fa-solid fa-circle-check"></i></div><div class="stat-lbl">Teslime Hazır (şu an)</div><div class="stat-val">${hazir}</div></div>
+    <div class="stat stat-tamir"><div class="stat-ico"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="stat-lbl">Tamirde</div><div class="stat-val">${tamirde}</div></div>
+    <div class="stat stat-hazir"><div class="stat-ico"><i class="fa-solid fa-circle-check"></i></div><div class="stat-lbl">Teslime hazır</div><div class="stat-val">${hazir}</div></div>
 <div class="stat stat-teslim"><div class="stat-ico"><i class="fa-solid fa-hand-holding"></i></div><div class="stat-lbl">Teslim Edildi</div><div class="stat-val">${teslimN}</div></div>
   `;
 }
@@ -1153,7 +1152,9 @@ function renderPayBox(all) {
   if (!box || !isAdminLoggedIn) return;
   const o = payTotals(all), total = o.nakit.sum + o.kart.sum + o.havale.sum;
   const tile = k => `<div class="paytile ${PAY[k].tile}"><div class="paytile-ico"><i class="fa-solid ${PAY[k].icon}"></i></div><div><div class="paytile-lbl">${PAY[k].label}</div><div class="paytile-val">${money(o[k].sum)}</div><div class="paytile-sub">${o[k].n} ödeme</div></div></div>`;
-  box.innerHTML = `<div class="flex items-center justify-between mb-2 px-1"><div class="text-sm font-extrabold text-slate-800"><i class="fa-solid fa-wallet text-[#16a095] mr-1.5"></i>Tahsilat · ${periodLabel()}</div><div class="text-xs font-bold text-slate-500">Toplam alınan: <span class="text-emerald-700">${money(total)}</span></div></div>
+  let sn = document.getElementById('stats-note');
+  if (!sn) { const sb = document.getElementById('admin-stats-box'); if (sb) { sn = document.createElement('p'); sn.id = 'stats-note'; sn.className = 'text-[11px] text-slate-400 font-medium px-1 mt-1'; sn.textContent = 'Tamirde ve Teslime hazır: şu anki durum. Diğer kartlar seçili döneme göre.'; sb.insertAdjacentElement('afterend', sn); } }
+  box.innerHTML = `<div class="mb-2 px-1"><div class="text-sm font-extrabold text-slate-800"><i class="fa-solid fa-wallet text-[#16a095] mr-1.5"></i>Tahsilat</div><div class="text-xs font-semibold text-slate-500 mt-0.5">${periodLabel()} · toplam alınan: <span class="text-emerald-700 font-extrabold">${money(total)}</span></div></div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5">${tile('nakit')}${tile('kart')}${tile('havale')}
     <button type="button" onclick="setFilter('unpaid')" class="paytile paytile-alacak text-left"><div class="paytile-ico"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="paytile-lbl">Alacak (ödenmemiş)</div><div class="paytile-val">${money(o.unpaid.sum)}</div><div class="paytile-sub">${o.unpaid.n} kayıt · göster</div></div></button></div>`;
 }

@@ -259,3 +259,6 @@ body[data-page="admin"] .wa-fab { display:none !important; }
   #admin-table-body td[data-label="İşlem"] { grid-template-columns:repeat(3,1fr) !important; gap:.35rem !important; padding-top:.6rem !important; }
   #admin-table-body td[data-label="İşlem"] > * { min-height:40px !important; padding:.35rem .2rem !important; font-size:.72rem !important; gap:.25rem !important; white-space:nowrap !important; }
 }
+
+/* Arama/form sahifelerinde yüzen WhatsApp düğmesi alanları örtmesin */
+body[data-page="sorgula"] .wa-fab, body[data-page="randevu"] .wa-fab { display:none !important; }

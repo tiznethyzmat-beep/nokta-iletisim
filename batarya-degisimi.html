@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Kırklareli telefon ve tablet batarya (pil) değişimi: çabuk biten, şişen veya kendiliğinden kapanan cihazlar. Nokta İletişim teknik servis.">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nokta-iletisim.vercel.app/batarya-degisimi">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="canonical" href="https://nokta-iletisim.vercel.app/batarya-degisimi">
+  <meta property="og:site_name" content="Nokta İletişim">
+  <meta property="og:title" content="Kırklareli Batarya Değişimi | Telefon Pil Değişimi | Nokta İletişim">
+  <meta property="og:description" content="Kırklareli telefon ve tablet batarya (pil) değişimi: çabuk biten, şişen veya kendiliğinden kapanan cihazlar. Nokta İletişim teknik servis.">
+  <meta property="og:image" content="https://nokta-iletisim.vercel.app/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <title>Kırklareli Batarya Değişimi | Telefon Pil Değişimi | Nokta İletişim</title>
+
+  <!-- Tailwind CSS (CDN) ve renk ayarları -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind renk paleti ve yazı tipi
+    tailwind.config = { theme: { extend: {
+      fontFamily: { display: ['"Bricolage Grotesque"', 'Inter', 'sans-serif'] },
+      colors: {
+        sky: { 50:'#effaf8',100:'#d5f3ee',200:'#abe6de',300:'#74d3c8',400:'#3dbbaf',500:'#16a095',600:'#0e8680',700:'#0f6b67',800:'#115654',900:'#0f4543',950:'#0a2c2f' },
+        slate: { 800:'#16243a', 900:'#0e1a2c', 950:'#08111f' }
+      } } } };
+  </script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Yazı tipleri: Inter, Bricolage Grotesque -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase (veritabanı + giriş) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+
+  <!-- Site stilleri -->
+  <link rel="stylesheet" href="style.css?v=11">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Kırklareli Batarya Değişimi", "serviceType": "Batarya değişimi", "areaServed": {"@type": "City", "name": "Kırklareli"}, "provider": {"@type": "MobilePhoneStore", "name": "Nokta İletişim", "telephone": "+905422888288", "url": "https://nokta-iletisim.vercel.app", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Batarya değişimi ne kadar sürer?", "acceptedAnswer": {"@type": "Answer", "text": "Süre cihaz modeline ve gerekli parçanın stokta olup olmamasına göre değişir. Cihazınızı getirdiğinizde ya da modelinizi WhatsApp'tan yazdığınızda size bilgi veririz."}}, {"@type": "Question", "name": "Batarya değişimi ücreti ne kadar?", "acceptedAnswer": {"@type": "Answer", "text": "Ücret marka, model ve arızanın türüne göre değişir. Modelinizi bu sayfadaki düğmeyle yazın, size WhatsApp'tan dönüş yapalım."}}, {"@type": "Question", "name": "Bataryam şişti, kullanmaya devam edebilir miyim?", "acceptedAnswer": {"@type": "Answer", "text": "Önermeyiz. Şişme güvenlik riski taşır; cihazı şarj etmeden mağazaya getirin."}}]}</script>
+</head>
+<body data-page="hizmet" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
+
+  <noscript>
+    <p style="padding:16px;text-align:center;background:#fef3c7;color:#78350f">Bu sayfanın çalışması için tarayıcınızda JavaScript açık olmalıdır.</p>
+  </noscript>
+
+  <!-- Üst menü -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="switchTab('sorgula')">
+          <img id="site-logo" src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white shrink-0 object-cover">
+          <div>
+            <div class="font-extrabold text-xl leading-tight">Nokta İletişim</div>
+            <p class="hidden sm:block text-xs text-sky-400 font-medium">Teknik Servis & Çözüm Merkezi • Kırklareli</p>
+          </div>
+        </div>
+
+        <!-- Masaüstü menü -->
+        <nav class="hidden md:flex items-center space-x-2">
+          <button onclick="switchTab('sorgula')" id="nav-sorgula" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-sky-400 bg-slate-800">
+            <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Cihaz Sorgula
+          </button>
+          <button onclick="switchTab('randevu')" id="nav-randevu" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-headset mr-1.5"></i> Servis Talebi Gönder
+          </button>
+          <button onclick="switchTab('iletisim')" id="nav-iletisim" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-location-dot mr-1.5"></i> İletişim & Konum
+          </button>
+          <button onclick="switchTab('sss')" id="nav-sss" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-circle-question mr-1.5"></i> Sık Sorulanlar
+          </button>
+        </nav>
+
+        <!-- Tekniker paneli düğmesi -->
+        <div class="flex items-center space-x-3">
+          <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
+            <i class="fa-solid fa-user-gear"></i>
+            <span id="admin-toggle-text" class="hidden xs:inline sm:inline">Tekniker Paneli</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ANA İÇERİK -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+    <!-- TAB 4: SIK SORULAN SORULAR / SİTE NASIL ÇALIŞIR -->
+    <section id="view-hizmet" class="tab-content space-y-6">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <nav class="text-xs text-slate-500 font-semibold"><a href="index.html" class="hover:underline text-sky-700">Ana sayfa</a> › Batarya değişimi</nav>
+
+        <div class="glass-card p-6 sm:p-8">
+          <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-battery-half"></i></div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Kırklareli Batarya Değişimi</h1>
+          <p class="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed">Çabuk biten, şişen ya da kendiliğinden kapanan telefon ve tablet bataryalarını Kırklareli'nde değiştiriyoruz. Modelinizi yazın, bilgi ve fiyat için size dönüş yapalım.</p>
+          <h2 class="text-base font-extrabold text-slate-900 mt-6">Şu durumlarda bize getirin</h2>
+          <ul class="mt-3 grid sm:grid-cols-2 gap-2 text-sm text-slate-700"><li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i><span>Şarjı çok çabuk bitiyor</span></li><li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i><span>Cihaz kendiliğinden kapanıyor</span></li><li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i><span>Batarya şişmiş, kapak veya ekran kalkmış</span></li><li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i><span>Şarj yüzdesi aniden düşüyor</span></li></ul>
+          <div class="mt-5 flex items-start gap-3 border rounded-2xl p-4 text-sm bg-amber-50 border-amber-200 text-amber-900"><i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5"></i><p>Bataryası şişmiş cihazı şarj etmeyin, ısı kaynaklarından uzak tutun ve en kısa sürede mağazaya getirin.</p></div>
+        </div>
+
+        <div class="glass-card p-6 sm:p-8 border-l-4 border-l-emerald-500">
+          <h2 class="text-xl font-extrabold text-slate-900"><i class="fa-brands fa-whatsapp text-emerald-500 mr-2"></i>Fiyat öğrenin</h2>
+          <p class="text-sm text-slate-600 mt-1">Fiyat model ve arızaya göre değişir. Modelinizi yazın, WhatsApp'tan size dönüş yapalım.</p>
+          <div class="mt-4 grid sm:grid-cols-3 gap-3">
+            <select id="hz-marka" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold"><option>iPhone</option><option>Samsung</option><option>Xiaomi</option><option>Redmi</option><option>Poco</option><option>Oppo</option><option>Vivo</option><option>Huawei</option><option>Tecno</option><option>Diğer</option></select>
+            <input id="hz-model" type="text" oninput="document.getElementById('hz-err').textContent=''" placeholder="Model, örn: Redmi Note 12 Pro" class="sm:col-span-2 w-full p-3 bg-white border border-slate-300 rounded-xl text-sm">
+          </div>
+          <p id="hz-err" class="text-xs text-red-600 font-semibold mt-2 min-h-[1rem]"></p>
+          <div class="mt-2 flex flex-wrap gap-3">
+            <button type="button" onclick="askPrice('batarya değişimi')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp'tan fiyat sor</button>
+            <a href="tel:+905422888288" class="bg-slate-900 hover:bg-slate-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-phone mr-1"></i> Ara</a>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 sm:p-8">
+          <h2 class="text-xl font-extrabold text-slate-900">Nasıl ilerler?</h2>
+          <ol class="mt-4 space-y-4"><li class="flex gap-3"><span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-store"></i></span><div><strong class="block text-slate-900 text-sm">1. Cihazı mağazaya getirin</strong><span class="text-sm text-slate-600">Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli adresindeki mağazamıza gelin.</span></div></li><li class="flex gap-3"><span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-magnifying-glass"></i></span><div><strong class="block text-slate-900 text-sm">2. Arıza tespiti</strong><span class="text-sm text-slate-600">Arıza tespitinde ek arıza veya ücret değişikliği çıkarsa, işlemden önce size bilgi verilir.</span></div></li><li class="flex gap-3"><span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i class="fa-solid fa-mobile-screen-button"></i></span><div><strong class="block text-slate-900 text-sm">3. Servis koduyla takip edin</strong><span class="text-sm text-slate-600">Size verilen servis koduyla cihazınızın durumunu bu siteden izleyin; hazır olunca mağazadan teslim alın.</span></div></li></ol>
+        </div>
+
+        <div class="glass-card p-6 sm:p-8">
+          <h2 class="text-xl font-extrabold text-slate-900">Sık sorulan sorular</h2>
+          <div class="mt-3 divide-y divide-slate-100"><div class="py-3"><h3 class="font-bold text-slate-900 text-sm sm:text-base">Batarya değişimi ne kadar sürer?</h3><p class="text-sm text-slate-600 mt-1 leading-relaxed">Süre cihaz modeline ve gerekli parçanın stokta olup olmamasına göre değişir. Cihazınızı getirdiğinizde ya da modelinizi WhatsApp'tan yazdığınızda size bilgi veririz.</p></div><div class="py-3"><h3 class="font-bold text-slate-900 text-sm sm:text-base">Batarya değişimi ücreti ne kadar?</h3><p class="text-sm text-slate-600 mt-1 leading-relaxed">Ücret marka, model ve arızanın türüne göre değişir. Modelinizi bu sayfadaki düğmeyle yazın, size WhatsApp'tan dönüş yapalım.</p></div><div class="py-3"><h3 class="font-bold text-slate-900 text-sm sm:text-base">Bataryam şişti, kullanmaya devam edebilir miyim?</h3><p class="text-sm text-slate-600 mt-1 leading-relaxed">Önermeyiz. Şişme güvenlik riski taşır; cihazı şarj etmeden mağazaya getirin.</p></div></div>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-extrabold text-slate-700 mb-3">Diğer hizmetlerimiz</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><a href="ekran-degisimi.html" class="glass-card hover-lift rounded-xl p-4 text-center text-xs font-semibold text-slate-700 block"><i class="fa-solid fa-mobile-screen text-sky-600 text-xl mb-1.5 block"></i>Ekran değişimi</a><a href="sarj-soketi-tamiri.html" class="glass-card hover-lift rounded-xl p-4 text-center text-xs font-semibold text-slate-700 block"><i class="fa-solid fa-plug text-sky-600 text-xl mb-1.5 block"></i>Şarj soketi tamiri</a><a href="sivi-temasi-tamiri.html" class="glass-card hover-lift rounded-xl p-4 text-center text-xs font-semibold text-slate-700 block"><i class="fa-solid fa-droplet text-sky-600 text-xl mb-1.5 block"></i>Sıvı teması tamiri</a><a href="yazilim-anakart-onarimi.html" class="glass-card hover-lift rounded-xl p-4 text-center text-xs font-semibold text-slate-700 block"><i class="fa-solid fa-microchip text-sky-600 text-xl mb-1.5 block"></i>Yazılım ve anakart</a></div>
+        </div>
+      </div>
+      <script>
+      function askPrice(svc) {
+        var m = document.getElementById('hz-model').value.trim(), mk = document.getElementById('hz-marka').value, er = document.getElementById('hz-err');
+        if (!m) { er.textContent = 'Önce cihaz modelini yazın.'; document.getElementById('hz-model').focus(); return; }
+        er.textContent = '';
+        var full = (mk === 'Diğer' || m.toLowerCase().indexOf(mk.toLowerCase()) === 0) ? m : mk + ' ' + m;
+        window.open('https://wa.me/905422888288?text=' + encodeURIComponent('Merhaba, ' + full + ' için ' + svc + ' fiyatını öğrenmek istiyorum.'), '_blank');
+      }
+      </script>
+    </section>
+
+
+  </main>
+
+  <!-- MODAL: GİRİŞ -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-slate-950/80 hidden flex items-center justify-center p-4">
+    <div id="login-card" class="bg-white rounded-3xl max-w-3xl w-full grid md:grid-cols-5 overflow-hidden shadow-2xl">
+      <div class="md:col-span-2 text-white p-6 md:p-8 flex md:flex-col md:justify-between items-center md:items-start gap-4" style="background: radial-gradient(420px 260px at 100% 0%, rgba(22,160,149,.45), transparent 60%), radial-gradient(300px 220px at 0% 100%, rgba(255,90,54,.28), transparent 60%), #0e1a2c;">
+        <div class="flex items-center gap-3">
+          <img src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white object-cover">
+          <span class="font-display font-extrabold text-lg">Nokta İletişim</span>
+        </div>
+        <div class="hidden md:block">
+          <h3 class="font-display text-2xl font-extrabold leading-tight">Servis kayıtları tek panelde.</h3>
+          <p class="text-sm text-slate-300 mt-3 leading-relaxed">Cihaz durumlarını güncelleyin, gelir ve gideri izleyin, müşteriye WhatsApp'tan haber verin.</p>
+        </div>
+        <p class="hidden md:flex items-center gap-2 text-xs text-slate-400"><i class="fa-solid fa-shield-halved text-sky-400"></i> Yalnızca yetkili teknisyenler için</p>
+      </div>
+
+      <div class="md:col-span-3 p-6 sm:p-9">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-2xl font-extrabold text-slate-900">Tekniker girişi</h3>
+            <p class="text-sm text-slate-500 mt-1">Yönetim paneline girmek için bilgilerinizi yazın.</p>
+          </div>
+          <button type="button" onclick="closeModal('modal-login')" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="mt-6 space-y-4">
+          <div>
+            <label for="login-user" class="block text-sm font-semibold text-slate-700 mb-1.5">Kullanıcı adı</label>
+            <div class="relative"><i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="login-user" required autocomplete="username" placeholder="Kullanıcı adınız" class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-medium outline-none"></div>
+          </div>
+          <div>
+            <label for="login-pass" class="block text-sm font-semibold text-slate-700 mb-1.5">Şifre</label>
+            <div class="relative"><i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="password" id="login-pass" required autocomplete="current-password" placeholder="Şifreniz" class="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-medium outline-none">
+              <button type="button" onclick="togglePass()" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700" aria-label="Şifreyi göster"><i id="pass-eye" class="fa-solid fa-eye"></i></button></div>
+          </div>
+          <p id="login-error" class="hidden text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5"><i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="login-error-text">Kullanıcı adı veya şifre hatalı.</span></p>
+          <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-sky-600/25 text-base"><i class="fa-solid fa-right-to-bracket mr-2"></i> Giriş yap</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: YENİ CİHAZ KAYDI -->
+  <div id="modal-new-ticket" class="fixed inset-0 z-50 bg-slate-900/70 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-lg text-slate-900"><i class="fa-solid fa-plus-circle text-sky-600"></i> Yeni Servis Kaydı Ekle</h3>
+        <button onclick="closeModal('modal-new-ticket')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form onsubmit="handleAdminCreateTicket(event)" class="space-y-4 text-xs">
+        
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+          <h4 class="font-bold text-sky-800 text-xs uppercase flex items-center gap-1.5"><i class="fa-solid fa-user"></i> Müşteri (Cari) Bilgileri</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" id="admin-add-name" required placeholder="Müşteri Ad Soyad *" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
+            <input type="tel" id="admin-add-phone" required oninput="checkReturning()" placeholder="GSM / Telefon No *" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
+          </div>
+          <div id="returning-box" class="hidden bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-lg p-3 text-xs space-y-1"></div>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+          <h4 class="font-bold text-sky-800 text-xs uppercase flex items-center gap-1.5"><i class="fa-solid fa-mobile-screen"></i> Ürün & Cihaz Bilgileri</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" id="admin-add-device" required placeholder="Marka & Model (Örn: iPhone 11) *" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
+            <input type="text" id="admin-add-serino" placeholder="Seri No / IMEI" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm">
+          </div>
+        </div>
+
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
+          <h4 class="font-bold text-amber-900 text-xs uppercase flex items-center gap-1.5"><i class="fa-solid fa-key"></i> Cihaz Güvenlik & Şifre Bilgileri</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Cihaz Ekran Kodu / Desen</label>
+              <input type="text" id="admin-add-lockcode" placeholder="Örn: 123456 veya L Desen" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">SIM Kart PIN Kodu</label>
+              <input type="text" id="admin-add-simpin" placeholder="Örn: 0000" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-mono">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Üzerinde Gelenler (Aksesuarlar)</label>
+            <textarea id="admin-add-gelenler" rows="2" placeholder="Örn: SIM kartı, kılıf, şarj kablosu..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Müşteri Beyanı / Şikayet *</label>
+            <textarea id="admin-add-problem" rows="2" required placeholder="Örn: Ekran kırık..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
+          </div>
+        </div>
+
+        <!-- GELİR / GİDER HESABI -->
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-3">
+          <h4 class="font-bold text-emerald-900 text-xs uppercase flex items-center gap-1.5"><i class="fa-solid fa-calculator"></i> Muhasebe (Gelir & Gider)</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-emerald-800 uppercase mb-1">Müşteri Ücreti (TL - Gelir)</label>
+              <input type="number" id="admin-add-price" placeholder="Örn: 3200" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-emerald-700">
+            </div>
+            <div>
+              <label class="block font-bold text-red-800 uppercase mb-1">Parça / Tamir Maliyeti (TL - Gider)</label>
+              <input type="number" id="admin-add-cost" placeholder="Örn: 1500" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-red-600">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Başlangıç Durumu</label>
+          <select id="admin-add-status" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold">
+            <option value="kayit">1. Kayıt Alındı</option>
+            <option value="tespit">2. Arıza Tespiti</option>
+            <option value="tamir">3. Tamirde</option>
+            <option value="hazir">4. Teslime Hazır</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Teknisyen Güncelleme Notu</label>
+          <textarea id="admin-add-note" rows="2" placeholder="Örn: Orijinal OLED ekran sipariş edildi, montaj yapılıyor." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-sky-800 font-medium"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl shadow-md transition-all text-sm">
+          <i class="fa-solid fa-save mr-1"></i> Servis Kaydını Oluştur
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DURUM GÜNCELLEME -->
+  <div id="modal-edit-ticket" class="fixed inset-0 z-50 bg-slate-900/70 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-lg text-slate-900">Servis Kaydını Güncelle</h3>
+        <button onclick="closeModal('modal-edit-ticket')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form onsubmit="handleAdminUpdateTicket(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="admin-edit-id">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input type="text" id="admin-edit-name" required placeholder="Müşteri Ad Soyad" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+          <input type="tel" id="admin-edit-phone" required placeholder="Telefon" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+          <input type="text" id="admin-edit-device" required placeholder="Cihaz" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+          <input type="text" id="admin-edit-problem" required placeholder="Arıza" class="p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+        </div>
+        
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Tamir Durumu</label>
+          <select id="admin-edit-status" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+            <option value="kayit">1. Kayıt Alındı</option>
+            <option value="tespit">2. Arıza Tespiti</option>
+            <option value="tamir">3. Tamirde</option>
+            <option value="hazir">4. Teslime Hazır</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Cihaz Kodu</label>
+            <input type="text" id="admin-edit-lockcode" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">SIM PIN Kodu</label>
+            <input type="text" id="admin-edit-simpin" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-emerald-800 uppercase mb-1">Müşteri Ücreti (Gelir TL)</label>
+            <input type="number" id="admin-edit-price" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-emerald-700">
+          </div>
+          <div>
+            <label class="block font-bold text-red-800 uppercase mb-1">Parça Maliyeti (Gider TL)</label>
+            <input type="number" id="admin-edit-cost" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-red-600">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Üzerinde Gelenler</label>
+          <input type="text" id="admin-edit-gelenler" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Teknisyen Güncelleme Notu</label>
+          <textarea id="admin-edit-note" rows="3" placeholder="Teknisyen Güncelleme Notu..." class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-sky-900 font-medium"></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button type="submit" class="flex-grow bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-md">Güncelle</button>
+          <button type="button" onclick="deleteTicket(document.getElementById('admin-edit-id').value).then(ok => { if (ok) closeModal('modal-edit-ticket'); });" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-3 rounded-xl text-sm transition-all shadow-md"><i class="fa-solid fa-trash"></i> Sil</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobil alt menü -->
+  <nav id="mobile-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-900 border-t border-slate-700 grid grid-cols-4 text-[11px] font-medium">
+    <button onclick="switchTab('sorgula')" id="mnav-sorgula" class="tab-btn py-2.5 text-sky-400"><i class="fa-solid fa-magnifying-glass block text-base mb-0.5"></i>Sorgula</button>
+    <button onclick="switchTab('randevu')" id="mnav-randevu" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-headset block text-base mb-0.5"></i>Servis Talebi</button>
+    <button onclick="switchTab('iletisim')" id="mnav-iletisim" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-location-dot block text-base mb-0.5"></i>İletişim</button>
+    <button onclick="switchTab('sss')" id="mnav-sss" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-circle-question block text-base mb-0.5"></i>SSS</button>
+  </nav>
+  <div id="print-area" class="hidden"></div>
+
+  <!-- MODAL: KAYIT OLUŞTURULDU -->
+  <div id="modal-created" class="fixed inset-0 z-50 bg-slate-900/70 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
+      <div class="w-14 h-14 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl"><i class="fa-solid fa-check"></i></div>
+      <h3 class="text-xl font-bold text-slate-900">Servis kaydı oluşturuldu</h3>
+      <p class="text-xs text-slate-500">Müşterinin servis kodu:</p>
+      <p id="created-code" class="font-display text-3xl font-extrabold text-sky-700 tracking-wide"></p>
+      <div class="grid gap-2 text-sm font-semibold">
+        <a id="created-wa" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-lg"></i> Müşteriye kodu gönder</a>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="created-copy-code" type="button" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 py-3 rounded-xl"><i class="fa-regular fa-copy mr-1"></i> Kodu kopyala</button>
+          <button id="created-copy-msg" type="button" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 py-3 rounded-xl"><i class="fa-regular fa-clone mr-1"></i> Mesajı kopyala</button>
+        </div>
+        <button id="created-print" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl"><i class="fa-solid fa-print mr-1"></i> Servis fişi yazdır</button>
+        <button type="button" onclick="closeModal('modal-created')" class="text-slate-400 hover:text-slate-600 py-2">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sabit WhatsApp düğmesi -->
+  <a href="https://wa.me/905422888288?text=Merhaba,%20teknik%20servisiniz%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="wa-fab fixed bottom-20 md:bottom-6 right-5 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center pulse-green">
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+  </a>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 text-xs pt-8 pb-28 md:pb-8 px-5 border-t border-white/10 text-center leading-relaxed">
+    <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
+  </footer>
+
+  <!-- Uygulama kodları (sıra önemli) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="app.js?v=11"></script>
+</body>
+</html>

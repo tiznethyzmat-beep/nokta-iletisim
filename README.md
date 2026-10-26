@@ -86,3 +86,4 @@ Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle
 - **Rapor** (A4 çıktı) ve **Excel** (CSV) düğmeleri seçili döneme göre çalışır.
 - **Dükan suraty**: `dukan.webp` / `dukan.jpg` (baş sahypa, İletişim sahypasy, paylaşma resmi `og-image.png`). Suraty değiştirmek için aynı adla yenisini koyun.
 - **Panel sekmeleri**: Özet / Kayıtlar / Sistem.
+- **Hizmet sayfaları**: `ekran-degisimi`, `batarya-degisimi`, `sarj-soketi-tamiri`, `sivi-temasi-tamiri`, `yazilim-anakart-onarimi` (her biri "WhatsApp'tan fiyat sor" düğmesi ve SSS ile; Google'da ayrı aramalarda çıkmak için).

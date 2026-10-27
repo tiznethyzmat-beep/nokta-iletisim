@@ -776,7 +776,9 @@ async function performSearch() {
     resultBox.innerHTML = `
       <div class="glass-card rounded-2xl p-6 text-center shadow-xl">
         <h4 class="font-bold text-slate-800 mb-1">Kayıt Bulunamadı</h4>
-        <p class="text-xs text-slate-500">"<strong>${esc(query)}</strong>" sorgusuna ait aktif bir tamir kaydı bulunamadı.</p>
+        <p class="text-sm text-slate-500">"<strong>${esc(query)}</strong>" için kayıt bulunamadı.</p>
+        <p class="text-sm text-slate-600 mt-3">Kodu fişteki gibi yazın (örn. X104-7K3M) ya da telefon numaranızı <strong>05XX XXX XX XX</strong> biçiminde girin.</p>
+        <a href="https://wa.me/${OFFICIAL_WA}?text=Merhaba,%20cihaz%20kaydimi%20bulamadim." target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-xl text-sm"><i class="fa-brands fa-whatsapp"></i> WhatsApp'tan yardım iste</a>
       </div>`;
     return;
   }

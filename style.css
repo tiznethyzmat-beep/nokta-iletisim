@@ -279,3 +279,10 @@ a.block.rounded-2xl{transition:transform .2s,box-shadow .2s,border-color .2s}
 a.block.rounded-2xl:hover{transform:translateY(-3px);border-color:#16a095;box-shadow:0 14px 28px -16px rgba(15,107,103,.45)}
 main section.space-y-6>*+*{margin-top:1.5rem}
 @media(min-width:768px){#hero-banner h1{max-width:20ch}}
+
+.brand-chip{display:flex;align-items:center;gap:.6rem;padding:.9rem 1rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff;font-weight:700;font-size:.9rem;color:#0e1a2c;min-height:56px}
+.brand-chip i{color:#16a095;font-size:1.1rem}
+.brand-chip:hover{border-color:#16a095;box-shadow:0 12px 24px -16px rgba(15,107,103,.5);transform:translateY(-2px)}
+.info-tile{display:flex;gap:1rem;align-items:flex-start}
+.info-tile>i{flex:none;width:2.8rem;height:2.8rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;background:#d5f3ee;color:#0f6b67;font-size:1.15rem}
+.info-link{display:inline-block;margin-top:.6rem;font-weight:700;font-size:.85rem;color:#0f6b67;border-bottom:2px solid #74d3c8}

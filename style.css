@@ -307,3 +307,14 @@ main section.space-y-6>*+*{margin-top:1.5rem}
 .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.4rem;margin-top:.9rem;font-size:.8rem}
 .footer-links a{color:#94a3b8;text-decoration:underline;text-underline-offset:3px}
 .footer-links a:hover{color:#fff}
+
+/* ===== v19: hızlı fiyat formu ===== */
+.quote-form{display:grid;gap:.9rem;margin-top:1.25rem}
+@media(min-width:768px){.quote-form{grid-template-columns:1fr 1fr 1fr;align-items:end}.quote-form .q-btn,.quote-form .q-err{grid-column:1/-1}}
+.q-field{display:block}
+.q-field>span{display:block;margin-bottom:.35rem;font-size:.8rem;font-weight:700;color:#334155}
+.q-field select,.q-field input{width:100%;min-height:50px;padding:.7rem .9rem;border:1.5px solid #cbd5e1;border-radius:.9rem;background:#fff;font-size:1rem;color:#0e1a2c}
+.q-field select:focus,.q-field input:focus{outline:none;border-color:#16a095;box-shadow:0 0 0 4px rgba(22,160,149,.18)}
+.q-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;min-height:54px;border-radius:.95rem;background:#16a34a;color:#fff;font-weight:800;font-size:1rem;box-shadow:0 14px 24px -14px rgba(22,163,74,.7)}
+.q-btn:hover{background:#15803d}
+.q-err{color:#b91c1c;font-size:.85rem;font-weight:600}

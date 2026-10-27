@@ -203,63 +203,6 @@ function showHistory(id) {
   openModal('modal-history');
 }
 
-// ===== Müşteri yorumları (yalnızca müşterinin izniyle girilen gerçek yorumlar) =====
-const REVIEW_LINK = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
-function starsHtml(n) { let s = ''; for (let i = 1; i <= 5; i++) s += '<i class="fa-solid fa-star ' + (i <= n ? 'text-amber-400' : 'text-slate-300') + '"></i>'; return s; }
-
-async function loadReviews() {   // herkese açık sayfa
-  const box = document.getElementById('reviews-box');
-  if (!box || !USE_FIREBASE) return;
-  try {
-    const snap = await fbDb.collection('reviews').orderBy('ts', 'desc').limit(9).get();
-    const list = snap.docs.map(d => d.data()).filter(r => r.consent !== false && r.name && r.text);
-    if (!list.length) { box.innerHTML = ''; return; }
-    box.innerHTML = '<div class="glass-card p-6 sm:p-8"><h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Müşterilerimiz ne diyor?</h2>'
-      + '<div class="grid sm:grid-cols-2 gap-3 mt-4">' + list.map(r => '<figure class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-sm">' + starsHtml(Number(r.stars) || 5) + '</div><blockquote class="text-sm text-slate-700 mt-2 leading-relaxed">“' + esc(r.text) + '”</blockquote><figcaption class="text-xs font-bold text-slate-500 mt-2">' + esc(r.name) + (r.date ? ' · ' + esc(r.date) : '') + '</figcaption></figure>').join('') + '</div>'
-      + '<a href="' + REVIEW_LINK + '" target="_blank" rel="noopener" class="inline-block mt-4 text-sm font-bold text-sky-700 hover:underline"><i class="fa-brands fa-google mr-1"></i> Siz de Google\'da yorum yazın</a></div>';
-  } catch (e) { box.innerHTML = ''; }
-}
-
-// Tekniker paneli: yorum ekle / sil (müşteri izni zorunlu)
-async function loadReviewsAdmin() {
-  const box = document.getElementById('reviews-admin');
-  if (!box || !USE_FIREBASE || !isAdminLoggedIn) return;
-  if (!document.getElementById('rev-list')) {
-    box.innerHTML = `<details class="glass-card p-4 sm:p-5"><summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-comments text-[#16a095] mr-2"></i>Müşteri yorumları (saytda görünýär)</span><span id="rev-sum" class="text-xs font-bold text-slate-500"></span></summary>
-      <p class="text-xs text-slate-500 mt-3">Diňe hakyky ýorumlary giriziň. Müşteri razylyk bermeli. Ýorum baş sahypada görünýär.</p>
-      <div class="mt-3 grid gap-2">
-        <input id="rev-name" placeholder="Müşteri ady (ör: Ahmet K.)" class="px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm">
-        <textarea id="rev-text" rows="3" placeholder="Müşterinin ýorumy" class="px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm"></textarea>
-        <select id="rev-stars" class="px-3 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold"><option value="5">5 ýyldyz</option><option value="4">4 ýyldyz</option><option value="3">3 ýyldyz</option></select>
-        <label class="flex items-start gap-2 text-xs text-slate-600"><input type="checkbox" id="rev-ok" class="mt-0.5 w-4 h-4 accent-emerald-600"><span>Müşteri bu ýorumy (ady bilen) saýtda görkezmäge razylyk berdi.</span></label>
-        <p id="rev-err" class="text-xs text-red-600 font-semibold min-h-[1rem]"></p>
-        <button onclick="addReview()" class="bg-[#ff5a36] hover:bg-[#ee4a27] text-white font-bold rounded-xl px-4 py-3 text-sm"><i class="fa-solid fa-plus mr-1"></i> Ýorum goş</button>
-      </div>
-      <ul id="rev-list" class="mt-4 divide-y divide-slate-100"></ul></details>`;
-  }
-  try {
-    const snap = await fbDb.collection('reviews').orderBy('ts', 'desc').limit(50).get();
-    const list = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
-    document.getElementById('rev-sum').textContent = list.length + ' ýorum';
-    document.getElementById('rev-list').innerHTML = list.map(r => '<li class="py-2.5 flex items-start justify-between gap-3"><div class="min-w-0"><div class="text-xs">' + starsHtml(Number(r.stars) || 5) + '</div><div class="text-sm text-slate-800 mt-1">' + esc(r.text) + '</div><div class="text-[11px] font-bold text-slate-500 mt-0.5">' + esc(r.name) + (r.date ? ' · ' + esc(r.date) : '') + '</div></div><button onclick="deleteReview(\'' + esc(r.id) + '\')" class="text-slate-400 hover:text-red-600 shrink-0" title="Poz"><i class="fa-solid fa-trash"></i></button></li>').join('') || '<li class="py-3 text-sm text-slate-500">Entek ýorum ýok.</li>';
-  } catch (e) { document.getElementById('rev-list').innerHTML = '<li class="py-3 text-xs text-red-600 font-semibold">Ýorumlar okalmady. firestore.rules täzelenmedik bolmagy mümkin.</li>'; }
-}
-async function addReview() {
-  const name = document.getElementById('rev-name').value.trim(), text = document.getElementById('rev-text').value.trim(), er = document.getElementById('rev-err');
-  if (!name || text.length < 10) { er.textContent = 'Ady we ýorumy (azyndan 10 harp) ýazyň.'; return; }
-  if (!document.getElementById('rev-ok').checked) { er.textContent = 'Müşteriniň razylygyny belläň.'; return; }
-  er.textContent = '';
-  try {
-    await fbDb.collection('reviews').doc('R' + Date.now()).set({ name, text, stars: Number(document.getElementById('rev-stars').value) || 5, consent: true, ts: Date.now(), date: TR_MONTHS[new Date().getMonth()] + ' ' + new Date().getFullYear() });
-    ['rev-name', 'rev-text'].forEach(i => { document.getElementById(i).value = ''; }); document.getElementById('rev-ok').checked = false;
-    loadReviewsAdmin();
-  } catch (e) { er.textContent = 'Saklanmady: ' + (e.code === 'permission-denied' ? 'firestore.rules täzelenmedik.' : e.message); }
-}
-async function deleteReview(id) {
-  if (!confirm('Bu ýorum pozulsunmy?')) return;
-  try { await fbDb.collection('reviews').doc(id).delete(); loadReviewsAdmin(); } catch (e) { dbFail(e); }
-}
-
 // ===== Çalışma saatleri: her gün 10:00–20:00 (değişirse yalnızca burayı ve Google profilini güncelleyin) =====
 const SHOP_HOURS = { 0: [10, 20], 1: [10, 20], 2: [10, 20], 3: [10, 20], 4: [10, 20], 5: [10, 20], 6: [10, 20] };   // 0 = Pazar
 function shopStatusAt(d) {
@@ -403,7 +346,6 @@ async function startLive() {
   const wk = new Date(Date.now() - 6 * 86400000).toLocaleDateString('sv-SE');
   liveUnsubs.push(fbDb.collection('visits').where('d', '>=', wk).onSnapshot(snap => { visitsCache = snap.docs.map(x => x.data()); renderLive(); }, onErr));
   fbDb.collection('presence').doc(getVid()).delete().catch(() => {});   // teknikerin kendisi ziyaretçi sayılmasın
-  loadReviewsAdmin();
   liveTimer = setInterval(() => { ref.update({ lastSeen: Date.now() }).catch(() => {}); renderLive(); }, 60000);
 }
 
@@ -723,7 +665,6 @@ window.onload = function () {
   if (new URLSearchParams(location.search).get('staff') === '1') { localStorage.setItem('nokta_staff', '1'); setTimeout(() => alert('Bu cihaz ziyaretçi sayacından çıkarıldı.'), 300); }
   if (USE_FIREBASE && PAGE !== 'admin' && !localStorage.getItem('nokta_staff')) trackVisit();
   renderShopStatus(); setInterval(renderShopStatus, 60000);
-  if (document.getElementById('reviews-box')) loadReviews();
   if (document.getElementById('tab-ozet')) { let pt = 'ozet'; try { pt = localStorage.getItem('nokta_ptab') || 'ozet'; } catch (e) {} setPanelTab(pt); }
   if (isAdminLoggedIn) renderAdminTable();
 };

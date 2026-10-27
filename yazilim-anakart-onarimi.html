@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Kırklareli Yazılım ve Anakart Onarımı", "serviceType": "Yazılım ve anakart", "areaServed": {"@type": "City", "name": "Kırklareli"}, "provider": {"@type": "MobilePhoneStore", "name": "Nokta İletişim", "telephone": "+905422888288", "url": "https://nokta-iletisim.vercel.app", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}}}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Yazılım ve anakart onarımı ne kadar sürer?", "acceptedAnswer": {"@type": "Answer", "text": "Süre cihaz modeline ve gerekli parçanın stokta olup olmamasına göre değişir. Cihazınızı getirdiğinizde ya da modelinizi WhatsApp'tan yazdığınızda size bilgi veririz."}}, {"@type": "Question", "name": "Yazılım ve anakart onarımı ücreti ne kadar?", "acceptedAnswer": {"@type": "Answer", "text": "Ücret marka, model ve arızanın türüne göre değişir. Modelinizi bu sayfadaki düğmeyle yazın, size WhatsApp'tan dönüş yapalım."}}, {"@type": "Question", "name": "Cihazım hiç açılmıyor, ne yapmalıyım?", "acceptedAnswer": {"@type": "Answer", "text": "Cihazı zorlamadan mağazaya getirin. Arıza tespitinde yazılım mı anakart mı olduğunu belirleyip size bilgi veririz."}}]}</script>
 </head>
@@ -63,30 +63,30 @@
           <img id="site-logo" src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white shrink-0 object-cover">
           <div>
             <div class="font-extrabold text-xl leading-tight">Nokta İletişim</div>
-            <p class="hidden sm:block text-xs text-sky-400 font-medium">Teknik Servis & Çözüm Merkezi • Kırklareli</p>
+            <p class="hidden xl:block text-xs text-sky-400 font-medium">Teknik Servis & Çözüm Merkezi • Kırklareli</p>
           </div>
         </div>
 
         <!-- Masaüstü menü -->
         <nav class="hidden md:flex items-center space-x-2">
-          <button onclick="switchTab('sorgula')" id="nav-sorgula" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-sky-400 bg-slate-800">
+          <button onclick="switchTab('sorgula')" id="nav-sorgula" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all text-sky-400 bg-slate-800">
             <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Cihaz Sorgula
           </button>
-          <button onclick="switchTab('randevu')" id="nav-randevu" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+          <button onclick="switchTab('randevu')" id="nav-randevu" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
             <i class="fa-solid fa-headset mr-1.5"></i> Servis Talebi Gönder
           </button>
-          <button onclick="switchTab('iletisim')" id="nav-iletisim" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+          <button onclick="switchTab('iletisim')" id="nav-iletisim" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
             <i class="fa-solid fa-location-dot mr-1.5"></i> İletişim & Konum
           </button>
-          <button onclick="switchTab('sss')" id="nav-sss" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+          <button onclick="switchTab('sss')" id="nav-sss" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
             <i class="fa-solid fa-circle-question mr-1.5"></i> Sık Sorulanlar
           </button>
         </nav>
 
         <!-- Tekniker paneli düğmesi -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden lg:inline font-semibold">· 0542 288 82 88</span></a>
-          <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
+          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 whitespace-nowrap shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden xl:inline font-semibold">· 0542 288 82 88</span></a>
+          <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 whitespace-nowrap shrink-0 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
             <i class="fa-solid fa-user-gear"></i>
             <span id="admin-toggle-text" class="hidden xs:inline sm:inline">Tekniker Paneli</span>
           </button>
@@ -394,6 +394,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>

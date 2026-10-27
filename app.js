@@ -817,7 +817,7 @@ function ticketCardHtml(match) {
       <div class="py-4 px-1">${stepperHtml(currentStep)}</div>
 
       <!-- Müşteri & Cihaz Detay Kutusu -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-slate-50/80 p-5 rounded-xl border border-slate-200/80">
+      <div class="detail-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <span class="text-slate-500 font-semibold block">Müşteri:</span>
           <strong class="text-slate-900 text-sm">${esc(match.nameMasked || maskName(match.name))}</strong>
@@ -836,17 +836,17 @@ function ticketCardHtml(match) {
         </div>
         <div class="sm:col-span-2 pt-2 border-t border-slate-200">
           <span class="text-slate-700 font-bold block">Arıza / Müşteri Şikayeti:</span>
-          <p class="text-slate-950 mt-1 text-lg sm:text-xl font-extrabold uppercase tracking-wide leading-snug">${esc(match.problem)}</p>
+          <p class="text-slate-950 mt-1 text-lg sm:text-xl font-extrabold leading-snug">${esc(match.problem)}</p>
         </div>
       </div>
 
       <!-- TEKNİKER GÜNCELLEME NOTU KUTUSU -->
-      <div class="bg-sky-50 border-2 border-sky-400 p-4 rounded-xl flex items-start gap-3 shadow-md">
+      <div class="tech-note flex items-start gap-3">
         <div class="p-2 bg-sky-100 text-sky-700 rounded-lg shrink-0">
           <i class="fa-solid fa-user-gear text-base"></i>
         </div>
         <div>
-          <h5 class="font-extrabold text-sky-900 text-sm uppercase tracking-wider">TEKNİKER GÜNCELLEME NOTU:</h5>
+          <h5 class="font-extrabold text-sky-900 text-sm">Tekniker güncelleme notu</h5>
           <p class="text-slate-950 text-lg sm:text-xl mt-1.5 font-extrabold leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
         </div>
       </div>

@@ -262,3 +262,20 @@ body[data-page="admin"] .wa-fab { display:none !important; }
 
 /* Arama/form sahifelerinde yüzen WhatsApp düğmesi alanları örtmesin */
 body[data-page="sorgula"] .wa-fab, body[data-page="randevu"] .wa-fab { display:none !important; }
+
+/* ===== v16: sadeleşmiş, daha okunaklı görünüm ===== */
+.hero-badge{display:inline-flex;align-items:center;gap:.55rem;padding:.4rem .95rem;border-radius:999px;font-size:.8rem;font-weight:600;color:#c9f3ec;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px)}
+.live-dot{position:relative;width:.55rem;height:.55rem;border-radius:50%;background:#34d399;flex:none}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:#34d399;animation:livePing 2.4s ease-out infinite}
+@keyframes livePing{0%{transform:scale(1);opacity:.6}80%,100%{transform:scale(3);opacity:0}}
+.detail-grid{padding:1.15rem 1.25rem;border-radius:1rem;background:#f8fafc;border:1px solid #e2e8f0}
+.detail-grid>div>span:first-child{display:block;font-size:.78rem;font-weight:600;color:#64748b;margin-bottom:.15rem}
+.detail-grid strong,.detail-grid span.text-amber-800{font-size:1rem}
+.tech-note{padding:1rem 1.1rem;border-radius:1rem;background:#effaf8;border:1.5px solid #74d3c8}
+.tech-note h5{font-size:.9rem}
+#search-result .glass-card{padding:1.25rem}
+@media(min-width:640px){#search-result .glass-card{padding:1.75rem}}
+a.block.rounded-2xl{transition:transform .2s,box-shadow .2s,border-color .2s}
+a.block.rounded-2xl:hover{transform:translateY(-3px);border-color:#16a095;box-shadow:0 14px 28px -16px rgba(15,107,103,.45)}
+main section.space-y-6>*+*{margin-top:1.5rem}
+@media(min-width:768px){#hero-banner h1{max-width:20ch}}

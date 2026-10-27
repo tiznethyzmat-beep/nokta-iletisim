@@ -673,7 +673,7 @@ window.onload = function () {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') ['modal-login','modal-new-ticket','modal-edit-ticket','modal-created'].forEach(closeModal); });
 
 const PAGE = document.body.dataset.page;
-const PAGE_URLS = {sorgula:'index.html',randevu:'servis-talebi.html',iletisim:'iletisim.html',sss:'sik-sorulanlar.html',admin:'panel.html'};
+const PAGE_URLS = {sorgula:'index.html',randevu:'servis-talebi.html',satis:'satis-takas.html',iletisim:'iletisim.html',sss:'sik-sorulanlar.html',admin:'panel.html'};
 
 // Her sekme ayrı sayfadır: hedef bu sayfada yoksa ilgili sayfaya gider
 function switchTab(tabId) {
@@ -748,20 +748,7 @@ function fillSearch(code) {
 
 let searchToken = 0;   // eski sorgu sonucu yenisinin üzerine yazmasın
 
-function scrollToResult() {
-  const b = document.getElementById('search-result');
-  if (b && !b.classList.contains('hidden')) b.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
 async function performSearch() {
-  const inp = document.getElementById('search-input');
-  if (inp && document.activeElement === inp) inp.blur(); // telefonda klavye kapansın, sonuç görünsün
-  const run = performSearchInner();
-  setTimeout(scrollToResult, 60);   // "Aranıyor..." görününce hemen aşağı in
-  await run;
-  scrollToResult();                  // sonuç gelince tekrar hizala
-  setTimeout(scrollToResult, 350);
-}
-async function performSearchInner() {
   const query = document.getElementById('search-input').value.trim().toUpperCase();
   const resultBox = document.getElementById('search-result');
   resultBox.classList.remove('hidden');
@@ -1081,7 +1068,7 @@ function renderStats(allTickets) {
   const sel = k => statsPeriod === k;
   bar.innerHTML = `<div class="w-full mb-1 text-sm font-extrabold text-[#0f6b67]"><i class="fa-regular fa-calendar-check mr-1"></i>Gösterilen dönem: <span class="text-slate-900">${periodLabel()}</span></div>`
     + '<div class="pscroll">' + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
-    + `<label class="pchip-lbl">Gün <input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" class="pchip ${sel('secgun') ? 'pchip-sel' : ''}"></label>`
+    + `<label class="pchip daypick ${sel('secgun') ? 'pchip-sel' : ''}" title="Belirli bir günü seçin"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span class="daypick-txt ${statsDay ? '' : 'is-empty'}">${statsDay ? statsDay.split('-').reverse().join('.') : 'Gün seç'}</span><input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" aria-label="Gün seç"></label>`
     + '</div>';
 
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));

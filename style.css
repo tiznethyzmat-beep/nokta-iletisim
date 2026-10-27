@@ -279,3 +279,31 @@ a.block.rounded-2xl{transition:transform .2s,box-shadow .2s,border-color .2s}
 a.block.rounded-2xl:hover{transform:translateY(-3px);border-color:#16a095;box-shadow:0 14px 28px -16px rgba(15,107,103,.45)}
 main section.space-y-6>*+*{margin-top:1.5rem}
 @media(min-width:768px){#hero-banner h1{max-width:20ch}}
+
+.brand-chip{display:flex;align-items:center;gap:.6rem;padding:.9rem 1rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff;font-weight:700;font-size:.9rem;color:#0e1a2c;min-height:56px}
+.brand-chip i{color:#16a095;font-size:1.1rem}
+.brand-chip:hover{border-color:#16a095;box-shadow:0 12px 24px -16px rgba(15,107,103,.5);transform:translateY(-2px)}
+.info-tile{display:flex;gap:1rem;align-items:flex-start}
+.info-tile>i{flex:none;width:2.8rem;height:2.8rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;background:#d5f3ee;color:#0f6b67;font-size:1.15rem}
+.info-link{display:inline-block;margin-top:.6rem;font-weight:700;font-size:.85rem;color:#0f6b67;border-bottom:2px solid #74d3c8}
+
+/* ===== v17: iç sayfa başlığı, panel dokunma alanları ===== */
+.page-hero{padding:1.1rem 0 1.25rem;color:#fff;border-bottom:1px solid rgba(255,255,255,.1);background:radial-gradient(700px 240px at 90% -20%,rgba(22,160,149,.35),transparent 60%),#0e1a2c}
+.page-hero-t{font-family:'Bricolage Grotesque','Inter',sans-serif;font-weight:800;font-size:1.5rem;line-height:1.2;margin-top:.6rem}
+@media(min-width:768px){.page-hero{padding:1.6rem 0}.page-hero-t{font-size:2rem}}
+.price-note{display:flex;gap:.5rem;align-items:flex-start;margin-top:.7rem;padding:.7rem .9rem;border-radius:.85rem;background:#effaf8;border:1px solid #abe6de;color:#0f4543;font-size:.85rem;text-align:left}
+.price-note i{margin-top:.15rem;color:#16a095}
+#view-admin button,#view-admin select{min-height:40px}
+.glass-card h2{line-height:1.25}
+
+/* ===== v18: Google yorum bandı, alt bilgi ===== */
+.review-band{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.5rem;margin-top:2rem;padding:1.4rem 1.5rem;border-radius:1.4rem;color:#fff;background:radial-gradient(500px 200px at 100% 0%,rgba(22,160,149,.4),transparent 60%),#0e1a2c;box-shadow:0 20px 40px -22px rgba(14,26,44,.7)}
+.review-band .stars{color:#fbbf24;font-size:1.25rem;letter-spacing:.15rem}
+.review-band h3{font-size:1.15rem;font-weight:800;line-height:1.25}
+.review-band p{font-size:.88rem;color:#cbd5e1;margin-top:.2rem;max-width:34rem}
+.review-band>div:nth-child(2){flex:1 1 16rem}
+.review-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.3rem;border-radius:.9rem;background:#fff;color:#0e1a2c;font-weight:800;font-size:.92rem;min-height:48px}
+.review-btn:hover{background:#d5f3ee}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.4rem;margin-top:.9rem;font-size:.8rem}
+.footer-links a{color:#94a3b8;text-decoration:underline;text-underline-offset:3px}
+.footer-links a:hover{color:#fff}

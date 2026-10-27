@@ -41,7 +41,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body data-page="admin" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -80,7 +80,8 @@
         </nav>
 
         <!-- Tekniker paneli düğmesi -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden lg:inline font-semibold">· 0542 288 82 88</span></a>
           <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
             <i class="fa-solid fa-user-gear"></i>
             <span id="admin-toggle-text" class="hidden xs:inline sm:inline">Tekniker Paneli</span>
@@ -111,7 +112,7 @@
           <button onclick="openNewRecordModal()" class="col-span-3 sm:col-span-1 justify-center bg-[#ff5a36] hover:bg-[#ee4a27] text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#ff5a36]/30 flex items-center gap-2"><i class="fa-solid fa-plus"></i> Yeni servis kaydı</button>
           <button onclick="exportBackup()" class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Kayıtları dosyaya yedekle"><i class="fa-solid fa-download mr-1"></i> Yedekle</button>
           <label class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold cursor-pointer" title="Yedek dosyasını geri yükle"><i class="fa-solid fa-upload mr-1"></i> Yükle<input type="file" accept=".json" class="hidden" onchange="importBackup(event)"></label>
-          <button onclick="printReport()" class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Seçili dönem raporunu çıktı al"><i class="fa-solid fa-file-lines mr-1"></i> Rapor</button>
+          <button onclick="printReport()" class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Seçili dönem raporu: açılan pencerede Hedef/Yazıcı yerine PDF olarak kaydet seçin"><i class="fa-solid fa-file-pdf mr-1"></i> PDF rapor</button>
           <button onclick="exportCsv()" class="text-center bg-white/10 hover:bg-white/20 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Seçili dönemi Excel (CSV) olarak indir"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
           <button onclick="logoutAdmin()" class="text-center bg-white/10 hover:bg-red-500 border border-white/15 text-white px-3 py-3 rounded-xl text-sm font-semibold" title="Çıkış yap"><i class="fa-solid fa-right-from-bracket mr-1"></i> Çıkış</button>
         </div>
@@ -181,6 +182,7 @@
       <div id="tab-sistem" class="hidden space-y-3">
       <div id="devices-box" class="mt-4"></div>
       <div id="visitors-box" class="mt-3"></div>
+      <div id="reviews-admin" class="mt-3"></div>
       </div>
     </section>
 
@@ -441,11 +443,11 @@
 
   <!-- Footer -->
   <footer class="bg-slate-950 text-slate-400 text-xs pt-8 pb-28 md:pb-8 px-5 border-t border-white/10 text-center leading-relaxed">
-    <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
+    <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br>Her gün açık 10:00–20:00 · <a href="https://www.instagram.com/noktailetisim39/" target="_blank" rel="noopener" class="underline hover:text-white">Instagram: @noktailetisim39</a><br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
   </footer>
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>

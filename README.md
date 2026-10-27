@@ -87,3 +87,5 @@ Panelde **Yedekle** düğmesi tüm kayıtları JSON dosyasına indirir, **Yükle
 - **Dükan suraty**: `dukan.webp` / `dukan.jpg` (baş sahypa, İletişim sahypasy, paylaşma resmi `og-image.png`). Suraty değiştirmek için aynı adla yenisini koyun.
 - **Panel sekmeleri**: Özet / Kayıtlar / Sistem.
 - **Hizmet sayfaları**: `ekran-degisimi`, `batarya-degisimi`, `sarj-soketi-tamiri`, `sivi-temasi-tamiri`, `yazilim-anakart-onarimi` (her biri "WhatsApp'tan fiyat sor" düğmesi ve SSS ile; Google'da ayrı aramalarda çıkmak için).
+- **Çalışma saatleri**: her gün 10:00–20:00 (`app.js` → `SHOP_HOURS`). Başlıkta sürekli görünen **Ara** düğmesi.
+- **Müşteri yorumları**: panel → Sistem sekmesi → yorum ekleyin (müşteri izni zorunlu); baş sayfada görünür. `firestore.rules` yeniden yayınlanmalı.

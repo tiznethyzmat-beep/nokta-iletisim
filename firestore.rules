@@ -25,6 +25,12 @@ service cloud.firestore {
       allow list, write: if isAdmin();
     }
 
+    // Müşteri yorumları: herkes okur, yalnız yönetici yazar
+    match /reviews/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Tekniker oturumları (bağlı cihazlar) -> yalnız yönetici
     match /sessions/{sid} {
       allow read, write: if isAdmin();

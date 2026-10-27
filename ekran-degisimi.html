@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=14">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Kırklareli Ekran Değişimi", "serviceType": "Ekran değişimi", "areaServed": {"@type": "City", "name": "Kırklareli"}, "provider": {"@type": "MobilePhoneStore", "name": "Nokta İletişim", "telephone": "+905422888288", "url": "https://nokta-iletisim.vercel.app", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}}}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Ekran değişimi ne kadar sürer?", "acceptedAnswer": {"@type": "Answer", "text": "Süre cihaz modeline ve gerekli parçanın stokta olup olmamasına göre değişir. Cihazınızı getirdiğinizde ya da modelinizi WhatsApp'tan yazdığınızda size bilgi veririz."}}, {"@type": "Question", "name": "Ekran değişimi ücreti ne kadar?", "acceptedAnswer": {"@type": "Answer", "text": "Ücret marka, model ve arızanın türüne göre değişir. Modelinizi bu sayfadaki düğmeyle yazın, size WhatsApp'tan dönüş yapalım."}}, {"@type": "Question", "name": "Ekran değişiminde verilerim silinir mi?", "acceptedAnswer": {"@type": "Answer", "text": "Ekran değişimi genellikle cihazdaki verilere dokunmaz. Yine de cihazdaki verilerin yedeğini almak müşterinin sorumluluğundadır."}}]}</script>
 </head>
@@ -84,7 +84,8 @@
         </nav>
 
         <!-- Tekniker paneli düğmesi -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden lg:inline font-semibold">· 0542 288 82 88</span></a>
           <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
             <i class="fa-solid fa-user-gear"></i>
             <span id="admin-toggle-text" class="hidden xs:inline sm:inline">Tekniker Paneli</span>
@@ -388,11 +389,11 @@
 
   <!-- Footer -->
   <footer class="bg-slate-950 text-slate-400 text-xs pt-8 pb-28 md:pb-8 px-5 border-t border-white/10 text-center leading-relaxed">
-    <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
+    <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br>Her gün açık 10:00–20:00 · <a href="https://www.instagram.com/noktailetisim39/" target="_blank" rel="noopener" class="underline hover:text-white">Instagram: @noktailetisim39</a><br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
   </footer>
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>

@@ -1176,8 +1176,6 @@ function renderPayBox(all) {
 }
 
 // ===== Rapor (A4 çıktı) ve Excel (CSV) =====
-function periodTickets(all) { return all.filter(t => statsPeriod === 'hepsi' || inStatsPeriod(t.date) || (t.status === 'teslim' && inStatsPeriod(deliveredAt(t)))); }
-
 function printReport() {
   const all = getTickets(), box = document.getElementById('print-area');
   if (!box) return;
@@ -1200,25 +1198,6 @@ function printReport() {
   const restore = () => { document.title = oldTitle; box.classList.add('hidden'); window.removeEventListener('afterprint', restore); };
   window.addEventListener('afterprint', restore);
   setTimeout(() => { window.print(); setTimeout(restore, 1500); }, 350);
-}
-
-function csvCell(v, isText) {
-  let s = String(v === undefined || v === null ? '' : v);
-  if (isText && /^[=+\-@\t\r]/.test(s)) s = "'" + s;       // Excel formül enjeksiyonuna karşı
-  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-}
-function exportCsv() {
-  const list = periodTickets(getTickets()).sort((a, b) => (a.ts || 0) - (b.ts || 0));
-  const head = ['Servis Kodu', 'Kayıt Tarihi', 'Teslim Tarihi', 'Müşteri', 'Telefon', 'Cihaz', 'Seri No', 'Üzerinde Gelenler', 'Arıza', 'Durum', 'Ücret (TL)', 'Maliyet (TL)', 'Kâr (TL)', 'Ödeme Şekli', 'Ödeme Tarihi'];
-  const lines = [head.join(';')].concat(list.map(t => {
-    const price = Number(t.price) || 0, cost = Number(t.cost) || 0;
-    return [csvCell(t.id, 1), csvCell(t.date, 1), csvCell(t.status === 'teslim' ? deliveredAt(t) : '', 1), csvCell(t.name, 1), csvCell(t.phone, 1), csvCell(t.device, 1), csvCell(t.serino, 1), csvCell(t.gelenler, 1), csvCell(t.problem, 1),
-      csvCell((statusMap[t.status] || {}).label || t.status, 1), price, cost, price - cost, csvCell(t.payMethod && PAY[t.payMethod] ? PAY[t.payMethod].label : (isUnpaid(t) ? 'Ödenmedi' : ''), 1), csvCell(t.paidAt, 1)].join(';');
-  }));
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
-  a.download = 'nokta-kayitlar-' + periodLabel().replace(/[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]+/g, '-').replace(/^-|-$/g, '') + '.csv';
-  document.body.appendChild(a); a.click(); a.remove();
 }
 
 // Teslim bekleyen (hazır) cihazlar listesi

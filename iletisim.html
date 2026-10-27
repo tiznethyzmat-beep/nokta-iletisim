@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=21">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobilePhoneStore", "name": "Nokta İletişim", "image": ["https://nokta-iletisim.vercel.app/dukan.jpg", "https://nokta-iletisim.vercel.app/og-image.png"], "url": "https://nokta-iletisim.vercel.app", "telephone": "+905422888288", "sameAs": ["https://www.instagram.com/noktailetisim39/"], "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "10:00", "closes": "20:00"}]}</script>
 </head>
 <body data-page="iletisim" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
@@ -53,34 +53,44 @@
   </noscript>
 
   <!-- Üst menü -->
-  <header class="site-header bg-slate-900 text-white sticky top-0 z-40 border-b border-white/10">
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between gap-3 h-16">
+      <div class="flex items-center justify-between h-16">
 
         <!-- Logo -->
-        <a href="index.html" class="brand flex items-center gap-3 shrink-0" aria-label="Nokta İletişim – ana sayfa">
+        <div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="switchTab('sorgula')">
           <img id="site-logo" src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white shrink-0 object-cover">
-          <span class="brand-txt">
-            <span class="brand-name">Nokta İletişim</span>
-            <span class="brand-sub">Teknik Servis &amp; Çözüm Merkezi • Kırklareli</span>
-          </span>
-        </a>
+          <div>
+            <div class="font-extrabold text-xl leading-tight">Nokta İletişim</div>
+            <p class="hidden xl:block text-xs text-sky-400 font-medium">Teknik Servis & Çözüm Merkezi • Kırklareli</p>
+          </div>
+        </div>
 
         <!-- Masaüstü menü -->
-        <nav class="site-nav hidden md:flex items-center gap-1 min-w-0" aria-label="Ana menü">
-          <a href="index.html" id="nav-sorgula" class="tab-btn nav-link text-slate-300 hover:text-white hover:bg-slate-800"><i class="fa-solid fa-magnifying-glass nav-ico" aria-hidden="true"></i><span>Sorgula</span></a>
-          <a href="servis-talebi.html" id="nav-randevu" class="tab-btn nav-link text-slate-300 hover:text-white hover:bg-slate-800"><i class="fa-solid fa-headset nav-ico" aria-hidden="true"></i><span>Servis Talebi</span></a>
-          <a href="satis-takas.html" id="nav-satis" class="tab-btn nav-link text-slate-300 hover:text-white hover:bg-slate-800"><i class="fa-solid fa-right-left nav-ico" aria-hidden="true"></i><span>Satış &amp; Takas</span></a>
-          <a href="iletisim.html" id="nav-iletisim" aria-current="page" class="tab-btn nav-link text-sky-400 bg-slate-800"><i class="fa-solid fa-location-dot nav-ico" aria-hidden="true"></i><span>İletişim</span></a>
-          <a href="sik-sorulanlar.html" id="nav-sss" class="tab-btn nav-link text-slate-300 hover:text-white hover:bg-slate-800"><i class="fa-solid fa-circle-question nav-ico" aria-hidden="true"></i><span>SSS</span></a>
+        <nav class="hidden md:flex items-center space-x-2">
+          <button onclick="switchTab('sorgula')" id="nav-sorgula" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all text-sky-400 bg-slate-800">
+            <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Cihaz Sorgula
+          </button>
+          <button onclick="switchTab('randevu')" id="nav-randevu" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-headset mr-1.5"></i> Servis Talebi
+          </button>
+          <button onclick="switchTab('satis')" id="nav-satis" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-tags mr-1.5"></i> Satış &amp; Takas
+          </button>
+          <button onclick="switchTab('iletisim')" id="nav-iletisim" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-location-dot mr-1.5"></i> İletişim
+          </button>
+          <button onclick="switchTab('sss')" id="nav-sss" class="tab-btn whitespace-nowrap px-3 lg:px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa-solid fa-circle-question mr-1.5"></i> SSS
+          </button>
         </nav>
 
-        <!-- Ara + tekniker paneli -->
-        <div class="flex items-center gap-2 shrink-0">
-          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 whitespace-nowrap shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden 2xl:inline font-semibold">· 0542 288 82 88</span></a>
-          <button onclick="checkAdminAccess()" id="admin-toggle-btn" aria-label="Tekniker paneli" class="flex items-center gap-2 whitespace-nowrap shrink-0 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3 py-2 rounded-lg text-xs font-semibold transition-all">
+        <!-- Tekniker paneli düğmesi -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <a id="header-call" href="tel:+905422888288" aria-label="Mağazayı ara" class="flex items-center gap-1.5 whitespace-nowrap shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-phone"></i><span>Ara</span><span class="hidden xl:inline font-semibold">· 0542 288 82 88</span></a>
+          <button onclick="checkAdminAccess()" id="admin-toggle-btn" class="flex items-center space-x-2 whitespace-nowrap shrink-0 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all">
             <i class="fa-solid fa-user-gear"></i>
-            <span id="admin-toggle-text" class="hidden sm:inline md:hidden xl:inline">Tekniker Paneli</span>
+            <span id="admin-toggle-text" class="hidden xs:inline sm:inline">Tekniker Paneli</span>
           </button>
         </div>
 
@@ -326,12 +336,12 @@
   </div>
 
   <!-- Mobil alt menü -->
-  <nav id="mobile-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-900 border-t border-slate-700 grid grid-cols-5" aria-label="Alt menü">
-    <a href="index.html" id="mnav-sorgula" class="tab-btn mnav-link text-slate-300"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Sorgula</span></a>
-    <a href="servis-talebi.html" id="mnav-randevu" class="tab-btn mnav-link text-slate-300"><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Servis Talebi</span></a>
-    <a href="satis-takas.html" id="mnav-satis" class="tab-btn mnav-link text-slate-300"><i class="fa-solid fa-right-left" aria-hidden="true"></i><span>Satış &amp; Takas</span></a>
-    <a href="iletisim.html" id="mnav-iletisim" aria-current="page" class="tab-btn mnav-link text-sky-400"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>İletişim</span></a>
-    <a href="sik-sorulanlar.html" id="mnav-sss" class="tab-btn mnav-link text-slate-300"><i class="fa-solid fa-circle-question" aria-hidden="true"></i><span>SSS</span></a>
+  <nav id="mobile-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-900 border-t border-slate-700 grid grid-cols-5 text-[11px] font-medium">
+    <button onclick="switchTab('sorgula')" id="mnav-sorgula" class="tab-btn py-2.5 text-sky-400"><i class="fa-solid fa-magnifying-glass block text-base mb-0.5"></i>Sorgula</button>
+    <button onclick="switchTab('randevu')" id="mnav-randevu" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-headset block text-base mb-0.5"></i>Servis Talebi</button>
+    <button onclick="switchTab('satis')" id="mnav-satis" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-tags block text-base mb-0.5"></i>Satış</button>
+    <button onclick="switchTab('iletisim')" id="mnav-iletisim" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-location-dot block text-base mb-0.5"></i>İletişim</button>
+    <button onclick="switchTab('sss')" id="mnav-sss" class="tab-btn py-2.5 text-slate-300"><i class="fa-solid fa-circle-question block text-base mb-0.5"></i>SSS</button>
   </nav>
   <div id="print-area" class="hidden"></div>
 
@@ -362,11 +372,11 @@
   <!-- Footer -->
   <footer class="bg-slate-950 text-slate-400 text-xs pt-8 pb-28 md:pb-8 px-5 border-t border-white/10 text-center leading-relaxed">
     <span class="inline-block w-2 h-2 rounded-full bg-[#ff5a36] mr-1.5"></span>© 2026 Nokta İletişim — Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli<br class="sm:hidden"><span class="hidden sm:inline"> | </span>Tel: +90 542 288 82 88<br>Her gün açık 10:00–20:00 · <a href="https://www.instagram.com/noktailetisim39/" target="_blank" rel="noopener" class="underline hover:text-white">Instagram: @noktailetisim39</a><br><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="underline hover:text-white">Google'da bizi değerlendirin</a>
-  <div class="footer-links"><a href="kvkk.html">KVKK ve gizlilik</a><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener">Google'da yorum yaz</a><a href="sik-sorulanlar.html">Sık sorulanlar</a><a href="satis-takas.html">Satış &amp; Takas</a></div>
+  <div class="footer-links"><a href="satis-takas.html">Satış &amp; Takas</a><a href="kvkk.html">KVKK ve gizlilik</a><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener">Google'da yorum yaz</a><a href="sik-sorulanlar.html">Sık sorulanlar</a></div>
   </footer>
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
 </body>
 </html>

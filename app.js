@@ -748,7 +748,20 @@ function fillSearch(code) {
 
 let searchToken = 0;   // eski sorgu sonucu yenisinin üzerine yazmasın
 
+function scrollToResult() {
+  const b = document.getElementById('search-result');
+  if (b && !b.classList.contains('hidden')) b.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 async function performSearch() {
+  const inp = document.getElementById('search-input');
+  if (inp && document.activeElement === inp) inp.blur(); // telefonda klavye kapansın, sonuç görünsün
+  const run = performSearchInner();
+  setTimeout(scrollToResult, 60);   // "Aranıyor..." görününce hemen aşağı in
+  await run;
+  scrollToResult();                  // sonuç gelince tekrar hizala
+  setTimeout(scrollToResult, 350);
+}
+async function performSearchInner() {
   const query = document.getElementById('search-input').value.trim().toUpperCase();
   const resultBox = document.getElementById('search-result');
   resultBox.classList.remove('hidden');
@@ -1068,7 +1081,7 @@ function renderStats(allTickets) {
   const sel = k => statsPeriod === k;
   bar.innerHTML = `<div class="w-full mb-1 text-sm font-extrabold text-[#0f6b67]"><i class="fa-regular fa-calendar-check mr-1"></i>Gösterilen dönem: <span class="text-slate-900">${periodLabel()}</span></div>`
     + '<div class="pscroll">' + Object.keys(labels).map(k => `<button type="button" onclick="setStatsPeriod('${k}')" class="pchip ${sel(k) ? 'pchip-on' : ''}">${sel(k) ? '<i class="fa-solid fa-check mr-1"></i>' : ''}${labels[k]}</button>`).join('')
-    + `<label class="pchip daypick ${sel('secgun') ? 'pchip-sel' : ''}" title="Belirli bir günü seçin"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span class="daypick-txt ${statsDay ? '' : 'is-empty'}">${statsDay ? statsDay.split('-').reverse().join('.') : 'Gün seç'}</span><input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" aria-label="Gün seç"></label>`
+    + `<label class="pchip-lbl">Gün <span class="daypick pchip ${sel('secgun') ? 'pchip-sel' : ''}"><span class="daypick-t">${/^\d{4}-\d\d-\d\d$/.test(statsDay || '') ? statsDay.slice(8, 10) + '.' + statsDay.slice(5, 7) + '.' + statsDay.slice(2, 4) : 'gg.aa.yy'}</span><input type="date" value="${statsDay}" onchange="setStatsDay(this.value)" aria-label="Gün seç"></span></label>`
     + '</div>';
 
   const tickets = allTickets.filter(t => inStatsPeriod(t.date));

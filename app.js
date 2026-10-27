@@ -748,7 +748,20 @@ function fillSearch(code) {
 
 let searchToken = 0;   // eski sorgu sonucu yenisinin üzerine yazmasın
 
+function scrollToResult() {
+  const b = document.getElementById('search-result');
+  if (b && !b.classList.contains('hidden')) b.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 async function performSearch() {
+  const inp = document.getElementById('search-input');
+  if (inp && document.activeElement === inp) inp.blur(); // telefonda klavye kapansın, sonuç görünsün
+  const run = performSearchInner();
+  setTimeout(scrollToResult, 60);   // "Aranıyor..." görününce hemen aşağı in
+  await run;
+  scrollToResult();                  // sonuç gelince tekrar hizala
+  setTimeout(scrollToResult, 350);
+}
+async function performSearchInner() {
   const query = document.getElementById('search-input').value.trim().toUpperCase();
   const resultBox = document.getElementById('search-result');
   resultBox.classList.remove('hidden');

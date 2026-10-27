@@ -318,3 +318,5 @@ main section.space-y-6>*+*{margin-top:1.5rem}
 .q-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;min-height:54px;border-radius:.95rem;background:#16a34a;color:#fff;font-weight:800;font-size:1rem;box-shadow:0 14px 24px -14px rgba(22,163,74,.7)}
 .q-btn:hover{background:#15803d}
 .q-err{color:#b91c1c;font-size:.85rem;font-weight:600}
+
+#search-result{scroll-margin-top:84px}

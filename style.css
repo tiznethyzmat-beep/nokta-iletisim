@@ -421,3 +421,13 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 @media(min-width:1400px){header nav[class*="md:flex"] i{display:inline-block}}
 @media(min-width:1024px) and (max-width:1279px){.sale-grid{grid-template-columns:1fr 1fr}}
 .sale-btn{text-align:center;line-height:1.25}
+
+/* ===== v26: sorgu sonucu yeni görünüm ===== */
+.result-card .detail-grid{padding:0;background:none;border:0}
+.result-card .detail-grid>div{min-width:0;padding:.8rem .9rem;border-radius:.9rem;background:#f1f5f9}
+.result-card .detail-grid>div>span:first-child{font-size:.75rem;margin-bottom:.15rem}
+.result-card .detail-grid strong,.result-card .detail-grid span.text-amber-800{display:block;font-size:.95rem;font-weight:700;overflow-wrap:anywhere;line-height:1.35}
+.result-card .detail-grid .dg-wide{grid-column:1/-1;background:#fff;border:1px solid #e2e8f0}
+.result-card .tech-note{padding:.9rem 1rem}
+.result-card .tech-note h5{font-size:.8rem;font-weight:700;color:#0f6b67}
+@media(max-width:380px){.result-card .detail-grid{grid-template-columns:1fr}}

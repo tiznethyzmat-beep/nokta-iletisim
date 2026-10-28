@@ -814,12 +814,12 @@ function ticketCardHtml(match) {
   const textActive = "text-sky-600 font-bold";
 
   return `
-    <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div class="glass-card result-card rounded-2xl p-5 sm:p-8 shadow-xl space-y-5">
 
       <!-- Servis kodu ve durum etiketi -->
       <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-4 gap-2">
         <div>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">SERVİS FİŞ KODU</span>
+          <span class="text-xs font-semibold text-slate-500">Servis kodu</span>
           <div class="flex items-center gap-2 flex-wrap"><h3 class="text-2xl font-black text-sky-700 tracking-wide">${esc(match.id)}</h3><button onclick="copyText('${esc(match.id)}', this)" class="text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-2.5 py-1.5" title="Servis kodunu kopyala"><i class="fa-regular fa-copy mr-1"></i> Kopyala</button></div>
           <p class="text-[11px] text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> Kabul Tarihi: ${esc(match.date || 'Bugün')}</p>
         </div>
@@ -832,26 +832,26 @@ function ticketCardHtml(match) {
       <div class="py-4 px-1">${stepperHtml(currentStep)}</div>
 
       <!-- Müşteri & Cihaz Detay Kutusu -->
-      <div class="detail-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="detail-grid grid grid-cols-2 gap-3">
         <div>
-          <span class="text-slate-500 font-semibold block">Müşteri:</span>
+          <span class="text-slate-500 font-semibold block">Müşteri</span>
           <strong class="text-slate-900 text-sm">${esc(match.nameMasked || maskName(match.name))}</strong>
         </div>
         <div>
-          <span class="text-slate-500 font-semibold block">Cihaz / Model:</span>
+          <span class="text-slate-500 font-semibold block">Cihaz</span>
           <strong class="text-slate-900 text-sm">${esc(match.device)}</strong>
         </div>
         <div>
-          <span class="text-slate-500 font-semibold block">Üzerinde Gelenler:</span>
+          <span class="text-slate-500 font-semibold block">Teslim alınan</span>
           <span class="text-amber-800 font-semibold">${esc(match.gelenler || 'Teslim alınan aksesuar yok')}</span>
         </div>
         <div>
-          <span class="text-slate-500 font-semibold block">Tahmini Onarım Ücreti:</span>
+          <span class="text-slate-500 font-semibold block">Tahmini ücret</span>
           <strong class="text-emerald-600 text-sm">${match.price ? match.price + ' TL' : 'Belirtilmedi'}</strong>
         </div>
-        <div class="sm:col-span-2 pt-2 border-t border-slate-200">
-          <span class="text-slate-700 font-bold block">Arıza / Müşteri Şikayeti:</span>
-          <p class="text-slate-950 mt-1 text-lg sm:text-xl font-extrabold leading-snug">${esc(match.problem)}</p>
+        <div class="sm:col-span-2 dg-wide">
+          <span class="text-slate-500 font-semibold block">Arıza / şikayet</span>
+          <p class="text-slate-950 mt-1 text-base sm:text-lg font-bold leading-snug">${esc(match.problem)}</p>
         </div>
       </div>
 
@@ -862,7 +862,7 @@ function ticketCardHtml(match) {
         </div>
         <div>
           <h5 class="font-extrabold text-sky-900 text-sm">Tekniker güncelleme notu</h5>
-          <p class="text-slate-950 text-lg sm:text-xl mt-1.5 font-extrabold leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
+          <p class="text-slate-950 text-base sm:text-lg mt-1 font-semibold leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
         </div>
       </div>
 
@@ -874,8 +874,8 @@ function ticketCardHtml(match) {
 
       <!-- WhatsApp Butonu -->
       <div class="pt-2">
-        <a href="https://wa.me/${OFFICIAL_WA}?text=Merhaba,%20${esc(match.id)}%20kodlu%20cihazim%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-md">
-          <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp'tan Bilgi Al (+90 542 288 82 88)
+        <a href="https://wa.me/${OFFICIAL_WA}?text=Merhaba,%20${esc(match.id)}%20kodlu%20cihazim%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-md">
+          <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp'tan bilgi al
         </a>
       </div>
 

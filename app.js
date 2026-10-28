@@ -819,13 +819,14 @@ function renderRecent() {
     : '';
 }
 
-function stepperMini(cur) {
-  const labels = ['Kayıt', 'Tespit', 'Tamirde', 'Hazır'];
-  return '<ol class="ms">' + labels.map((t, k) => {
-    const n = k + 1, done = n < cur || (cur === 4 && n === 4), now = n === cur && !done;
-    const cls = done ? 'ms-c ms-done' : now ? 'ms-c ms-now' : 'ms-c';
+function stepperMini(cur, status) {
+  const steps = [['Kayıt alındı', 'fa-clipboard-list'], ['Arıza tespiti', 'fa-magnifying-glass'], ['Tamirde', 'fa-screwdriver-wrench'], ['Teslime hazır', 'fa-box-open']];
+  return '<ol class="ms">' + steps.map(([t, ic], k) => {
+    const n = k + 1, done = n < cur || (status === 'teslim' && n === 4), fin = status === 'hazir' && n === 4, now = n === cur && !done;
+    const cls = fin ? 'ms-c ms-fin' : done ? 'ms-c ms-done' : now ? 'ms-c ms-now' : 'ms-c';
     const line = k < 3 ? `<span class="ms-line ${n < cur ? 'on' : ''}"></span>` : '';
-    return `<li>${line}<span class="${cls}">${done ? '<i class="fa-solid fa-check"></i>' : n}</span><span class="ms-t ${done || now ? 'on' : ''}">${t}</span></li>`;
+    const sub = fin ? 'Gelip alabilirsiniz' : (now && status !== 'teslim' ? 'Şu an burada' : '');
+    return `<li>${line}<span class="${cls}"><i class="fa-solid ${done || fin ? 'fa-check' : ic}"></i></span><span class="ms-t ${done || now || fin ? 'on' : ''}">${t}</span>${sub ? `<span class="ms-s${fin ? ' fin' : ''}">${sub}</span>` : ''}</li>`;
   }).join('') + '</ol>';
 }
 
@@ -847,7 +848,7 @@ function ticketCardHtml(match) {
         <span class="rc-pill border ${stInfo.color}">${stInfo.label}</span>
       </div>
 
-      <div class="rc-steps">${stepperMini(currentStep)}${hint ? `<p class="rc-hint">${hint}</p>` : ''}</div>
+      <div class="rc-steps">${stepperMini(currentStep, match.status)}</div>
 
       <div class="rc-tiles">
         <div class="rc-tile"><span>Müşteri</span><strong>${esc(match.nameMasked || maskName(match.name))}</strong></div>

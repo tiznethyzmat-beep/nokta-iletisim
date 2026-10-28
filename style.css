@@ -496,3 +496,13 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .recent-codes button{padding:.35rem .75rem;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:.8rem;font-weight:700;color:#0f6b67;letter-spacing:.02em}
 .recent-codes button:hover{border-color:#16a095;background:#ecf8f5}
 .recent-codes .rc-clear{border:0;background:none;color:#94a3b8;font-weight:500;text-decoration:underline}
+
+/* ===== v30: ädim ikonlary ===== */
+.ms-c{width:2.5rem;height:2.5rem;font-size:1rem;border-radius:.9rem}
+.ms-line{top:1.2rem;height:4px}
+.ms-t{font-size:.72rem;text-align:center;line-height:1.25}
+.ms-s{font-size:.66rem;font-weight:700;color:#0f6b67;text-align:center;line-height:1.2}
+.ms-s.fin{color:#047857}
+.ms-fin{background:#10b981;border-color:#10b981;color:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.2)}
+.ms-now{background:#fff;color:#0f6b67;border:2px solid #0f6b67;box-shadow:0 0 0 4px rgba(15,107,103,.15)}
+.rc-steps{margin:1.1rem 0 1rem}

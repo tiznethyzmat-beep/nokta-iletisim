@@ -411,3 +411,13 @@ header .flex.items-center.space-x-3.cursor-pointer{margin-right:.25rem}
   .wa-fab{width:3.4rem !important;height:3.4rem !important;right:.85rem !important;bottom:5.4rem !important;opacity:.95}
   .wa-fab i{font-size:1.6rem !important}
 }
+
+/* ===== v25: geniş ekranda menü kesilmesin, kartlar dar ekranda sıkışmasın ===== */
+header > .max-w-7xl{max-width:84rem}
+header p[class*="xl:block"]{display:none !important}
+header #header-call span[class*="xl:inline"]{display:none !important}
+@media(min-width:1800px){header p[class*="xl:block"]{display:block !important}}
+@media(max-width:1399px){header nav[class*="md:flex"] i{display:none}}
+@media(min-width:1400px){header nav[class*="md:flex"] i{display:inline-block}}
+@media(min-width:1024px) and (max-width:1279px){.sale-grid{grid-template-columns:1fr 1fr}}
+.sale-btn{text-align:center;line-height:1.25}

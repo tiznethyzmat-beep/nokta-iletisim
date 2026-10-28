@@ -506,3 +506,14 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .ms-fin{background:#10b981;border-color:#10b981;color:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.2)}
 .ms-now{background:#fff;color:#0f6b67;border:2px solid #0f6b67;box-shadow:0 0 0 4px rgba(15,107,103,.15)}
 .rc-steps{margin:1.1rem 0 1rem}
+
+/* ===== v31: sonuç kartı üst satır ===== */
+.rc-row1{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.2rem}
+.rc-row1 .rc-lbl{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b}
+.rc-code h3{font-size:1.5rem}
+.rc-pill{font-size:.75rem;padding:.35rem .8rem}
+
+/* ===== v31: etiketler eski adlarıyla ===== */
+.rc-dot{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:currentColor;margin-right:.45rem;vertical-align:middle}
+.rc-pill{display:inline-flex;align-items:center}
+.rc-tile span{line-height:1.25}

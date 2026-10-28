@@ -840,26 +840,25 @@ function ticketCardHtml(match) {
     <div class="glass-card result-card rc2">
 
       <div class="rc-top">
-        <div class="min-w-0">
-          <p class="rc-lbl">Servis kodu</p>
+        <div class="min-w-0 w-full">
+          <div class="rc-row1"><p class="rc-lbl">Servis fiş kodu</p><span class="rc-pill border ${stInfo.color}"><i class="rc-dot"></i>${stInfo.label}</span></div>
           <div class="rc-code"><h3>${esc(match.id)}</h3><button onclick="copyText('${esc(match.id)}', this)" class="rc-copy" title="Servis kodunu kopyala"><i class="fa-regular fa-copy"></i> Kopyala</button></div>
-          <p class="rc-date"><i class="fa-regular fa-clock"></i> Kabul tarihi: ${esc(match.date || 'Bugün')}</p>
+          <p class="rc-date"><i class="fa-regular fa-clock"></i> Kabul Tarihi: ${esc(match.date || 'Bugün')}</p>
         </div>
-        <span class="rc-pill border ${stInfo.color}">${stInfo.label}</span>
       </div>
 
       <div class="rc-steps">${stepperMini(currentStep, match.status)}</div>
 
       <div class="rc-tiles">
         <div class="rc-tile"><span>Müşteri</span><strong>${esc(match.nameMasked || maskName(match.name))}</strong></div>
-        <div class="rc-tile"><span>Cihaz</span><strong>${esc(match.device)}</strong></div>
-        <div class="rc-tile"><span>Arıza</span><strong>${esc(match.problem)}</strong></div>
-        <div class="rc-tile"><span>Tahmini ücret</span><strong class="rc-price">${match.price ? match.price + ' TL' : 'Belirtilmedi'}</strong></div>
-        <div class="rc-tile rc-wide"><span>Aksesuar</span><strong class="rc-acc">${esc(match.gelenler || 'Yok')}</strong></div>
+        <div class="rc-tile"><span>Cihaz / Model</span><strong>${esc(match.device)}</strong></div>
+        <div class="rc-tile"><span>Üzerinde Gelenler</span><strong class="rc-acc">${esc(match.gelenler || 'Teslim alınan aksesuar yok')}</strong></div>
+        <div class="rc-tile"><span>Tahmini Onarım Ücreti</span><strong class="rc-price">${match.price ? match.price + ' TL' : 'Belirtilmedi'}</strong></div>
+        <div class="rc-tile rc-wide"><span>Arıza / Müşteri Şikayeti</span><strong>${esc(match.problem)}</strong></div>
       </div>
 
       <div class="rc-note">
-        <span>Tekniker notu</span>
+        <span>Tekniker güncelleme notu:</span>
         <p>${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
       </div>
 

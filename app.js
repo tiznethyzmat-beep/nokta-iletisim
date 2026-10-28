@@ -801,83 +801,56 @@ async function performSearchInner() {
     + matches.map(ticketCardHtml).join('<div class="h-5"></div>');
 }
 
+function stepperMini(cur) {
+  const labels = ['Kayıt', 'Tespit', 'Tamirde', 'Hazır'];
+  return '<ol class="ms">' + labels.map((t, k) => {
+    const n = k + 1, done = n < cur || (cur === 4 && n === 4), now = n === cur && !done;
+    const cls = done ? 'ms-c ms-done' : now ? 'ms-c ms-now' : 'ms-c';
+    const line = k < 3 ? `<span class="ms-line ${n < cur ? 'on' : ''}"></span>` : '';
+    return `<li>${line}<span class="${cls}">${done ? '<i class="fa-solid fa-check"></i>' : n}</span><span class="ms-t ${done || now ? 'on' : ''}">${t}</span></li>`;
+  }).join('') + '</ol>';
+}
+
 function ticketCardHtml(match) {
   const stInfo = statusMap[match.status] || statusMap.kayit;
-
-  // Adım seviyeleri (1-4)
   const stepLevels = { kayit: 1, tespit: 2, tamir: 3, hazir: 4, teslim: 4 };
   const currentStep = stepLevels[match.status] || 1;
-  const progressPercent = ((currentStep - 1) / 3) * 100;
-
-  // Mavi renkli, onay işaretli (✓) adım göstergesi
-  const checkActive = "bg-sky-500 text-white shadow-md shadow-sky-500/40 border border-sky-400";
-  const textActive = "text-sky-600 font-bold";
+  const hint = match.status === 'hazir' ? 'Gelip alabilirsiniz' : (match.status === 'teslim' ? '' : 'Şu an: ' + ['Kayıt alındı', 'Arıza tespiti', 'Tamirde'][currentStep - 1]);
 
   return `
-    <div class="glass-card result-card rounded-2xl p-5 sm:p-8 shadow-xl space-y-5">
+    <div class="glass-card result-card rc2">
 
-      <!-- Servis kodu ve durum etiketi -->
-      <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-4 gap-2">
-        <div>
-          <span class="text-xs font-semibold text-slate-500">Servis kodu</span>
-          <div class="flex items-center gap-2 flex-wrap"><h3 class="text-2xl font-black text-sky-700 tracking-wide">${esc(match.id)}</h3><button onclick="copyText('${esc(match.id)}', this)" class="text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-2.5 py-1.5" title="Servis kodunu kopyala"><i class="fa-regular fa-copy mr-1"></i> Kopyala</button></div>
-          <p class="text-[11px] text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> Kabul Tarihi: ${esc(match.date || 'Bugün')}</p>
+      <div class="rc-top">
+        <div class="min-w-0">
+          <p class="rc-lbl">Servis kodu</p>
+          <div class="rc-code"><h3>${esc(match.id)}</h3><button onclick="copyText('${esc(match.id)}', this)" class="rc-copy" title="Servis kodunu kopyala"><i class="fa-regular fa-copy"></i> Kopyala</button></div>
+          <p class="rc-date"><i class="fa-regular fa-clock"></i> Kabul tarihi: ${esc(match.date || 'Bugün')}</p>
         </div>
-        <span class="px-4 py-1.5 rounded-full text-xs font-extrabold border ${stInfo.color} flex items-center gap-1.5 shadow-sm whitespace-nowrap">
-          <span class="w-2 h-2 rounded-full bg-current"></span> ${stInfo.label}
-        </span>
+        <span class="rc-pill border ${stInfo.color}">${stInfo.label}</span>
       </div>
 
-      <!-- Durum adımları -->
-      <div class="py-4 px-1">${stepperHtml(currentStep)}</div>
+      <div class="rc-steps">${stepperMini(currentStep)}${hint ? `<p class="rc-hint">${hint}</p>` : ''}</div>
 
-      <!-- Müşteri & Cihaz Detay Kutusu -->
-      <div class="detail-grid grid grid-cols-2 gap-3">
-        <div>
-          <span class="text-slate-500 font-semibold block">Müşteri</span>
-          <strong class="text-slate-900 text-sm">${esc(match.nameMasked || maskName(match.name))}</strong>
-        </div>
-        <div>
-          <span class="text-slate-500 font-semibold block">Cihaz</span>
-          <strong class="text-slate-900 text-sm">${esc(match.device)}</strong>
-        </div>
-        <div>
-          <span class="text-slate-500 font-semibold block">Aksesuar</span>
-          <span class="text-amber-800 font-semibold">${esc(match.gelenler || 'Yok')}</span>
-        </div>
-        <div>
-          <span class="text-slate-500 font-semibold block">Tahmini ücret</span>
-          <strong class="text-emerald-600 text-sm">${match.price ? match.price + ' TL' : 'Belirtilmedi'}</strong>
-        </div>
-        <div class="sm:col-span-2 dg-wide">
-          <span class="text-slate-500 font-semibold block">Arıza / şikayet</span>
-          <p class="text-slate-950 mt-1 text-base sm:text-lg font-bold leading-snug">${esc(match.problem)}</p>
-        </div>
+      <div class="rc-tiles">
+        <div class="rc-tile"><span>Müşteri</span><strong>${esc(match.nameMasked || maskName(match.name))}</strong></div>
+        <div class="rc-tile"><span>Cihaz</span><strong>${esc(match.device)}</strong></div>
+        <div class="rc-tile"><span>Arıza</span><strong>${esc(match.problem)}</strong></div>
+        <div class="rc-tile"><span>Tahmini ücret</span><strong class="rc-price">${match.price ? match.price + ' TL' : 'Belirtilmedi'}</strong></div>
+        <div class="rc-tile rc-wide"><span>Aksesuar</span><strong class="rc-acc">${esc(match.gelenler || 'Yok')}</strong></div>
       </div>
 
-      <!-- TEKNİKER GÜNCELLEME NOTU KUTUSU -->
-      <div class="tech-note flex items-start gap-3">
-        <div class="p-2 bg-sky-100 text-sky-700 rounded-lg shrink-0">
-          <i class="fa-solid fa-user-gear text-base"></i>
-        </div>
-        <div>
-          <h5 class="font-extrabold text-sky-900 text-sm">Tekniker güncelleme notu</h5>
-          <p class="text-slate-950 text-base mt-1 font-medium leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
-        </div>
+      <div class="rc-note">
+        <span>Tekniker notu</span>
+        <p>${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
       </div>
 
       ${match.status === 'teslim'
-        ? `<div class="bg-slate-100 border border-slate-300 text-slate-800 p-4 rounded-xl text-xs font-medium leading-relaxed"><i class="fa-solid fa-circle-check mr-1"></i> <strong>Cihazınız teslim edilmiştir.</strong> Bizi tercih ettiğiniz için teşekkür ederiz.</div>`
+        ? `<div class="rc-info rc-done"><i class="fa-solid fa-circle-check"></i> <span><strong>Cihazınız teslim edilmiştir.</strong> Bizi tercih ettiğiniz için teşekkür ederiz.</span></div>`
         : match.status === 'hazir'
-        ? `<div class="bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-xl text-xs font-medium leading-relaxed"><i class="fa-solid fa-store mr-1"></i> <strong>Cihazınız hazır!</strong> Mağazamıza gelip servis fişinizle teslim alabilirsiniz (kapanış 20:00). Adrese gönderim yapılmamaktadır.</div>`
-        : `<div class="bg-slate-50 border border-slate-200 text-slate-600 p-3 rounded-xl text-[11px] leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i> Cihaz hazır olunca mağazadan kendiniz teslim alırsınız; kargo/adrese teslim yoktur.</div>`}
+        ? `<div class="rc-info rc-ready"><i class="fa-solid fa-store"></i> <span><strong>Cihazınız hazır!</strong> Mağazamıza gelip servis fişinizle teslim alabilirsiniz (kapanış 20:00). Adrese gönderim yapılmamaktadır.</span></div>`
+        : `<p class="rc-plain"><i class="fa-solid fa-circle-info"></i> Cihaz hazır olunca mağazadan kendiniz teslim alırsınız; kargo/adrese teslim yoktur.</p>`}
 
-      <!-- WhatsApp Butonu -->
-      <div class="pt-2">
-        <a href="https://wa.me/${OFFICIAL_WA}?text=Merhaba,%20${esc(match.id)}%20kodlu%20cihazim%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-md">
-          <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp'tan bilgi al
-        </a>
-      </div>
+      <a href="https://wa.me/${OFFICIAL_WA}?text=Merhaba,%20${esc(match.id)}%20kodlu%20cihazim%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener" class="rc-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp'tan bilgi al</a>
 
     </div>`;
 }

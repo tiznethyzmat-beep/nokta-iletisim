@@ -488,3 +488,11 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rc-wa:hover{background:#15803d}
 .rc-wa i{font-size:1.2rem}
 @media(min-width:640px){.rc2{padding:1.75rem !important}.rc-tiles{grid-template-columns:repeat(4,1fr)}.rc-wide{grid-column:1/-1}}
+
+/* ===== v29: son sorgular ===== */
+.recent-codes{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin-top:.9rem}
+.recent-codes:empty{display:none}
+.recent-codes>span{font-size:.78rem;color:#64748b;margin-right:.15rem}
+.recent-codes button{padding:.35rem .75rem;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:.8rem;font-weight:700;color:#0f6b67;letter-spacing:.02em}
+.recent-codes button:hover{border-color:#16a095;background:#ecf8f5}
+.recent-codes .rc-clear{border:0;background:none;color:#94a3b8;font-weight:500;text-decoration:underline}

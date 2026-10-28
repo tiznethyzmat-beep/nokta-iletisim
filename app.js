@@ -652,6 +652,7 @@ window.onload = function () {
   updateModeBadge();
   if (document.getElementById('view-' + PAGE)) switchTab(PAGE);
   if (PAGE === 'admin' && !USE_FIREBASE) location.replace('index.html?giris=1');
+  renderRecent();
   const kod = new URLSearchParams(location.search).get('kod');
   if (kod && document.getElementById('search-input')) {
     // QR / bağlantı ile gelen müşteri: afişi gizle, sorguyu çalıştır, sonuca otomatik kaydır
@@ -799,6 +800,23 @@ async function performSearchInner() {
   resultBox.innerHTML = (matches.length > 1
     ? `<p class="text-sm font-semibold text-slate-600 mb-3 text-center">Bu numaraya ait ${matches.length} kayıt bulundu (en yenisi üstte):</p>` : '')
     + matches.map(ticketCardHtml).join('<div class="h-5"></div>');
+  if (matches[0] && matches[0].id) saveRecent(matches[0].id);
+}
+
+const RECENT_KEY = 'nokta_recent_codes';
+function getRecent() { try { const r = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); return Array.isArray(r) ? r.filter(x => typeof x === 'string' && /^[A-Z0-9-]{3,24}$/i.test(x)).slice(0, 5) : []; } catch (e) { return []; } }
+function saveRecent(code) {
+  if (!code) return;
+  try { const r = getRecent().filter(x => x !== code); r.unshift(code); localStorage.setItem(RECENT_KEY, JSON.stringify(r.slice(0, 5))); } catch (e) {}
+  renderRecent();
+}
+function clearRecent() { try { localStorage.removeItem(RECENT_KEY); } catch (e) {} renderRecent(); }
+function renderRecent() {
+  const box = document.getElementById('recent-codes'); if (!box) return;
+  const r = getRecent();
+  box.innerHTML = r.length
+    ? '<span>Son sorgular:</span>' + r.map(c => `<button type="button" onclick="fillSearch('${esc(c)}')">${esc(c)}</button>`).join('') + '<button type="button" class="rc-clear" onclick="clearRecent()">Temizle</button>'
+    : '';
 }
 
 function stepperMini(cur) {

@@ -360,3 +360,16 @@ header nav[class*="md:flex"]>*{white-space:nowrap;flex:none}
   .review-band p{font-size:.82rem}
   .review-btn{width:100%;justify-content:center}
 }
+
+/* ===== v23: masaüstü başlık/menü taşmasını düzelt ===== */
+header nav[class*="md:flex"]{justify-content:flex-start;margin:0 .75rem;overflow-x:auto}
+header nav[class*="md:flex"]>:first-child{margin-left:auto}
+header nav[class*="md:flex"]>:last-child{margin-right:auto}
+header nav[class*="md:flex"] button{padding-left:.8rem;padding-right:.8rem}
+header .flex.items-center.space-x-3.cursor-pointer{margin-right:.25rem}
+@media(max-width:1535px){
+  header p[class*="xl:block"]{display:none}
+  header #header-call span[class*="xl:inline"]{display:none}
+}
+@media(max-width:1279px){header nav[class*="md:flex"] i{display:none}}
+@media(min-width:768px) and (max-width:1023px){header nav[class*="md:flex"] button{padding-left:.55rem;padding-right:.55rem;font-size:.8rem}}

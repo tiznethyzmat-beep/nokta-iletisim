@@ -842,8 +842,8 @@ function ticketCardHtml(match) {
           <strong class="text-slate-900 text-sm">${esc(match.device)}</strong>
         </div>
         <div>
-          <span class="text-slate-500 font-semibold block">Teslim alınan</span>
-          <span class="text-amber-800 font-semibold">${esc(match.gelenler || 'Teslim alınan aksesuar yok')}</span>
+          <span class="text-slate-500 font-semibold block">Aksesuar</span>
+          <span class="text-amber-800 font-semibold">${esc(match.gelenler || 'Yok')}</span>
         </div>
         <div>
           <span class="text-slate-500 font-semibold block">Tahmini ücret</span>
@@ -862,7 +862,7 @@ function ticketCardHtml(match) {
         </div>
         <div>
           <h5 class="font-extrabold text-sky-900 text-sm">Tekniker güncelleme notu</h5>
-          <p class="text-slate-950 text-base sm:text-lg mt-1 font-semibold leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
+          <p class="text-slate-950 text-base mt-1 font-medium leading-snug">${esc(match.note || 'Henüz ek bir not girilmedi.')}</p>
         </div>
       </div>
 

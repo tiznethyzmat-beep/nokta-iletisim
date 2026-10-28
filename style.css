@@ -431,3 +431,9 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .result-card .tech-note{padding:.9rem 1rem}
 .result-card .tech-note h5{font-size:.8rem;font-weight:700;color:#0f6b67}
 @media(max-width:380px){.result-card .detail-grid{grid-template-columns:1fr}}
+
+/* ===== v27: sonuç kartı ince ayar ===== */
+.result-card .detail-grid strong,.result-card .detail-grid span.text-amber-800{font-weight:600}
+.result-card .detail-grid .dg-wide p{font-weight:600}
+.result-card .detail-grid span.text-amber-800{color:#92400e}
+.result-card .tech-note{background:#ecf8f5;border:1px solid #9bdcd2}

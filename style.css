@@ -575,3 +575,26 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .st-kvkk{margin-top:.9rem;text-align:center;font-size:.78rem;color:#64748b}
 .st-kvkk a{color:#0f6b67;text-decoration:underline}
 #booking-form input,#booking-form textarea{min-height:48px;font-size:1rem}
+
+/* ===== v36: İletişim ve SSS sahypalary ===== */
+#view-sss .glass-card,#view-iletisim .glass-card{border-radius:1.4rem}
+#view-sss ol li{padding:.9rem 1rem;border:1px solid #e2e8f0;border-radius:1rem;background:#f8fafc;align-items:flex-start}
+#view-sss ol li>span:first-child{background:#0f6b67 !important;color:#fff !important}
+#view-sss ol li:last-child>span:first-child{background:#16a34a !important}
+#view-sss ul.list-disc{padding-left:1.25rem}
+#faq-list{border:0 !important}
+#faq-list>details{margin:.55rem .2rem;padding:0 !important;border:1px solid #e2e8f0 !important;border-radius:1rem;background:#fff}
+#faq-list>details[open]{border-color:#9bdcd2 !important;background:#f3fbf9}
+#faq-list summary{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.95rem 1rem;list-style:none;font-size:.95rem;min-height:52px}
+#faq-list summary::-webkit-details-marker{display:none}
+#faq-list summary::after{content:"+";flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:#ecf8f5;color:#0f6b67;font-size:1.2rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+#faq-list details[open] summary::after{content:"\2212";background:#0f6b67;color:#fff}
+#faq-list details p{margin:0 !important;padding:0 1rem 1rem !important;line-height:1.65;color:#475569}
+.sss-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;padding:1.3rem 1.4rem;border-radius:1.4rem;color:#fff;background:radial-gradient(420px 180px at 100% 0%,rgba(22,160,149,.4),transparent 60%),#0e1a2c}
+.sss-cta h2{font-size:1.15rem;font-weight:800}
+.sss-cta p{font-size:.88rem;color:#cbd5e1;margin-top:.2rem}
+.sss-cta a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:50px;padding:0 1.2rem;border-radius:.95rem;background:#16a34a;color:#fff;font-weight:700}
+@media(max-width:640px){.sss-cta a{width:100%}}
+#view-iletisim ul.space-y-4>li{padding:.75rem .85rem;border:1px solid #e2e8f0;border-radius:1rem;background:#f8fafc;align-items:center}
+#view-iletisim .grid.gap-2 a{min-height:52px;font-size:.95rem}
+#view-iletisim iframe{border-radius:1.1rem}

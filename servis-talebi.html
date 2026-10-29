@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=25">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body data-page="randevu" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -115,28 +115,40 @@
             <p class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-3 inline-block"><i class="fa-solid fa-store mr-1"></i> Kargo/adrese teslim yoktur: cihazı mağazaya kendiniz getirir, kendiniz teslim alırsınız. Resmi kayıt cihaz mağazaya gelince açılır.</p>
           </div>
 
+          <div class="fp" id="form-progress" aria-live="polite">
+            <div class="fp-top"><strong id="fp-title">4 alan kaldı</strong><span id="fp-count">0 / 4</span></div>
+            <div class="fp-bar"><span id="fp-fill"></span></div>
+            <ul class="fp-list">
+              <li data-k="book-name"><i></i>Ad soyad</li>
+              <li data-k="book-phone"><i></i>Telefon</li>
+              <li data-k="book-device"><i></i>Cihaz</li>
+              <li data-k="book-problem"><i></i>Arıza</li>
+            </ul>
+          </div>
           <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="space-y-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Müşteri Adı Soyadı *</label>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Müşteri adı soyadı <span class="fld-ck" data-for="book-name"></span></label>
                 <input type="text" id="book-name" required placeholder="Örn: Ahmet Yılmaz" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Telefon Numarası *</label>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Telefon numarası <span class="fld-ck" data-for="book-phone"></span></label>
                 <input type="tel" id="book-phone" required placeholder="05XX XXX XX XX" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cihaz Marka & Modeli *</label>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cihaz marka ve modeli <span class="fld-ck" data-for="book-device"></span></label>
                 <input type="text" id="book-device" required placeholder="Örn: iPhone 13 Pro / Samsung S21" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
+              <div class="qchips"><button type="button" class="qchip" data-brand="iPhone">iPhone</button><button type="button" class="qchip" data-brand="Samsung">Samsung</button><button type="button" class="qchip" data-brand="Xiaomi">Xiaomi</button><button type="button" class="qchip" data-brand="Redmi">Redmi</button><button type="button" class="qchip" data-brand="Tecno">Tecno</button><button type="button" class="qchip" data-brand="Oppo">Oppo</button></div>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Şikayet / Arıza Açıklaması *</label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Arıza açıklaması <span class="fld-ck" data-for="book-problem"></span></label>
               <textarea id="book-problem" rows="3" required placeholder="Cihazın sorununu detaylıca yazınız..." class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium"></textarea>
+            <div class="qchips"><button type="button" class="qchip" data-issue="Ekran kırık">Ekran kırık</button><button type="button" class="qchip" data-issue="Batarya">Batarya</button><button type="button" class="qchip" data-issue="Şarj almıyor">Şarj almıyor</button><button type="button" class="qchip" data-issue="Suya düştü">Suya düştü</button><button type="button" class="qchip" data-issue="Açılmıyor">Açılmıyor</button><button type="button" class="qchip" data-issue="Kamera / ses">Kamera / ses</button></div>
             </div>
 
             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all text-sm flex items-center justify-center gap-2">
@@ -150,7 +162,34 @@
 
 
   <div class="review-band"><div class="stars" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div><h3>Hizmetimizden memnun kaldınız mı?</h3><p>Google'da kısa bir yorum yazmanız, başka müşterilerin bizi bulmasına yardımcı olur.</p></div><a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="review-btn"><i class="fa-brands fa-google"></i> Google'da yorum yaz</a></div>
-  </main>
+  <script>
+(function(){
+  var ids=['book-name','book-phone','book-device','book-problem'];
+  function ok(id){var v=(document.getElementById(id)||{}).value||'';v=v.trim();return id==='book-phone'?v.replace(/\D/g,'').length>=10:v.length>=2}
+  function upd(){
+    var n=0;
+    ids.forEach(function(id){var g=ok(id);if(g)n++;
+      document.querySelectorAll('[data-for="'+id+'"]').forEach(function(e){e.className='fld-ck'+(g?' on':'')});
+      var li=document.querySelector('.fp-list [data-k="'+id+'"]');if(li)li.className=g?'on':'';});
+    var left=4-n;
+    document.getElementById('fp-count').textContent=n+' / 4';
+    document.getElementById('fp-fill').style.width=(n*25)+'%';
+    document.getElementById('fp-title').textContent=left?(left+' alan kaldı'):'Hazır, gönderebilirsiniz';
+    document.getElementById('form-progress').classList.toggle('done',!left);
+  }
+  ids.forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('input',upd)});
+  document.querySelectorAll('[data-brand]').forEach(function(b){b.addEventListener('click',function(){
+    var d=document.getElementById('book-device'),v=d.value.trim(),br=b.dataset.brand;
+    if(v.toLowerCase().indexOf(br.toLowerCase())!==0)d.value=br+' '+v.replace(/^(iPhone|Samsung|Xiaomi|Redmi|Tecno|Oppo)\s*/i,'');
+    d.focus();upd();})});
+  document.querySelectorAll('[data-issue]').forEach(function(b){b.addEventListener('click',function(){
+    var t=document.getElementById('book-problem'),v=t.value.trim(),is=b.dataset.issue;
+    if(v.indexOf(is)===-1)t.value=v?(v+', '+is):is;
+    b.classList.add('on');upd();})});
+  upd();
+})();
+</script>
+</main>
 
   <!-- MODAL: GİRİŞ -->
   <div id="modal-login" class="fixed inset-0 z-50 bg-slate-950/80 hidden flex items-center justify-center p-4">

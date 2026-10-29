@@ -536,3 +536,26 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .ms-c:not(.ms-done):not(.ms-now):not(.ms-fin){color:#b6c0cc;background:#f8fafc}
 .ms-now{background:#0f6b67;color:#fff;box-shadow:0 0 0 5px rgba(15,107,103,.16)}
 .ms-s{font-size:.7rem;font-weight:700;color:#0f6b67;margin-top:-.1rem}
+
+/* ===== v34: Servis Talebi doldurma ilerlemesi ===== */
+#booking-form label{text-transform:none !important;letter-spacing:0 !important;font-size:.85rem !important;font-weight:600 !important;display:flex;align-items:center;gap:.45rem}
+.fld-ck{width:1.15rem;height:1.15rem;border-radius:50%;border:1.5px solid #cbd5e1;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:.65rem;color:transparent}
+.fld-ck.on{background:#16a34a;border-color:#16a34a;color:#fff}
+.fld-ck.on::before,.fp-list li.on i::before{content:"\2713";font-style:normal;font-weight:800;line-height:1}
+.fp{margin:0 0 1.25rem;padding:1rem 1.1rem;border-radius:1.1rem;background:#f1f5f9;border:1px solid #e2e8f0}
+.fp.done{background:#ecfdf5;border-color:#a7f3d0}
+.fp-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.55rem}
+.fp-top strong{font-size:1rem;color:#0e1a2c}
+.fp-top span{font-size:.85rem;font-weight:700;color:#0f6b67}
+.fp-bar{height:.5rem;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.fp-bar span{display:block;height:100%;width:0;background:#16a34a;border-radius:999px;transition:width .25s}
+.fp-list{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .8rem;margin-top:.8rem;list-style:none;font-size:.85rem;color:#64748b}
+@media(min-width:640px){.fp-list{grid-template-columns:repeat(4,1fr)}}
+.fp-list li{display:flex;align-items:center;gap:.45rem}
+.fp-list li i{width:1.15rem;height:1.15rem;border-radius:50%;border:1.5px solid #cbd5e1;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;flex:none}
+.fp-list li.on{color:#0e1a2c;font-weight:600}
+.fp-list li.on i{background:#16a34a;border-color:#16a34a}
+.qchips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem}
+.qchip{padding:.45rem .8rem;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:.85rem;color:#0e1a2c;min-height:38px}
+.qchip:hover{border-color:#16a095;background:#ecf8f5}
+.qchip.on{background:#0f6b67;border-color:#0f6b67;color:#fff}

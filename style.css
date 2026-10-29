@@ -529,3 +529,10 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rc-note{background:#c9e9c9;border:1px solid #7cc47a}
 .rc-note span{color:#166534;font-weight:600;font-size:.85rem}
 .rc-note p{font-size:1.02rem;font-weight:500}
+
+/* ===== v33: geçen ädimde ✓, häzirki we geljekki ädimde ikon ===== */
+.ms-c{width:2.2rem;height:2.2rem;font-size:.95rem}
+.ms-line{top:1.1rem}
+.ms-c:not(.ms-done):not(.ms-now):not(.ms-fin){color:#b6c0cc;background:#f8fafc}
+.ms-now{background:#0f6b67;color:#fff;box-shadow:0 0 0 5px rgba(15,107,103,.16)}
+.ms-s{font-size:.7rem;font-weight:700;color:#0f6b67;margin-top:-.1rem}

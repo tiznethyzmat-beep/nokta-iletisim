@@ -736,7 +736,7 @@ function stepperHtml(cur) {
     const line = i < 3 ? `<span class="absolute top-6 -mt-0.5 left-1/2 w-full h-1 rounded-full ${n < cur ? 'bg-sky-500' : 'bg-slate-200'}"></span>` : '';
     const tc = fin ? 'font-bold text-emerald-700' : now ? 'font-bold text-slate-900' : done ? 'font-semibold text-sky-700' : 'text-slate-400 font-medium';
     return `<li class="relative flex flex-col items-center text-center">${line}
-      <span class="relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-lg ${circle}">${done || fin ? '<i class="fa-solid fa-check"></i>' : n}</span>
+      <span class="relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-lg ${circle}"><i class="fa-solid ${done || fin ? 'fa-check' : ic}"></i></span>
       <span class="mt-2.5 text-[11px] sm:text-xs leading-tight ${tc}">${t}</span>
       ${now ? `<span class="mt-1 text-[10px] font-semibold ${fin ? 'text-emerald-600' : 'text-sky-600'}">${fin ? 'Gelip alabilirsiniz' : 'Şu an burada'}</span>` : ''}</li>`;
   }).join('') + '</ol>';
@@ -820,13 +820,13 @@ function renderRecent() {
 }
 
 function stepperMini(cur, status) {
-  const steps = [['Kayıt', ''], ['Tespit', ''], ['Tamirde', ''], ['Hazır', '']];
+  const steps = [['Kayıt', 'fa-clipboard-list'], ['Tespit', 'fa-magnifying-glass'], ['Tamirde', 'fa-screwdriver-wrench'], ['Hazır', 'fa-box-open']];
   return '<ol class="ms">' + steps.map(([t, ic], k) => {
     const n = k + 1, done = n < cur || (status === 'teslim' && n === 4), fin = status === 'hazir' && n === 4, now = n === cur && !done;
     const cls = fin ? 'ms-c ms-fin' : done ? 'ms-c ms-done' : now ? 'ms-c ms-now' : 'ms-c';
     const line = k < 3 ? `<span class="ms-line ${n < cur ? 'on' : ''}"></span>` : '';
     const sub = fin ? 'Gelip alabilirsiniz' : (now && status !== 'teslim' ? 'Şu an burada' : '');
-    return `<li>${line}<span class="${cls}">${done || fin ? '<i class="fa-solid fa-check"></i>' : n}</span><span class="ms-t ${done || now || fin ? 'on' : ''}">${t}</span>${sub ? `<span class="ms-s${fin ? ' fin' : ''}">${sub}</span>` : ''}</li>`;
+    return `<li>${line}<span class="${cls}"><i class="fa-solid ${done || fin ? 'fa-check' : ic}"></i></span><span class="ms-t ${done || now || fin ? 'on' : ''}">${t}</span>${sub ? `<span class="ms-s${fin ? ' fin' : ''}">${sub}</span>` : ''}</li>`;
   }).join('') + '</ol>';
 }
 

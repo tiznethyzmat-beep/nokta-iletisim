@@ -517,3 +517,15 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rc-dot{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:currentColor;margin-right:.45rem;vertical-align:middle}
 .rc-pill{display:inline-flex;align-items:center}
 .rc-tile span{line-height:1.25}
+
+/* ===== v32: yuvarlak ✓ ädimler we ýaşyl tekniker notu ===== */
+.ms-c{width:1.9rem;height:1.9rem;border-radius:50%;font-size:.85rem;font-weight:700;background:#fff;border:1.5px solid #cbd5e1;color:#64748b}
+.ms-line{top:.95rem;height:3px;background:#e2e8f0}
+.ms-line.on{background:#0f6b67}
+.ms-done{background:#0f6b67;border-color:#0f6b67;color:#fff}
+.ms-now{background:#0f6b67;border-color:#0f6b67;color:#fff;box-shadow:0 0 0 4px rgba(15,107,103,.18)}
+.ms-fin{background:#10b981;border-color:#10b981;color:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.2)}
+.ms-t{font-size:.8rem}
+.rc-note{background:#c9e9c9;border:1px solid #7cc47a}
+.rc-note span{color:#166534;font-weight:600;font-size:.85rem}
+.rc-note p{font-size:1.02rem;font-weight:500}

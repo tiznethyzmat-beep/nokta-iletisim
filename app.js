@@ -881,7 +881,14 @@ function handleBookingSubmit(e) {
   const problem = document.getElementById('book-problem').value;
 
   const mesaj = encodeURIComponent(`Merhaba Nokta İletişim,\n- *Müşteri:* ${name}\n- *Tel:* ${phone}\n- *Cihaz:* ${device}\n- *Arıza:* ${problem}\n- Cihazı mağazaya kendim getireceğim, kendim teslim alacağım.`);
-  window.open(`https://wa.me/${OFFICIAL_WA}?text=${mesaj}`, '_blank');
+  const waUrl = `https://wa.me/${OFFICIAL_WA}?text=${mesaj}`;
+  window.open(waUrl, '_blank');
+  const done = document.getElementById('book-done');
+  if (done) {
+    const l = document.getElementById('book-done-link'); if (l) l.href = waUrl;
+    done.hidden = false;
+    setTimeout(() => done.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+  }
 }
 
 // ======================================================================

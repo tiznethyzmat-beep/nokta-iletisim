@@ -43,7 +43,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=34">
+  <link rel="stylesheet" href="style.css?v=35">
 </head>
 <body data-page="randevu" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">
 
@@ -106,15 +106,11 @@
     <section id="view-randevu" class="tab-content space-y-6">
       <div class="max-w-3xl mx-auto">
         <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
-          <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-slate-900 flex items-center justify-center gap-2">
-              <i class="fa-solid fa-wrench text-sky-600"></i> Hızlı Servis Talebi Gönder
-            </h1>
-            <p class="price-note"><i class="fa-solid fa-circle-info"></i> Fiyatı cihazı mağazada görünce söyleriz; ön fiyat için WhatsApp'tan da yazabilirsiniz.</p>
-            <p class="text-slate-500 text-sm mt-1">Formu doldurun, WhatsApp üzerinden ön bilgi ve teknik destek alın.</p>
-            <p class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-3 inline-block"><i class="fa-solid fa-store mr-1"></i> Kargo/adrese teslim yoktur: cihazı mağazaya kendiniz getirir, kendiniz teslim alırsınız. Resmi kayıt cihaz mağazaya gelince açılır.</p>
+          <div class="st-head">
+            <h1>Servis talebi formu</h1>
+            <p>Bilgilerinizi yazın; mesajınız WhatsApp'ta hazır açılır.</p>
+            <div class="st-info"><i class="fa-solid fa-store"></i><p><strong>Kargo ve adrese teslim yoktur.</strong> Cihazı mağazaya kendiniz getirir, hazır olunca kendiniz teslim alırsınız. Fiyatı cihazı görünce söyleriz.</p></div>
           </div>
-
           <div class="fp" id="form-progress" aria-live="polite">
             <div class="fp-top"><strong id="fp-title">4 alan kaldı</strong><span id="fp-count">0 / 4</span></div>
             <div class="fp-bar"><span id="fp-fill"></span></div>
@@ -129,15 +125,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Müşteri adı soyadı <span class="fld-ck" data-for="book-name"></span></label>
-                <input type="text" id="book-name" required placeholder="Örn: Ahmet Yılmaz" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
+                <input type="text" id="book-name" name="name" autocomplete="name" required placeholder="Örn: Ahmet Yılmaz" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Telefon numarası <span class="fld-ck" data-for="book-phone"></span></label>
-                <input type="tel" id="book-phone" required placeholder="05XX XXX XX XX" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
+                <input type="tel" id="book-phone" name="tel" autocomplete="tel" inputmode="tel" maxlength="14" required placeholder="05XX XXX XX XX" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="grid grid-cols-1 gap-5">
               <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cihaz marka ve modeli <span class="fld-ck" data-for="book-device"></span></label>
                 <input type="text" id="book-device" required placeholder="Örn: iPhone 13 Pro / Samsung S21" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-slate-900 font-medium">
@@ -154,6 +150,12 @@
             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all text-sm flex items-center justify-center gap-2">
               <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp İle Servis Talebi Gönder
             </button>
+          <div id="book-done" class="st-done" hidden>
+            <i class="fa-solid fa-circle-check"></i>
+            <div><strong>Talebiniz hazırlandı.</strong><p>WhatsApp açıldıysa mesajı gönderin. Açılmadıysa aşağıdaki düğmeye basın.</p>
+            <a id="book-done-link" href="#" target="_blank" rel="noopener" class="st-done-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp'ı aç</a></div>
+          </div>
+          <p class="st-kvkk"><i class="fa-solid fa-lock"></i> Bilgileriniz yalnızca servis talebiniz için kullanılır. <a href="kvkk.html">KVKK aydınlatma metni</a></p>
           </form>
 
         </div>
@@ -188,6 +190,11 @@
     b.classList.add('on');upd();})});
   upd();
 })();
+</script>
+<script>
+(function(){var p=document.getElementById('book-phone');if(!p)return;
+p.addEventListener('input',function(){var d=p.value.replace(/\D/g,'').slice(0,11),o='';
+if(d.length>0)o=d.slice(0,4);if(d.length>4)o+=' '+d.slice(4,7);if(d.length>7)o+=' '+d.slice(7,9);if(d.length>9)o+=' '+d.slice(9,11);p.value=o;});})();
 </script>
 </main>
 
@@ -430,6 +437,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=19"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>

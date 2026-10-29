@@ -559,3 +559,19 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .qchip{padding:.45rem .8rem;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:.85rem;color:#0e1a2c;min-height:38px}
 .qchip:hover{border-color:#16a095;background:#ecf8f5}
 .qchip.on{background:#0f6b67;border-color:#0f6b67;color:#fff}
+
+/* ===== v35: Servis Talebi sade başlık, onay ve KVKK notu ===== */
+.st-head{text-align:center;margin-bottom:1.25rem}
+.st-head h1{font-size:1.5rem;font-weight:800;color:#0e1a2c;line-height:1.25}
+.st-head>p{margin-top:.35rem;color:#475569;font-size:.95rem}
+.st-info{display:flex;gap:.75rem;align-items:flex-start;text-align:left;margin-top:1rem;padding:.9rem 1rem;border-radius:1rem;background:#fffbeb;border:1.5px solid #fcd34d;color:#78350f}
+.st-info i{color:#d97706;margin-top:.2rem}
+.st-info p{font-size:.88rem;line-height:1.55}
+.st-done{display:flex;gap:.8rem;margin-top:1rem;padding:1rem 1.1rem;border-radius:1rem;background:#ecfdf5;border:1.5px solid #6ee7b7;color:#064e3b}
+.st-done[hidden]{display:none}
+.st-done>i{font-size:1.4rem;color:#16a34a;margin-top:.1rem}
+.st-done p{font-size:.88rem;margin-top:.15rem;line-height:1.5}
+.st-done-btn{display:inline-flex;align-items:center;gap:.5rem;margin-top:.6rem;padding:.65rem 1rem;border-radius:.85rem;background:#16a34a;color:#fff;font-weight:700;font-size:.9rem;min-height:44px}
+.st-kvkk{margin-top:.9rem;text-align:center;font-size:.78rem;color:#64748b}
+.st-kvkk a{color:#0f6b67;text-decoration:underline}
+#booking-form input,#booking-form textarea{min-height:48px;font-size:1rem}

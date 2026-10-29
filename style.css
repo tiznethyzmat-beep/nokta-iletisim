@@ -598,3 +598,12 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 #view-iletisim ul.space-y-4>li{padding:.75rem .85rem;border:1px solid #e2e8f0;border-radius:1rem;background:#f8fafc;align-items:center}
 #view-iletisim .grid.gap-2 a{min-height:52px;font-size:.95rem}
 #view-iletisim iframe{border-radius:1.1rem}
+
+/* ===== v37: Instagram kartı ===== */
+.sale-ig{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.25rem;padding:1.3rem 1.4rem;border-radius:1.4rem;color:#fff;background:linear-gradient(120deg,#7c2ae8 0%,#d62976 55%,#f58529 100%)}
+.sale-ig-ic{flex:none;width:3.2rem;height:3.2rem;border-radius:1rem;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.sale-ig>div{flex:1 1 15rem}
+.sale-ig h2{font-size:1.2rem;font-weight:800}
+.sale-ig p{font-size:.9rem;margin-top:.25rem;line-height:1.5;color:rgba(255,255,255,.92)}
+.sale-ig>a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:50px;padding:0 1.3rem;border-radius:.95rem;background:#fff;color:#9d174d;font-weight:800}
+@media(max-width:640px){.sale-ig>a{width:100%}}

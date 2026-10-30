@@ -607,3 +607,6 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .sale-ig p{font-size:.9rem;margin-top:.25rem;line-height:1.5;color:rgba(255,255,255,.92)}
 .sale-ig>a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:50px;padding:0 1.3rem;border-radius:.95rem;background:#fff;color:#9d174d;font-weight:800}
 @media(max-width:640px){.sale-ig>a{width:100%}}
+
+.footer-services{border-top:0;margin-top:.6rem;padding-top:0}
+.footer-services a{font-size:.82rem}

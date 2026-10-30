@@ -642,3 +642,15 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 #view-hizmet .divide-y{border:0}
 #view-hizmet .divide-y>div{border:1px solid #e2e8f0 !important;border-radius:1rem;padding:.9rem 1rem !important;margin-bottom:.55rem;background:#fff}
 #view-hizmet .review-band{margin-top:0}
+
+/* ===== v41: Instagram bağlantısı hizası, müşteri yorumları ===== */
+.info-links{display:flex;flex-wrap:wrap;gap:.3rem 1.1rem;margin-top:.5rem}
+.info-links .info-link{margin-top:0;margin-left:0}
+.rev-grid{display:grid;gap:.8rem;margin-top:1.1rem;grid-template-columns:1fr}
+@media(min-width:768px){.rev-grid{grid-template-columns:repeat(3,1fr)}}
+.rev-card{margin:0;padding:1.1rem 1.15rem;border-radius:1.1rem;background:#f8fafc;border:1px solid #e2e8f0;display:flex;flex-direction:column;gap:.5rem}
+.rev-stars{color:#f5b301;font-size:.95rem;letter-spacing:.1rem}
+.rev-card blockquote{margin:0;font-size:.95rem;line-height:1.55;color:#0e1a2c;flex:1}
+.rev-card figcaption{font-size:.85rem;font-weight:700;color:#0e1a2c}
+.rev-card figcaption span{font-weight:500;color:#64748b}
+.rev-more{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;font-weight:700;font-size:.9rem;color:#0f6b67;border-bottom:2px solid #74d3c8;padding-bottom:.1rem}

@@ -49,5 +49,18 @@ service cloud.firestore {
         && request.resource.data.p is string && request.resource.data.p.size() < 30;
       allow read, delete: if isAdmin();
     }
+
+    // Müşteri yorumları: herkes okur ve yeni yorum yazar; yalnız yönetici siler
+    match /reviews/{rid} {
+      allow read: if true;
+      allow create: if rid.matches('^[A-Za-z0-9]{10,24}$')
+        && request.resource.data.keys().hasOnly(['n', 'r', 't', 'ts'])
+        && request.resource.data.n is string && request.resource.data.n.size() >= 2 && request.resource.data.n.size() <= 30
+        && request.resource.data.r is int && request.resource.data.r >= 1 && request.resource.data.r <= 5
+        && request.resource.data.t is string && request.resource.data.t.size() >= 5 && request.resource.data.t.size() <= 400
+        && request.resource.data.ts is number;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
   }
 }

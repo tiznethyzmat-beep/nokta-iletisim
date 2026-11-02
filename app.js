@@ -474,9 +474,11 @@ const DB = {
     if (user) {
       DB.listen();
       startLive();
+      startReviewsAdmin();
       closeModal('modal-login');
     } else {
       if (stopListening) { stopListening(); stopListening = null; }
+      stopReviewsAdmin();
       stopLive();
       ticketsCache = [];
       resetAdminUi();
@@ -653,6 +655,7 @@ window.onload = function () {
   if (document.getElementById('view-' + PAGE)) switchTab(PAGE);
   if (PAGE === 'admin' && !USE_FIREBASE) location.replace('index.html?giris=1');
   renderRecent();
+  reviewsInit();
   const kod = new URLSearchParams(location.search).get('kod');
   if (kod && document.getElementById('search-input')) {
     // QR / bağlantı ile gelen müşteri: afişi gizle, sorguyu çalıştır, sonuca otomatik kaydır
@@ -817,6 +820,75 @@ function renderRecent() {
   box.innerHTML = r.length
     ? '<span>Son sorgular:</span>' + r.map(c => `<button type="button" onclick="fillSearch('${esc(c)}')">${esc(c)}</button>`).join('') + '<button type="button" class="rc-clear" onclick="clearRecent()">Temizle</button>'
     : '';
+}
+
+
+// ======================================================================
+// MÜŞTERİ YORUMLARI (herkes yazar, tekniker panelden siler)
+// ======================================================================
+let rvStars = 5, rvTries = 0, rvAdminUnsub = null;
+const rvDate = ts => { const d = new Date(ts || 0); return isNaN(d) ? '' : String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
+const rvStarsHtml = n => '<span class="rev-stars" aria-label="' + n + ' yıldız">' + '<i class="fa-solid fa-star"></i>'.repeat(n) + '<i class="fa-regular fa-star"></i>'.repeat(5 - n) + '</span>';
+
+function reviewsInit() {
+  const list = document.getElementById('site-reviews');
+  if (!list) return;
+  if (!fbDb) { if (rvTries++ < 12) setTimeout(reviewsInit, 500); return; }
+  const wrap = document.getElementById('rv-stars');
+  if (wrap && !wrap.dataset.ready) {
+    wrap.dataset.ready = '1';
+    const paint = () => wrap.querySelectorAll('button').forEach(b => { const on = +b.dataset.v <= rvStars; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.querySelector('i').className = on ? 'fa-solid fa-star' : 'fa-regular fa-star'; });
+    wrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { rvStars = +b.dataset.v; paint(); }));
+    paint();
+    const f = document.getElementById('rv-form'); if (f) f.addEventListener('submit', submitReview);
+  }
+  loadReviews();
+}
+
+function loadReviews() {
+  const list = document.getElementById('site-reviews'); if (!list || !fbDb) return;
+  fbDb.collection('reviews').orderBy('ts', 'desc').limit(30).get().then(snap => {
+    const items = snap.docs.map(d => d.data()).filter(x => x && x.t && x.n);
+    list.innerHTML = items.map(x => '<figure class="rev-card">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<blockquote>“' + esc(x.t) + '”</blockquote><figcaption>' + esc(x.n) + ' <span>· ' + rvDate(x.ts) + '</span></figcaption></figure>').join('');
+    const head = document.getElementById('site-reviews-head'); if (head) head.hidden = !items.length;
+  }).catch(() => {});
+}
+
+function submitReview(e) {
+  e.preventDefault();
+  const msg = document.getElementById('rv-msg'), btn = document.querySelector('#rv-form button[type=submit]');
+  const say = (t, ok) => { msg.textContent = t; msg.className = 'rv-msg ' + (ok ? 'ok' : 'err'); };
+  if (document.getElementById('rv-hp').value) return;
+  const n = document.getElementById('rv-name').value.trim().replace(/\s+/g, ' ');
+  const t = document.getElementById('rv-text').value.trim().replace(/\s+/g, ' ');
+  if (n.length < 2) return say('Lütfen adınızı yazın.', false);
+  if (t.length < 5) return say('Lütfen yorumunuzu yazın (en az 5 karakter).', false);
+  if (/(\+?90|0)?\s?5\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/.test(t) || /https?:\/\/|www\./i.test(t)) return say('Yoruma telefon numarası veya bağlantı yazmayın.', false);
+  let last = 0; try { last = +localStorage.getItem('nokta_rv_ts') || 0; } catch (x) {}
+  if (Date.now() - last < 10 * 60 * 1000) return say('Kısa süre önce yorum gönderdiniz. Lütfen biraz sonra tekrar deneyin.', false);
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => (b % 36).toString(36)).join('');
+  btn.disabled = true; say('Gönderiliyor...', true);
+  fbDb.collection('reviews').doc(id).set({ n: n.slice(0, 30), r: rvStars, t: t.slice(0, 400), ts: Date.now() }).then(() => {
+    try { localStorage.setItem('nokta_rv_ts', String(Date.now())); } catch (x) {}
+    document.getElementById('rv-text').value = '';
+    say('Teşekkürler! Yorumunuz yayınlandı.', true);
+    loadReviews();
+  }).catch(() => say('Şu an gönderilemedi. Lütfen daha sonra tekrar deneyin.', false)).finally(() => { btn.disabled = false; });
+}
+
+function startReviewsAdmin() {
+  const box = document.getElementById('admin-reviews'); if (!box || !fbDb || rvAdminUnsub) return;
+  rvAdminUnsub = fbDb.collection('reviews').orderBy('ts', 'desc').onSnapshot(snap => {
+    const cnt = document.getElementById('rv-count'); if (cnt) cnt.textContent = snap.size ? '(' + snap.size + ')' : '';
+    box.innerHTML = snap.empty
+      ? '<p class="rva-empty">Henüz yorum yok.</p>'
+      : snap.docs.map(d => { const x = d.data(); return '<div class="rva-item"><div class="rva-body">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<p>' + esc(x.t) + '</p><small>' + esc(x.n) + ' · ' + rvDate(x.ts) + '</small></div><button type="button" class="rva-del" onclick="deleteReview(\'' + esc(d.id) + '\')"><i class="fa-solid fa-trash"></i> Sil</button></div>'; }).join('');
+  }, () => { box.innerHTML = '<p class="rva-empty">Yorumlar okunamadı. Firestore kurallarını yayınladınız mı?</p>'; });
+}
+function stopReviewsAdmin() { if (rvAdminUnsub) { rvAdminUnsub(); rvAdminUnsub = null; } }
+function deleteReview(id) {
+  if (!confirm('Bu yorum silinsin mi? Bu işlem geri alınamaz.')) return;
+  fbDb.collection('reviews').doc(id).delete().catch(() => alert('Silinemedi. Lütfen tekrar deneyin.'));
 }
 
 function stepperMini(cur, status) {
@@ -1010,8 +1082,8 @@ function setFilter(v) { document.getElementById('admin-status-filter').value = v
 // Panel sekmeleri: Özet / Kayıtlar / Sistem
 function setPanelTab(t) {
   if (!document.getElementById('tab-ozet')) return;
-  if (!['ozet', 'kayit', 'sistem'].includes(t)) t = 'ozet';
-  ['ozet', 'kayit', 'sistem'].forEach(k => document.getElementById('tab-' + k).classList.toggle('hidden', k !== t));
+  if (!['ozet', 'kayit', 'yorum', 'sistem'].includes(t)) t = 'ozet';
+  ['ozet', 'kayit', 'yorum', 'sistem'].forEach(k => document.getElementById('tab-' + k).classList.toggle('hidden', k !== t));
   document.querySelectorAll('#panel-tabs .ptab').forEach(b => b.classList.toggle('ptab-on', b.dataset.ptab === t));
   try { localStorage.setItem('nokta_ptab', t); } catch (e) {}
 }

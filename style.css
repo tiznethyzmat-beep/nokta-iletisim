@@ -654,3 +654,31 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rev-card figcaption{font-size:.85rem;font-weight:700;color:#0e1a2c}
 .rev-card figcaption span{font-weight:500;color:#64748b}
 .rev-more{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;font-weight:700;font-size:.9rem;color:#0f6b67;border-bottom:2px solid #74d3c8;padding-bottom:.1rem}
+
+/* ===== v42: müşteri yorumları (yazma + panel) ===== */
+.rv-write{margin-top:1.4rem;padding:1.2rem;border-radius:1.2rem;background:#f1f9f7;border:1px solid #c9eee6}
+.rv-write h3,.rv-sub{font-size:1.1rem;font-weight:800;color:#0e1a2c}
+.rv-sub{margin-top:1.4rem}
+.rv-write form{display:grid;gap:.5rem;margin-top:.7rem}
+.rv-lbl{font-size:.82rem;font-weight:600;color:#475569;margin-top:.35rem}
+.rv-stars-input{display:flex;gap:.25rem}
+.rv-stars-input button{font-size:1.7rem;color:#cbd5e1;padding:.15rem .2rem;min-width:2.6rem;min-height:2.6rem;line-height:1}
+.rv-stars-input button.on{color:#f5b301}
+#rv-form input[type=text],#rv-form textarea{width:100%;min-height:48px;padding:.65rem .85rem;border:1.5px solid #cbd5e1;border-radius:.9rem;background:#fff;font-size:1rem;color:#0e1a2c}
+#rv-form textarea{resize:vertical;min-height:90px}
+#rv-form input:focus,#rv-form textarea:focus{outline:none;border-color:#16a095;box-shadow:0 0 0 4px rgba(22,160,149,.18)}
+.rv-hp{position:absolute !important;left:-9999px !important;width:1px !important;height:1px !important;opacity:0}
+.rv-msg{font-size:.85rem;font-weight:600;min-height:1.2rem}
+.rv-msg.ok{color:#15803d}.rv-msg.err{color:#b91c1c}
+.rv-send{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:52px;border-radius:1rem;background:#0f6b67;color:#fff;font-weight:700;font-size:1rem}
+.rv-send:hover{background:#0b5753}.rv-send:disabled{opacity:.6}
+.rv-note{font-size:.78rem;color:#64748b}
+.rva-list{display:grid;gap:.6rem;margin-top:.9rem}
+.rva-item{display:flex;gap:.8rem;align-items:flex-start;justify-content:space-between;padding:.85rem 1rem;border:1px solid #e2e8f0;border-radius:1rem;background:#fff}
+.rva-body{min-width:0;flex:1}
+.rva-body p{margin-top:.2rem;font-size:.95rem;color:#0e1a2c;overflow-wrap:anywhere}
+.rva-body small{color:#64748b}
+.rva-del{flex:none;min-height:42px;padding:0 .9rem;border-radius:.8rem;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;font-weight:700;font-size:.85rem}
+.rva-del:hover{background:#b91c1c;color:#fff}
+.rva-empty{padding:1rem;color:#64748b;font-size:.9rem}
+#rv-count{font-weight:800}

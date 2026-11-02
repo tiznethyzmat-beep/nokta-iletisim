@@ -44,7 +44,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=42">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobilePhoneStore", "name": "Nokta İletişim", "description": "Kırklareli'nde telefon tamiri, sıfır ve 2. el telefon satışı ve takas.", "image": "https://nokta-iletisim.vercel.app/og-image.png", "logo": "https://nokta-iletisim.vercel.app/logo.png", "url": "https://nokta-iletisim.vercel.app", "telephone": "+905422888288", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}, "areaServed": {"@type": "City", "name": "Kırklareli"}, "knowsAbout": ["Telefon tamiri", "Tablet tamiri", "Ekran değişimi", "Batarya değişimi", "Şarj soketi tamiri", "Sıvı teması tamiri"], "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "10:00", "closes": "20:00"}], "sameAs": ["https://www.instagram.com/noktailetisim39/", "https://g.page/r/CUqajgS4nXY0EBM/review"]}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Kırklareli’nde telefon tamiri nerede yapılır?", "acceptedAnswer": {"@type": "Answer", "text": "Nokta İletişim, Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli adresinde cep telefonu ve tablet teknik servisi hizmeti verir. Telefon veya WhatsApp ile +90 542 288 82 88 numarasından ulaşabilirsiniz."}}, {"@type": "Question", "name": "Cihazımın tamir durumunu nasıl öğrenirim?", "acceptedAnswer": {"@type": "Answer", "text": "Cihaz teslim alındığında size bir servis kodu verilir. Bu kodu veya telefon numaranızı sitemizdeki “Cihaz Sorgula” bölümüne yazarak kayıt alındı, arıza tespiti, tamirde ve teslime hazır aşamalarını canlı takip edebilirsiniz."}}, {"@type": "Question", "name": "Hangi telefon ve tablet markalarının tamiri yapılıyor?", "acceptedAnswer": {"@type": "Answer", "text": "iPhone, Samsung, Xiaomi, Redmi, Poco, Tecno, Oppo, Huawei gibi birçok marka ve modelde ekran değişimi, batarya değişimi, şarj soketi tamiri ve sıvı teması onarımı yapılır. Modeliniz için mağazamızı arayabilirsiniz."}}, {"@type": "Question", "name": "Kargo ile cihaz gönderebilir miyim?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Nokta İletişim cihazı adresten almaz ve adrese göndermez; cihazınızı mağazaya kendiniz getirir, tamir bitince kendiniz teslim alırsınız."}}, {"@type": "Question", "name": "Servis talebini nasıl oluştururum?", "acceptedAnswer": {"@type": "Answer", "text": "Sitedeki “Servis Talebi” sayfasındaki formu doldurup WhatsApp ile bize gönderebilirsiniz. Resmi servis kaydı cihaz mağazaya geldiğinde açılır."}}, {"@type": "Question", "name": "Ekran değişimi, batarya ve şarj soketi tamiri yapıyor musunuz?", "acceptedAnswer": {"@type": "Answer", "text": "Evet. Ekran değişimi, batarya yenileme, şarj soketi tamiri, sıvı teması onarımı ve yazılım işlemleri servisimizde yapılan işlemler arasındadır."}}]}</script>
 </head>
@@ -225,6 +225,25 @@
         <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Müşterilerimiz ne diyor?</h2>
         <p class="text-sm text-slate-600 mt-1">Google'daki yorumlardan örnekler.</p>
         <div class="rev-grid"><figure class="rev-card"><span class="rev-stars" aria-label="5 yıldız"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><blockquote>“Çok memnun kaldım, çok ilgililerdi.”</blockquote><figcaption>Beyza <span>· Google yorumu</span></figcaption></figure><figure class="rev-card"><span class="rev-stars" aria-label="5 yıldız"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><blockquote>“Çok iyi yapıyorlar. Memnun kaldım. Ellerinize sağlık.”</blockquote><figcaption>Inabat K. <span>· Google yorumu</span></figcaption></figure><figure class="rev-card"><span class="rev-stars" aria-label="5 yıldız"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><blockquote>“Gayet güzel ilgilendiler, kalite konusunda da içiniz rahat olsun.”</blockquote><figcaption>Öykü Y. <span>· Google yorumu</span></figcaption></figure></div>
+        <div class="rv-write">
+          <h3>Siz de yorum yazın</h3>
+          <form id="rv-form" novalidate>
+            <p class="rv-lbl">Puanınız</p>
+            <div id="rv-stars" class="rv-stars-input" role="group" aria-label="Puan seçin">
+              <button type="button" data-v="1" aria-label="1 yıldız"><i class="fa-solid fa-star"></i></button><button type="button" data-v="2" aria-label="2 yıldız"><i class="fa-solid fa-star"></i></button><button type="button" data-v="3" aria-label="3 yıldız"><i class="fa-solid fa-star"></i></button><button type="button" data-v="4" aria-label="4 yıldız"><i class="fa-solid fa-star"></i></button><button type="button" data-v="5" aria-label="5 yıldız"><i class="fa-solid fa-star"></i></button>
+            </div>
+            <label class="rv-lbl" for="rv-name">Adınız</label>
+            <input id="rv-name" type="text" maxlength="30" placeholder="Örn: Ahmet" autocomplete="given-name">
+            <label class="rv-lbl" for="rv-text">Yorumunuz</label>
+            <textarea id="rv-text" rows="3" maxlength="400" placeholder="Hizmetimizden memnun kaldınız mı? Kısaca yazın."></textarea>
+            <input id="rv-hp" class="rv-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <p id="rv-msg" class="rv-msg" role="status"></p>
+            <button type="submit" class="rv-send"><i class="fa-solid fa-paper-plane"></i> Yorumu gönder</button>
+            <p class="rv-note"><i class="fa-solid fa-lock"></i> Yorumunuz sitede herkese açık görünür. Telefon numarası gibi kişisel bilgi yazmayın.</p>
+          </form>
+        </div>
+        <h3 id="site-reviews-head" class="rv-sub" hidden>Sitemizden gelen yorumlar</h3>
+        <div id="site-reviews" class="rev-grid"></div>
         <a href="https://www.google.com/maps/search/?api=1&amp;query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli" target="_blank" rel="noopener" class="rev-more"><i class="fa-brands fa-google"></i> Tüm yorumları Google'da gör</a>
       </div>
       <div class="glass-card p-5 sm:p-6 grid md:grid-cols-5 gap-5 items-center">
@@ -497,6 +516,6 @@
 
   <!-- Uygulama kodları (sıra önemli) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js?v=19"></script>
+  <script src="app.js?v=21"></script>
 </body>
 </html>

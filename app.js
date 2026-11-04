@@ -830,9 +830,25 @@ let rvStars = 5, rvTries = 0, rvAdminUnsub = null;
 const rvDate = ts => { const d = new Date(ts || 0); return isNaN(d) ? '' : String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
 const rvStarsHtml = n => '<span class="rev-stars" aria-label="' + n + ' yıldız">' + '<i class="fa-solid fa-star"></i>'.repeat(n) + '<i class="fa-regular fa-star"></i>'.repeat(5 - n) + '</span>';
 
+
+// Yorumlar: ilk 4 görünür, kalanı "Daha fazla göster" ile açılır
+let rvExpanded = false;
+function rvCollapse() {
+  const cards = document.querySelectorAll('#rv-list .rev-card'), btn = document.getElementById('rv-more');
+  if (!btn) return;
+  const LIMIT = 4;
+  cards.forEach((c, i) => c.classList.toggle('rv-hidden', !rvExpanded && i >= LIMIT));
+  if (cards.length > LIMIT) {
+    btn.hidden = false;
+    btn.textContent = rvExpanded ? 'Daha az göster' : 'Daha fazla yorum göster (' + (cards.length - LIMIT) + ')';
+    btn.onclick = () => { rvExpanded = !rvExpanded; rvCollapse(); };
+  } else btn.hidden = true;
+}
+
 function reviewsInit() {
   const list = document.getElementById('site-reviews');
   if (!list) return;
+  rvCollapse();
   if (!fbDb) { if (rvTries++ < 12) setTimeout(reviewsInit, 500); return; }
   const wrap = document.getElementById('rv-stars');
   if (wrap && !wrap.dataset.ready) {
@@ -850,7 +866,7 @@ function loadReviews() {
   fbDb.collection('reviews').orderBy('ts', 'desc').limit(30).get().then(snap => {
     const items = snap.docs.map(d => d.data()).filter(x => x && x.t && x.n);
     list.innerHTML = items.map(x => '<figure class="rev-card rev-slide">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<blockquote>“' + esc(x.t) + '”</blockquote><figcaption>' + esc(x.n) + ' <span>· Sitemizden · ' + rvDate(x.ts) + '</span></figcaption></figure>').join('');
-    const head = document.getElementById('site-reviews-head'); if (head) head.hidden = !items.length;
+    rvCollapse();
   }).catch(() => {});
 }
 

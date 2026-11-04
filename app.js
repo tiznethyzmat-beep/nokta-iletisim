@@ -23,8 +23,8 @@ const SHOP = {
 };
 const OFFICIAL_WA = SHOP.whatsapp;
 const SITE_URL = 'https://nokta-iletisim.vercel.app';   // fişteki QR, yazı ve WhatsApp bağlantıları
-// Google yorum bağlantınız (Google Business Profile → yorum bağlantısı). Boşsa Maps araması açılır.
-const GOOGLE_REVIEW_URL = 'https://www.google.com/maps/search/?api=1&query=Nokta%20%C4%B0leti%C5%9Fim%20K%C4%B1rklareli';
+// Google yorum bağlantınız: müşteri bu bağlantıya basınca doğrudan yorum yazma ekranı açılır.
+const GOOGLE_REVIEW_URL = 'https://g.page/r/CUqajgS4nXY0EBM/review';
 // Tahmin edilemesin diye servis koduna rastgele ek (ör. X103-9A4U)
 const RANDOM_SUFFIX = true;    // yeni kodlar tahmin edilemez: X103-9A4U (false = X103)
 function randCode() { if (!RANDOM_SUFFIX) return ''; const c = 'ABCDEFGHJKMNPRSTUVWXYZ23456789'; let r = ''; for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
@@ -849,7 +849,7 @@ function loadReviews() {
   const list = document.getElementById('site-reviews'); if (!list || !fbDb) return;
   fbDb.collection('reviews').orderBy('ts', 'desc').limit(30).get().then(snap => {
     const items = snap.docs.map(d => d.data()).filter(x => x && x.t && x.n);
-    list.innerHTML = items.map(x => '<figure class="rev-card">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<blockquote>“' + esc(x.t) + '”</blockquote><figcaption>' + esc(x.n) + ' <span>· ' + rvDate(x.ts) + '</span></figcaption></figure>').join('');
+    list.innerHTML = items.map(x => '<figure class="rev-card rev-slide">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<blockquote>“' + esc(x.t) + '”</blockquote><figcaption>' + esc(x.n) + ' <span>· Sitemizden · ' + rvDate(x.ts) + '</span></figcaption></figure>').join('');
     const head = document.getElementById('site-reviews-head'); if (head) head.hidden = !items.length;
   }).catch(() => {});
 }
@@ -1307,6 +1307,9 @@ function buildNotifyMsg(t, st) {
     const u = Number(t.price) || 0;
     const rev = GOOGLE_REVIEW_URL || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Nokta İletişim Kırklareli');
     return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız *teslime hazırdır* ✅\nServis fişinizle mağazamızdan teslim alabilirsiniz.${u ? '\nÜcret: ' + u + ' TL' : ''}\n\nGoogle'da kısa bir yorum yazarsanız çok seviniriz 🙏\n${rev}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
+  }
+  if (t.status === 'teslim') {
+    return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız teslim edilmiştir. Bizi tercih ettiğiniz için teşekkür ederiz 🙏\n\nHizmetimizden memnun kaldıysanız kısa bir Google yorumu yazarsanız çok seviniriz:\n${GOOGLE_REVIEW_URL}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
   }
   return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınızın durumu: *${st.label}*.${t.note ? '\nNot: ' + t.note : ''}\nCanlı takip: ${link}\nNokta İletişim`;
 }

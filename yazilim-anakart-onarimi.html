@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
   <meta name="description" content="Kırklareli telefon yazılım yükleme ve anakart onarımı: açılmayan, logoda kalan veya sürekli yeniden başlayan cihazlar. Nokta İletişim teknik servis.">
   <meta name="theme-color" content="#0f172a">
   <link rel="icon" type="image/png" href="logo.png">
@@ -43,7 +48,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=40">
+  <link rel="stylesheet" href="style.css?v=46">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Kırklareli Yazılım ve Anakart Onarımı", "serviceType": "Yazılım ve anakart", "areaServed": {"@type": "City", "name": "Kırklareli"}, "provider": {"@type": "MobilePhoneStore", "name": "Nokta İletişim", "telephone": "+905422888288", "url": "https://nokta-iletisim.vercel.app", "address": {"@type": "PostalAddress", "streetAddress": "Karakaş Mah. Hasan Paşa Cd. No:35/A", "addressLocality": "Merkez", "addressRegion": "Kırklareli", "addressCountry": "TR"}}}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Yazılım ve anakart onarımı ne kadar sürer?", "acceptedAnswer": {"@type": "Answer", "text": "Süre cihaz modeline ve gerekli parçanın stokta olup olmamasına göre değişir. Cihazınızı getirdiğinizde ya da modelinizi WhatsApp'tan yazdığınızda size bilgi veririz."}}, {"@type": "Question", "name": "Yazılım ve anakart onarımı ücreti ne kadar?", "acceptedAnswer": {"@type": "Answer", "text": "Ücret marka, model ve arızanın türüne göre değişir. Modelinizi bu sayfadaki düğmeyle yazın, size WhatsApp'tan ön bilgi verelim; net fiyat cihazı görünce söylenir."}}, {"@type": "Question", "name": "Cihazım hiç açılmıyor, ne yapmalıyım?", "acceptedAnswer": {"@type": "Answer", "text": "Cihazı zorlamadan mağazaya getirin. Arıza tespitinde yazılım mı anakart mı olduğunu belirleyip size bilgi veririz."}}]}</script>
 </head>
@@ -60,7 +65,7 @@
 
         <!-- Logo -->
         <div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="switchTab('sorgula')">
-          <img id="site-logo" src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white shrink-0 object-cover">
+          <img id="site-logo" src="logo.png" width="44" height="44" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white shrink-0 object-cover">
           <div>
             <div class="font-extrabold text-xl leading-tight">Nokta İletişim</div>
             <p class="hidden xl:block text-xs text-sky-400 font-medium">Teknik Servis & Çözüm Merkezi • Kırklareli</p>
@@ -167,7 +172,7 @@
     <div id="login-card" class="bg-white rounded-3xl max-w-3xl w-full grid md:grid-cols-5 overflow-hidden shadow-2xl">
       <div class="md:col-span-2 text-white p-6 md:p-8 flex md:flex-col md:justify-between items-center md:items-start gap-4" style="background: radial-gradient(420px 260px at 100% 0%, rgba(22,160,149,.45), transparent 60%), radial-gradient(300px 220px at 0% 100%, rgba(255,90,54,.28), transparent 60%), #0e1a2c;">
         <div class="flex items-center gap-3">
-          <img src="logo.png" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white object-cover">
+          <img src="logo.png" width="44" height="44" alt="Nokta İletişim Kırklareli telefon tamiri logosu" class="w-11 h-11 rounded-full shadow-lg bg-white object-cover">
           <span class="font-display font-extrabold text-lg">Nokta İletişim</span>
         </div>
         <div class="hidden md:block">

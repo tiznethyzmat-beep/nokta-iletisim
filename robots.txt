@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /panel
+Disallow: /qr-plakat
 
 Sitemap: https://nokta-iletisim.vercel.app/sitemap.xml

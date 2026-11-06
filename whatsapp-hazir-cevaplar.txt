@@ -1,0 +1,22 @@
+WhatsApp Business – hazır cevaplar (Ayarlar > İş araçları > Hızlı yanıtlar)
+
+/merhaba
+Merhaba, Nokta İletişim'e hoş geldiniz. Size nasıl yardımcı olabiliriz? Telefon tamiri, sıfır/2. el telefon alım satımı ve takas için yazabilirsiniz.
+
+/fiyat
+Fiyat cihazın modeline ve arızasına göre değişir. Cihazı görmeden net fiyat söyleyemiyoruz. Telefonunuzla mağazamıza gelirseniz arızayı görüp fiyatı söyleriz. Modeli ve arızayı yazarsanız ön bilgi verebiliriz.
+
+/adres
+Karakaş Mah. Hasan Paşa Cd. No:35/A, Merkez / Kırklareli. Her gün 10:00–20:00 arası açığız. Yol tarifi: https://www.google.com/maps/search/?api=1&query=Karaka%C5%9F+Mah.+Hasan+Pa%C5%9Fa+Cd.+No%3A35%2FA+K%C4%B1rklareli
+
+/takip
+Cihazınızın durumunu servis kodunuzla sitemizden canlı takip edebilirsiniz: https://nokta-iletisim.vercel.app/
+
+/kargo
+Cihazları kargoyla almıyor ve adrese göndermiyoruz. Cihazı mağazaya getirir, hazır olunca mağazadan teslim alırsınız.
+
+/takas
+Takas yapıyoruz. Eski telefonunuzu mağazaya getirin; cihazı görüp değerini söyleriz. İsterseniz farkı ödeyerek başka bir telefonla değiştirebilirsiniz.
+
+/yorum
+Hizmetimizden memnun kaldıysanız kısa bir Google yorumu yazarsanız çok seviniriz: https://g.page/r/CUqajgS4nXY0EBM/review

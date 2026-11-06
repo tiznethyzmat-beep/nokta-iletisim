@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>QR plakatları | Nokta İletişim</title>
+  <style>
+    :root{--ink:#0e1a2c;--teal:#0f6b67;--bg:#f1f5f9}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+    .bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;padding:.8rem 1rem;background:var(--ink);color:#fff}
+    .bar p{font-size:.9rem;margin:0}
+    .bar button{min-height:44px;padding:0 1.2rem;border:0;border-radius:.8rem;background:#16a34a;color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
+    .wrap{display:grid;gap:1.2rem;padding:1.2rem;max-width:900px;margin:0 auto}
+    @media(min-width:760px){.wrap{grid-template-columns:1fr 1fr}}
+    .poster{background:#fff;border-radius:1.2rem;padding:1.6rem 1.2rem;text-align:center;border:1px solid #e2e8f0;break-inside:avoid;page-break-inside:avoid}
+    .brand{font-weight:800;font-size:1.05rem;color:var(--teal);letter-spacing:.02em}
+    .poster h1{font-size:1.7rem;line-height:1.2;margin:.7rem 0 .4rem;font-weight:800}
+    .poster p{margin:.2rem 0;color:#475569;font-size:1rem;line-height:1.45}
+    .qr{display:flex;justify-content:center;margin:1.1rem 0 .8rem}
+    .qr img,.qr canvas{width:230px !important;height:230px !important}
+    .stars{color:#f5b301;font-size:1.6rem;letter-spacing:.2rem}
+    .url{font-size:.85rem;color:#64748b;word-break:break-all}
+    .foot{margin-top:.8rem;font-size:.85rem;color:#334155}
+    @media print{
+      body{background:#fff}
+      .bar{display:none}
+      .wrap{display:block;padding:0}
+      .poster{border:2px solid #0e1a2c;border-radius:1rem;margin:0 0 10mm;padding:10mm}
+      .qr img,.qr canvas{width:60mm !important;height:60mm !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="bar"><p>İki plakat hazır. “Yazdır” basıp A4 kâğıda basın, ortadan kesin.</p><button type="button" onclick="window.print()">Yazdır</button></div>
+  <main class="wrap">
+    <section class="poster">
+      <div class="brand">NOKTA İLETİŞİM</div>
+      <div class="stars" aria-hidden="true">★★★★★</div>
+      <h1>Memnun kaldınız mı?</h1>
+      <p>Telefonunuzla QR kodu okutun, Google'da kısa bir yorum yazın.</p>
+      <div class="qr" id="qr-review"></div>
+      <p class="foot">Yorumunuz bizim için çok değerli. Teşekkürler!</p>
+    </section>
+    <section class="poster">
+      <div class="brand">NOKTA İLETİŞİM</div>
+      <h1>Cihazınızı takip edin</h1>
+      <p>QR kodu okutun, servis kodunuzu yazın; onarımın hangi aşamada olduğunu görün.</p>
+      <div class="qr" id="qr-site"></div>
+      <p class="url" id="site-url"></p>
+      <p class="foot">Karakaş Mah. Hasan Paşa Cd. No:35/A, Kırklareli · 0542 288 82 88</p>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    (function () {
+      var REVIEW = 'https://g.page/r/CUqajgS4nXY0EBM/review';
+      var SITE = location.origin + '/';
+      document.getElementById('site-url').textContent = SITE.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      function make(id, text) {
+        new QRCode(document.getElementById(id), { text: text, width: 256, height: 256, colorDark: '#0e1a2c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+      }
+      if (window.QRCode) { make('qr-review', REVIEW); make('qr-site', SITE); }
+      else document.querySelector('.bar p').textContent = 'QR kodu yüklenemedi. İnternet bağlantısını kontrol edip sayfayı yenileyin.';
+    })();
+  </script>
+</body>
+</html>

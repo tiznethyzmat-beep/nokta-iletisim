@@ -863,8 +863,8 @@ function reviewsInit() {
 
 function loadReviews() {
   const list = document.getElementById('site-reviews'); if (!list || !fbDb) return;
-  fbDb.collection('reviews').orderBy('ts', 'desc').limit(30).get().then(snap => {
-    const items = snap.docs.map(d => d.data()).filter(x => x && x.t && x.n);
+  fbDb.collection('reviews').where('ok', '==', true).limit(50).get().then(snap => {
+    const items = snap.docs.map(d => d.data()).filter(x => x && x.t && x.n).sort((p, q) => (q.ts || 0) - (p.ts || 0));
     list.innerHTML = items.map(x => '<figure class="rev-card rev-slide">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<blockquote>“' + esc(x.t) + '”</blockquote><figcaption>' + esc(x.n) + ' <span>· Sitemizden · ' + rvDate(x.ts) + '</span></figcaption></figure>').join('');
     rvCollapse();
   }).catch(() => {});
@@ -884,23 +884,30 @@ function submitReview(e) {
   if (Date.now() - last < 10 * 60 * 1000) return say('Kısa süre önce yorum gönderdiniz. Lütfen biraz sonra tekrar deneyin.', false);
   const id = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => (b % 36).toString(36)).join('');
   btn.disabled = true; say('Gönderiliyor...', true);
-  fbDb.collection('reviews').doc(id).set({ n: n.slice(0, 30), r: rvStars, t: t.slice(0, 400), ts: Date.now() }).then(() => {
+  fbDb.collection('reviews').doc(id).set({ n: n.slice(0, 30), r: rvStars, t: t.slice(0, 400), ts: Date.now(), ok: false }).then(() => {
     try { localStorage.setItem('nokta_rv_ts', String(Date.now())); } catch (x) {}
     document.getElementById('rv-text').value = '';
-    say('Teşekkürler! Yorumunuz yayınlandı.', true);
-    loadReviews();
+    say('Teşekkürler! Yorumunuz kontrol edildikten sonra yayınlanacak.', true);
   }).catch(() => say('Şu an gönderilemedi. Lütfen daha sonra tekrar deneyin.', false)).finally(() => { btn.disabled = false; });
 }
 
 function startReviewsAdmin() {
   const box = document.getElementById('admin-reviews'); if (!box || !fbDb || rvAdminUnsub) return;
   rvAdminUnsub = fbDb.collection('reviews').orderBy('ts', 'desc').onSnapshot(snap => {
-    const cnt = document.getElementById('rv-count'); if (cnt) cnt.textContent = snap.size ? '(' + snap.size + ')' : '';
+    const docs = snap.docs.slice().sort((p, q) => (p.data().ok === true) - (q.data().ok === true) || (q.data().ts || 0) - (p.data().ts || 0));
+    const pending = docs.filter(d => d.data().ok !== true).length;
+    const cnt = document.getElementById('rv-count'); if (cnt) cnt.textContent = pending ? '(' + pending + ' yeni)' : (snap.size ? '(' + snap.size + ')' : '');
     box.innerHTML = snap.empty
       ? '<p class="rva-empty">Henüz yorum yok.</p>'
-      : snap.docs.map(d => { const x = d.data(); return '<div class="rva-item"><div class="rva-body">' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<p>' + esc(x.t) + '</p><small>' + esc(x.n) + ' · ' + rvDate(x.ts) + '</small></div><button type="button" class="rva-del" onclick="deleteReview(\'' + esc(d.id) + '\')"><i class="fa-solid fa-trash"></i> Sil</button></div>'; }).join('');
+      : docs.map(d => {
+        const x = d.data(), live = x.ok === true, id = esc(d.id);
+        return '<div class="rva-item' + (live ? '' : ' pending') + '"><div class="rva-body"><span class="rva-badge ' + (live ? 'live' : 'wait') + '">' + (live ? 'Yayında' : 'Onay bekliyor') + '</span>' + rvStarsHtml(Math.min(5, Math.max(1, +x.r || 5))) + '<p>' + esc(x.t) + '</p><small>' + esc(x.n) + ' · ' + rvDate(x.ts) + '</small></div><div class="rva-btns">'
+          + (live ? '<button type="button" class="rva-hide" onclick="approveReview(\'' + id + '\', false)"><i class="fa-solid fa-eye-slash"></i> Gizle</button>' : '<button type="button" class="rva-ok" onclick="approveReview(\'' + id + '\', true)"><i class="fa-solid fa-check"></i> Onayla</button>')
+          + '<button type="button" class="rva-del" onclick="deleteReview(\'' + id + '\')"><i class="fa-solid fa-trash"></i> Sil</button></div></div>';
+      }).join('');
   }, () => { box.innerHTML = '<p class="rva-empty">Yorumlar okunamadı. Firestore kurallarını yayınladınız mı?</p>'; });
 }
+function approveReview(id, v) { fbDb.collection('reviews').doc(id).update({ ok: !!v }).catch(() => alert('Kaydedilemedi. Lütfen tekrar deneyin.')); }
 function stopReviewsAdmin() { if (rvAdminUnsub) { rvAdminUnsub(); rvAdminUnsub = null; } }
 function deleteReview(id) {
   if (!confirm('Bu yorum silinsin mi? Bu işlem geri alınamaz.')) return;
@@ -1311,9 +1318,15 @@ function renderReadyBox(all) {
   box.innerHTML = `<details class="glass-card p-4 sm:p-5" ${readyOpen ? 'open' : ''} ontoggle="readyOpen = this.open">
     <summary class="cursor-pointer flex items-center justify-between gap-3 font-extrabold text-slate-900 list-none"><span><i class="fa-solid fa-box-open text-emerald-600 mr-2"></i>Teslim bekleyen cihazlar</span><span class="text-xs font-bold text-emerald-700">${list.length} cihaz</span></summary>
     <ul class="mt-3 divide-y divide-slate-100">${list.slice(0, 12).map(t => `<li class="py-2.5 flex items-center justify-between gap-3 flex-wrap">
-      <div class="min-w-0"><div class="font-bold text-slate-900 text-sm"><span class="font-mono text-emerald-700">${esc(t.id)}</span> · ${esc(t.name)}</div><div class="text-[11px] text-slate-500 font-medium">${esc(t.device)} · ${daysReady(t)} gündür bekliyor${daysReady(t) >= 30 ? ' <b class="text-amber-700">⚠ 30+ gün</b>' : ''}</div></div>
-      <div class="flex gap-2 shrink-0 flex-wrap"><a href="https://wa.me/${waNumber(t.phone)}?text=${encodeURIComponent(buildNotifyMsg(t, statusMap.hazir))}" target="_blank" class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2"><i class="fa-brands fa-whatsapp"></i> Haber ver</a><button onclick="quickStatus('${esc(t.id)}','teslim')" class="text-xs font-bold text-white bg-slate-700 hover:bg-slate-900 rounded-lg px-3 py-2"><i class="fa-solid fa-hand-holding"></i> Teslim edildi</button></div></li>`).join('')}</ul>
+      <div class="min-w-0"><div class="font-bold text-slate-900 text-sm"><span class="font-mono text-emerald-700">${esc(t.id)}</span> · ${esc(t.name)}</div><div class="text-[11px] text-slate-500 font-medium">${esc(t.device)} · ${daysReady(t)} gündür bekliyor${daysReady(t) >= 5 && daysReady(t) < 30 ? ' <b class="text-amber-700">· hatırlat</b>' : ''}${daysReady(t) >= 30 ? ' <b class="text-amber-700">⚠ 30+ gün</b>' : ''}</div></div>
+      <div class="flex gap-2 shrink-0 flex-wrap"><a href="https://wa.me/${waNumber(t.phone)}?text=${encodeURIComponent(daysReady(t) >= 5 ? buildReminderMsg(t) : buildNotifyMsg(t, statusMap.hazir))}" target="_blank" class="text-xs font-bold ${daysReady(t) >= 5 ? 'text-amber-800 bg-amber-50 border-amber-300' : 'text-emerald-700 bg-emerald-50 border-emerald-200'} border rounded-lg px-3 py-2"><i class="fa-brands fa-whatsapp"></i> ${daysReady(t) >= 5 ? 'Hatırlat' : 'Haber ver'}</a><button onclick="quickStatus('${esc(t.id)}','teslim')" class="text-xs font-bold text-white bg-slate-700 hover:bg-slate-900 rounded-lg px-3 py-2"><i class="fa-solid fa-hand-holding"></i> Teslim edildi</button></div></li>`).join('')}</ul>
     ${list.length > 12 ? '<p class="text-[11px] text-slate-400 mt-2">İlk 12 cihaz gösteriliyor.</p>' : ''}</details>`;
+}
+
+// Teslim bekleyen cihaz için hatırlatma mesajı
+function buildReminderMsg(t) {
+  const d = daysReady(t), link = SITE_URL + '/?kod=' + encodeURIComponent(t.id);
+  return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız ${d} gündür teslime hazır ✅\nMağazamızdan servis fişinizle teslim alabilirsiniz (her gün 10:00–20:00).\nDurumu görmek için: ${link}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
 }
 
 // Müşteriye gidecek WhatsApp metni (duruma göre)

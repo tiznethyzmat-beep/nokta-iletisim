@@ -50,16 +50,17 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
 
-    // Müşteri yorumları: herkes okur ve yeni yorum yazar; yalnız yönetici siler
+    // Müşteri yorumları: herkes yazar (onay bekler), yalnız yönetici onaylar/siler
     match /reviews/{rid} {
-      allow read: if true;
+      allow read: if resource.data.get('ok', false) == true || isAdmin();
       allow create: if rid.matches('^[A-Za-z0-9]{10,24}$')
-        && request.resource.data.keys().hasOnly(['n', 'r', 't', 'ts'])
+        && request.resource.data.keys().hasOnly(['n', 'r', 't', 'ts', 'ok'])
+        && request.resource.data.ok == false
         && request.resource.data.n is string && request.resource.data.n.size() >= 2 && request.resource.data.n.size() <= 30
         && request.resource.data.r is int && request.resource.data.r >= 1 && request.resource.data.r <= 5
         && request.resource.data.t is string && request.resource.data.t.size() >= 5 && request.resource.data.t.size() <= 400
         && request.resource.data.ts is number;
-      allow update: if false;
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ok']);
       allow delete: if isAdmin();
     }
   }

@@ -714,3 +714,6 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rv-more-btn:hover{background:#e3f5f0}
 .rv-more-btn[hidden]{display:none}
 .rv-hint{display:none}
+
+/* v47 */
+.trade-strip{margin-top:1rem}

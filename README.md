@@ -18,3 +18,10 @@ Müşteriler servis koduyla cihazlarının durumunu sorgular, servis talebi gön
 - "Teslime hazır" / "Teslim edildi" WhatsApp mesajları Google yorum bağlantısını içerir (`GOOGLE_REVIEW_URL` in `app.js`).
 - Alan adı alınınca: `index.html` ve diğer sayfalardaki `nokta-iletisim.vercel.app` adreslerini, `sitemap.xml` ve `robots.txt` içindeki adresi yeni alanla değiştirin.
 - `qr-plakat.html` adresini açıp **Yazdır**'a basın (sitenizin adresine göre QR otomatik üretilir).
+
+## Tailwind CSS (derlenmiş)
+Sayfalar `tw.css` kullanır (Tailwind 3.4, internetten yüklenmez, daha hızlı açılır). Sayfalara yeni Tailwind sınıfı eklerseniz `tw.css` dosyasını yeniden üretin:
+
+    npx tailwindcss@3.4 -c tailwind.config.js -i tw-input.css -o tw.css --minify
+
+(Bilgisayarınızda Node.js gerekir. Yapmazsanız yeni eklenen sınıflar görünmez, eski sayfalar etkilenmez.)

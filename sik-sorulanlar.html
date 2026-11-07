@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
@@ -27,16 +26,8 @@
   <meta name="robots" content="index,follow,max-image-preview:large">
 
   <!-- Tailwind CSS (CDN) ve renk ayarları -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // Tailwind renk paleti ve yazı tipi
-    tailwind.config = { theme: { extend: {
-      fontFamily: { display: ['"Bricolage Grotesque"', 'Inter', 'sans-serif'] },
-      colors: {
-        sky: { 50:'#effaf8',100:'#d5f3ee',200:'#abe6de',300:'#74d3c8',400:'#3dbbaf',500:'#16a095',600:'#0e8680',700:'#0f6b67',800:'#115654',900:'#0f4543',950:'#0a2c2f' },
-        slate: { 800:'#16243a', 900:'#0e1a2c', 950:'#08111f' }
-      } } } };
-  </script>
+  
+  
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Yazı tipleri: Inter, Bricolage Grotesque -->
@@ -49,7 +40,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
   <!-- Site stilleri -->
-  <link rel="stylesheet" href="style.css?v=46">
+  <link rel="stylesheet" href="style.css?v=47">
+  <link rel="stylesheet" href="tw.css?v=1">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Cihazımı kargoyla gönderebilir miyim?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Kargo, kurye veya adresten alma hizmetimiz yoktur. Cihazı mağazamıza kendiniz getirmeniz gerekir."}}, {"@type": "Question", "name": "Onarım bitince cihaz adresime gelir mi?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır, adrese teslim yapmıyoruz. Cihaz \"Teslime Hazır\" olunca mağazadan kendiniz teslim alırsınız."}}, {"@type": "Question", "name": "Servis kodumu kaybettim, ne yapmalıyım?", "acceptedAnswer": {"@type": "Answer", "text": "Sorgulama kutusuna kayıt sırasında verdiğiniz telefon numarasını (05XX...) yazın. Aynı numaraya ait tüm kayıtlarınız listelenir."}}, {"@type": "Question", "name": "Sorgulamada kaydım bulunamıyor.", "acceptedAnswer": {"@type": "Answer", "text": "Kodu tam yazdığınızdan emin olun (örn. X104-7K3M). Cihazı yeni bıraktıysanız kayıt birkaç dakika içinde girilir. Hâlâ bulunamazsa WhatsApp'tan bize yazın."}}, {"@type": "Question", "name": "\"Servis Talebi Gönder\" ne işe yarar?", "acceptedAnswer": {"@type": "Answer", "text": "Formu doldurup gönderince WhatsApp açılır ve arızanızı bize yazılı iletirsiniz. Bu bir randevu veya kayıt değildir; kayıt, cihaz mağazaya teslim edildiğinde açılır."}}, {"@type": "Question", "name": "Onarım ücretini nereden öğrenirim?", "acceptedAnswer": {"@type": "Answer", "text": "Arıza tespitinden sonra ücret kaydınıza işlenir ve sorgulama sayfasında \"Tahmini Onarım Ücreti\" olarak görünür. Kesin bilgi için mağazamızdan veya WhatsApp'tan sorabilirsiniz."}}, {"@type": "Question", "name": "Cihazımı teslim alırken ne gerekli?", "acceptedAnswer": {"@type": "Answer", "text": "Servis fişiniz (veya servis kodunuz) ve kimliğiniz yanınızda olsun. Cihaz yalnızca kayıt sahibine teslim edilir."}}, {"@type": "Question", "name": "Kişisel bilgilerim herkese görünür mü?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Sorgulama sayfasında adınız maskeli görünür (örn. Ahmet Y***). Ekran kilidi ve SIM PIN bilgileri yalnızca servis panelinde, yetkili teknisyende bulunur."}}, {"@type": "Question", "name": "Daha önce de servisinize gelmiştim, tekrar bilgi vermem gerekir mi?", "acceptedAnswer": {"@type": "Answer", "text": "Hayır. Sistemimiz telefon numaranızdan sizi tanır; önceki kayıtlarınız teknisyende görünür ve bilgileriniz hazır gelir."}}, {"@type": "Question", "name": "Çalışma saatleriniz nedir?", "acceptedAnswer": {"@type": "Answer", "text": "Mağazamız 20:00'de kapanır. Cihazı kapanıştan önce getirmenizi öneririz."}}]}</script>
 </head>
 <body data-page="sss" class="min-h-screen flex flex-col justify-between antialiased pb-20 md:pb-0 overflow-x-hidden">

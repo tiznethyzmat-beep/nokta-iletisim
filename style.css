@@ -726,3 +726,30 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .rva-ok,.rva-hide{min-height:42px;padding:0 .9rem;border-radius:.8rem;font-weight:700;font-size:.85rem}
 .rva-ok{background:#16a34a;color:#fff;border:1px solid #16a34a}.rva-ok:hover{background:#15803d}
 .rva-hide{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1}
+
+/* ===== v49: aksesuar ve paketler ===== */
+.acc-strip{background:linear-gradient(110deg,#b45309,#f59e0b);box-shadow:0 14px 28px -18px rgba(180,83,9,.8)}
+.acc-strip .ts-btn{color:#b45309}
+.acc-block{padding:0}
+.acc-h{font-size:1.35rem;font-weight:800;color:#0e1a2c;margin-bottom:.4rem}
+.acc-sub{font-size:.92rem;color:#64748b;margin-bottom:.4rem}
+.acc-grid{display:grid;gap:.8rem;grid-template-columns:1fr 1fr;margin-top:.8rem}
+@media(min-width:768px){.acc-grid{grid-template-columns:repeat(3,1fr)}}
+.acc-card{display:flex;flex-direction:column;gap:.35rem;padding:1.1rem;border-radius:1.3rem;background:#fff;border:1px solid #e2e8f0;box-shadow:0 12px 28px -24px rgba(14,26,44,.6)}
+.acc-ic{width:2.8rem;height:2.8rem;border-radius:.95rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:#ccfbf1;color:#0f766e}
+.acc-card:nth-child(2) .acc-ic{background:#e0e7ff;color:#4338ca}
+.acc-card:nth-child(3) .acc-ic{background:#fef3c7;color:#b45309}
+.acc-card:nth-child(4) .acc-ic{background:#ffe4e6;color:#e11d48}
+.acc-card:nth-child(5) .acc-ic{background:#f3e8ff;color:#7e22ce}
+.acc-card h3{font-size:1.02rem;font-weight:800;color:#0e1a2c;line-height:1.25;margin-top:.3rem}
+.acc-card p{font-size:.85rem;color:#475569;line-height:1.5;flex:1}
+.acc-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;margin-top:.5rem;padding:0 .6rem;border-radius:.85rem;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-weight:700;font-size:.82rem;text-align:center;line-height:1.2}
+.acc-btn:hover{background:#16a34a;color:#fff;border-color:#16a34a}
+.pkg-grid{display:grid;gap:.9rem;grid-template-columns:1fr;margin-top:.8rem}
+@media(min-width:700px){.pkg-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.pkg-grid{grid-template-columns:repeat(3,1fr)}}
+.pkg-card{position:relative;display:flex;flex-direction:column;gap:.5rem;padding:1.4rem 1.3rem 1.3rem;border-radius:1.5rem;background:linear-gradient(160deg,#0e1a2c,#14304a);color:#fff;box-shadow:0 18px 36px -24px rgba(14,26,44,.9)}
+.pkg-badge{align-self:flex-start;padding:.2rem .7rem;border-radius:999px;background:#f59e0b;color:#3b2200;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pkg-card h3{font-size:1.2rem;font-weight:800;line-height:1.25}
+.pkg-card p{font-size:.9rem;color:#cbd5e1;line-height:1.55;flex:1}
+.pkg-card .sale-btn{margin-top:.6rem}

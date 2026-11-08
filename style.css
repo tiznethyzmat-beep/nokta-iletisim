@@ -753,3 +753,29 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .pkg-card h3{font-size:1.2rem;font-weight:800;line-height:1.25}
 .pkg-card p{font-size:.9rem;color:#cbd5e1;line-height:1.55;flex:1}
 .pkg-card .sale-btn{margin-top:.6rem}
+
+/* ===== v50: sadeleşmiş renkler, kategori kartları, tek paket ===== */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1rem}
+@media(min-width:900px){.cat-grid{grid-template-columns:repeat(4,1fr)}}
+.cat-card{display:flex;flex-direction:column;gap:.2rem;padding:1rem;border-radius:1.2rem;background:#fff;border:1px solid #e2e8f0;box-shadow:0 12px 26px -22px rgba(14,26,44,.6);transition:transform .2s,border-color .2s}
+.cat-card:hover{transform:translateY(-2px);border-color:#16a095}
+.cat-ic{width:2.7rem;height:2.7rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#ccfbf1;color:#0f766e;margin-bottom:.4rem}
+.cat-card strong{font-size:1rem;color:#0e1a2c;line-height:1.25}
+.cat-card small{font-size:.8rem;color:#64748b;line-height:1.4}
+/* tek renk ailesi: mor-gradient ve mämişi şeritleri sadeleştir */
+.sale-ig{background:#0e1a2c !important}
+.sale-ig-ic{background:rgba(255,255,255,.12) !important}
+.sale-ig>a{color:#0e1a2c !important}
+.acc-strip{background:linear-gradient(110deg,#0f6b67,#16a095) !important;box-shadow:0 14px 28px -18px rgba(15,107,103,.8) !important}
+.acc-strip .ts-btn{color:#0f6b67 !important}
+.acc-card .acc-ic,.acc-card:nth-child(n) .acc-ic{background:#ccfbf1 !important;color:#0f766e !important}
+.acc-card:last-child:nth-child(odd){grid-column:1/-1}
+.pkg-single{display:flex;flex-direction:column;gap:.6rem;padding:1.6rem 1.4rem;border-radius:1.6rem;background:linear-gradient(160deg,#0e1a2c,#14304a);color:#fff;box-shadow:0 18px 36px -24px rgba(14,26,44,.9);margin-top:.8rem}
+.pkg-single h3{font-size:1.4rem;font-weight:800;line-height:1.25}
+.pkg-single>p{font-size:.95rem;color:#cbd5e1;line-height:1.6}
+.pkg-single ul{list-style:none;display:grid;gap:.45rem;margin:.3rem 0 .4rem;font-size:.92rem;color:#e2e8f0}
+.pkg-single ul i{color:#34d399;margin-right:.5rem}
+.pkg-single .sale-btn{margin-top:.4rem}
+@media(min-width:768px){.pkg-single{padding:2rem}.pkg-single .sale-btn{width:auto;align-self:flex-start;padding:0 2rem}}
+
+.cta-pair a{flex:1 1 12rem;display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:52px;font-size:.95rem !important}

@@ -779,3 +779,16 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 @media(min-width:768px){.pkg-single{padding:2rem}.pkg-single .sale-btn{width:auto;align-self:flex-start;padding:0 2rem}}
 
 .cta-pair a{flex:1 1 12rem;display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:52px;font-size:.95rem !important}
+
+/* ===== v52: aksesuar fotoğraf galerisi ===== */
+.acc-gallery{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(min-width:768px){.acc-gallery{grid-template-columns:2fr 1fr 1fr;grid-template-rows:auto auto}.acc-gallery .ag-main{grid-row:span 2}}
+.acc-gallery figure{position:relative;margin:0;border-radius:1.2rem;overflow:hidden;background:#e2e8f0;aspect-ratio:4/3}
+.acc-gallery .ag-main{grid-column:1/-1;aspect-ratio:16/9}
+@media(min-width:768px){.acc-gallery .ag-main{grid-column:auto;aspect-ratio:auto}}
+.acc-gallery img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.acc-gallery a:hover img{transform:scale(1.04)}
+.acc-gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.6rem .8rem .6rem;background:linear-gradient(to top,rgba(8,17,31,.82),transparent);color:#fff;font-size:.82rem;font-weight:700;line-height:1.25}
+
+.acc-gallery figure:nth-child(4){grid-column:1/-1;aspect-ratio:16/9}
+@media(min-width:768px){.acc-gallery figure:nth-child(4){grid-column:2/4;aspect-ratio:4/3}}

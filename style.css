@@ -814,3 +814,12 @@ header #header-call span[class*="xl:inline"]{display:none !important}
 .acc-chips{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;margin:.2rem 0 .4rem}
 .acc-chips li{padding:.3rem .7rem;border-radius:999px;background:#f1f9f7;border:1px solid #c9eee6;font-size:.8rem;font-weight:600;color:#0f6b67}
 .acc-btn.wide{min-height:50px;font-size:.92rem;margin-top:.3rem}
+
+/* ===== v54: aksesuar kategorileri (suratsyz, kompakt) ===== */
+.acc-card .acc-chips{margin:.25rem 0 .2rem}
+.acc-card .acc-chips li{font-size:.72rem;padding:.2rem .55rem}
+.acc-grid{grid-template-columns:1fr 1fr}
+@media(min-width:900px){.acc-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:899px){.acc-card:last-child:nth-child(odd){grid-column:1/-1}}
+@media(min-width:900px){.acc-card:last-child:nth-child(odd){grid-column:auto}}
+@media(min-width:1100px){.acc-grid{grid-template-columns:repeat(5,1fr)}.acc-card{padding:1rem}.acc-card h3{font-size:1rem}}

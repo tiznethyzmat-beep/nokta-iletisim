@@ -835,3 +835,14 @@ a.gift-banner{transition:transform .2s}a.gift-banner:hover{transform:translateY(
 @media(max-width:560px){a.gift-banner{flex-wrap:wrap}.gb-btn{width:100%;text-align:center}}
 #view-hizmet .gift-banner,#booking-form-wrap .gift-banner{margin-top:0}
 #view-hizmet .gift-banner{margin-top:1.25rem;margin-bottom:1.25rem}
+
+/* ===== v56: dokunma alanlarý (a11y) ===== */
+#mobile-nav button{min-height:52px}
+header a[href^="tel"]{min-height:40px;display:inline-flex;align-items:center}
+.qchip{min-height:44px}
+#view-iletisim ul a{display:inline-block;padding:.5rem 0}
+#view-hizmet nav a{display:inline-block;padding:.65rem .3rem}
+#view-hizmet select{min-height:48px}
+footer a{display:inline-block;padding:.4rem .1rem}
+.footer-links a,.footer-services a{display:inline-flex;align-items:center;min-height:40px}
+.st-kvkk a{display:inline-block;padding:.45rem .2rem}

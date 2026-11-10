@@ -120,7 +120,7 @@
           <h2 class="text-xl font-extrabold text-slate-900"><i class="fa-brands fa-whatsapp text-emerald-500 mr-2"></i>Ön bilgi alın</h2>
           <p class="text-sm text-slate-600 mt-1">Net fiyatı cihazı görünce söyleriz. Modelinizi yazın, WhatsApp'tan ön bilgi verelim.</p>
           <div class="mt-4 grid sm:grid-cols-3 gap-3">
-            <select id="hz-marka" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold"><option>iPhone</option><option>Samsung</option><option>Xiaomi</option><option>Redmi</option><option>Poco</option><option>Oppo</option><option>Vivo</option><option>Huawei</option><option>Tecno</option><option>Diğer</option></select>
+            <select id="hz-marka" aria-label="Telefon markası" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold"><option>iPhone</option><option>Samsung</option><option>Xiaomi</option><option>Redmi</option><option>Poco</option><option>Oppo</option><option>Vivo</option><option>Huawei</option><option>Tecno</option><option>Diğer</option></select>
             <input id="hz-model" type="text" oninput="document.getElementById('hz-err').textContent=''" placeholder="Model, örn: Redmi Note 12 Pro" class="sm:col-span-2 w-full p-3 bg-white border border-slate-300 rounded-xl text-sm">
           </div>
           <p id="hz-err" class="text-xs text-red-600 font-semibold mt-2 min-h-[1rem]"></p>

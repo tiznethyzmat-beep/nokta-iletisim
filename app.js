@@ -833,18 +833,22 @@ const rvDate = ts => { const d = new Date(ts || 0); return isNaN(d) ? '' : Strin
 const rvStarsHtml = n => '<span class="rev-stars" aria-label="' + n + ' yıldız">' + '<i class="fa-solid fa-star"></i>'.repeat(n) + '<i class="fa-regular fa-star"></i>'.repeat(5 - n) + '</span>';
 
 
-// Yorumlar: ilk 4 görünür, kalanı "Daha fazla göster" ile açılır
-let rvExpanded = false;
+// Yorumlar: yatay kaydırmalı şerit (Apple tarzı); masaüstünde ok düğmeleri
 function rvCollapse() {
-  const cards = document.querySelectorAll('#rv-list .rev-card'), btn = document.getElementById('rv-more');
-  if (!btn) return;
-  const LIMIT = 4;
-  cards.forEach((c, i) => c.classList.toggle('rv-hidden', !rvExpanded && i >= LIMIT));
-  if (cards.length > LIMIT) {
-    btn.hidden = false;
-    btn.textContent = rvExpanded ? 'Daha az göster' : 'Daha fazla yorum göster (' + (cards.length - LIMIT) + ')';
-    btn.onclick = () => { rvExpanded = !rvExpanded; rvCollapse(); };
-  } else btn.hidden = true;
+  document.querySelectorAll('#rv-list .rev-card').forEach(c => c.classList.remove('rv-hidden'));
+  const btn = document.getElementById('rv-more'); if (btn) btn.hidden = true;
+  const list = document.getElementById('rv-list'), prev = document.querySelector('.ar-prev'), next = document.querySelector('.ar-next');
+  if (!list || !prev || !next) return;
+  const upd = () => { const max = list.scrollWidth - list.clientWidth - 48; prev.hidden = list.scrollLeft < 8; next.hidden = list.scrollLeft >= max; };
+  if (!list.dataset.ar) {
+    list.dataset.ar = '1';
+    const step = () => { const c = list.querySelector('.rev-card'); return (c ? c.getBoundingClientRect().width : 320) + 16; };
+    prev.addEventListener('click', () => list.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => list.scrollBy({ left: step(), behavior: 'smooth' }));
+    list.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+  }
+  upd();
 }
 
 function reviewsInit() {
@@ -998,6 +1002,7 @@ function ticketCardHtml(match) {
     </div>`;
 }
 
+window.__bookT0 = Date.now();
 function handleBookingSubmit(e) {
   e.preventDefault();
   const name = document.getElementById('book-name').value;
@@ -1005,9 +1010,19 @@ function handleBookingSubmit(e) {
   const device = document.getElementById('book-device').value;
   const problem = document.getElementById('book-problem').value;
 
+  // Spam koruması: gizli alan dolu (bot) / çok hızlı gönderim / kısa sürede tekrar / bağlantı içeren metin
+  // Bu durumlarda talep panele yazılmaz; müşterinin kendi WhatsApp mesajı yine de açılır.
+  const hp = document.getElementById('book-hp');
+  if (hp && hp.value) return;   // bot: hiçbir şey yapma
+  let rqLast = 0; try { rqLast = +localStorage.getItem('nokta_rq_ts') || 0; } catch (err) {}
+  const tooFast = Date.now() - (window.__bookT0 || 0) < 2000;
+  const tooSoon = Date.now() - rqLast < 2 * 60 * 1000;
+  const hasLink = /https?:\/\/|www\./i.test(name + ' ' + device + ' ' + problem);
+  const okToSave = !tooFast && !tooSoon && !hasLink;
   // Talebi panelde de sakla (WhatsApp açılmasa/gönderilmese bile talep kaybolmaz)
   try {
-    if (typeof fbDb !== 'undefined' && fbDb) {
+    if (okToSave && typeof fbDb !== 'undefined' && fbDb) {
+      try { localStorage.setItem('nokta_rq_ts', String(Date.now())); } catch (err) {}
       const rid = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => (b % 36).toString(36)).join('');
       fbDb.collection('requests').doc(rid).set({ n: name.trim().slice(0, 80), p: phone.trim().slice(0, 20), d: device.trim().slice(0, 100), m: problem.trim().slice(0, 600), ts: Date.now(), st: 'yeni' }).catch(err => console.warn('Talep kaydedilemedi', err));
     }

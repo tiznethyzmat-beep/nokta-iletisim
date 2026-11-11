@@ -846,3 +846,40 @@ header a[href^="tel"]{min-height:40px;display:inline-flex;align-items:center}
 footer a{display:inline-block;padding:.4rem .1rem}
 .footer-links a,.footer-services a{display:inline-flex;align-items:center;min-height:40px}
 .st-kvkk a{display:inline-block;padding:.45rem .2rem}
+
+/* ===== v57: yorumlar — sayfanın en altında, Apple tarzı ===== */
+.ar{margin-top:2.5rem;background:#f5f5f7;border-radius:2rem;padding:3rem 0 2.6rem;overflow:hidden}
+.ar-inner{max-width:72rem;margin:0 auto;text-align:center}
+.ar-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6e6e73}
+.ar-title{margin-top:.5rem;font-size:clamp(1.9rem,5.5vw,2.9rem);font-weight:700;letter-spacing:-.025em;line-height:1.08;color:#1d1d1f;padding:0 1.25rem}
+.ar-sub{margin-top:.7rem;font-size:1.05rem;color:#6e6e73;padding:0 1.25rem}
+.ar-stars{display:inline-flex;gap:.2rem;margin-top:1rem;color:#ff9f0a;font-size:1.15rem}
+.ar-wrap{position:relative;margin-top:1.8rem}
+#yorumlar .rv-list{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:.4rem max(1.25rem,calc((100% - 70rem)/2 + 1.25rem)) 1.6rem;margin:0;grid-template-columns:none;text-align:left;scroll-padding-inline:max(1.25rem,calc((100% - 70rem)/2 + 1.25rem))}
+#yorumlar .rv-list::-webkit-scrollbar{display:none}
+#yorumlar .rv-contents{display:contents}
+#yorumlar .rv-list .rev-card{flex:0 0 min(82%,22rem);width:auto;scroll-snap-align:start;margin:0;background:#fff;border:0;border-radius:1.6rem;padding:1.6rem 1.5rem 1.4rem;gap:.9rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.06)}
+#yorumlar .rev-card.rv-hidden{display:flex}
+#yorumlar .rev-stars{color:#ff9f0a;font-size:.9rem;letter-spacing:.12rem}
+#yorumlar .rev-card blockquote{font-size:1.08rem;line-height:1.5;letter-spacing:-.01em;color:#1d1d1f;font-weight:500}
+#yorumlar .rev-card figcaption{font-size:.88rem;font-weight:600;color:#1d1d1f}
+#yorumlar .rev-card figcaption span{font-weight:400;color:#6e6e73}
+.ar-arrow{display:none;position:absolute;top:calc(50% - 1.6rem);z-index:2;width:2.8rem;height:2.8rem;border-radius:50%;background:rgba(255,255,255,.92);color:#1d1d1f;box-shadow:0 4px 18px rgba(0,0,0,.14);align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:transform .15s}
+.ar-arrow:hover{transform:scale(1.06)}
+.ar-prev{left:1rem}.ar-next{right:1rem}
+@media(min-width:900px){.ar-arrow:not([hidden]){display:flex}}
+.ar-actions{display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:0 1.25rem}
+.ar-btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-height:50px;padding:0 1.6rem;border-radius:999px;font-weight:600;font-size:1rem;letter-spacing:-.005em}
+.ar-btn-dark{background:#1d1d1f;color:#fff}.ar-btn-dark:hover{background:#000}
+#yorumlar .rv-details{margin:0;width:100%;max-width:30rem;border:0;border-radius:1.6rem;background:transparent;overflow:visible}
+#yorumlar .rv-details>summary{justify-content:center;min-height:50px;padding:0 1.6rem;margin:0 auto;width:max-content;max-width:100%;border-radius:999px;background:#fff;color:#0071e3;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+#yorumlar .rv-details>summary::after{content:none}
+#yorumlar .rv-details[open]>summary{background:#e8e8ed;color:#1d1d1f}
+#yorumlar .rv-details form{margin-top:1rem;padding:1.4rem 1.3rem;background:#fff;border-radius:1.6rem;box-shadow:0 10px 30px rgba(0,0,0,.07);text-align:left}
+#yorumlar #rv-form input[type=text],#yorumlar #rv-form textarea{border:1px solid #d2d2d7;background:#fbfbfd;border-radius:.9rem}
+#yorumlar #rv-form input:focus,#yorumlar #rv-form textarea:focus{border-color:#0071e3;box-shadow:0 0 0 4px rgba(0,113,227,.18)}
+#yorumlar .rv-send{background:#0071e3;border-radius:999px}#yorumlar .rv-send:hover{background:#0062c4}
+#yorumlar .rv-stars-input button.on{color:#ff9f0a}
+@media(min-width:640px){.ar-actions{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:flex-start}#yorumlar .ar-actions .rv-details{width:auto;max-width:none;flex:0 1 auto}#yorumlar .ar-actions .rv-details[open]{flex:1 1 100%;max-width:30rem;margin:0 auto}}
+@media(max-width:560px){.ar{border-radius:1.6rem;padding:2.4rem 0 2rem}}
+@media(min-width:640px){#yorumlar .ar-actions .rv-details:not([open]){width:max-content;max-width:100%}}

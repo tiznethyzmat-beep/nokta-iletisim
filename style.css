@@ -883,3 +883,17 @@ footer a{display:inline-block;padding:.4rem .1rem}
 @media(min-width:640px){.ar-actions{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:flex-start}#yorumlar .ar-actions .rv-details{width:auto;max-width:none;flex:0 1 auto}#yorumlar .ar-actions .rv-details[open]{flex:1 1 100%;max-width:30rem;margin:0 auto}}
 @media(max-width:560px){.ar{border-radius:1.6rem;padding:2.4rem 0 2rem}}
 @media(min-width:640px){#yorumlar .ar-actions .rv-details:not([open]){width:max-content;max-width:100%}}
+
+/* ===== v60: düzeltmeler (yorum okları, SSS akordeon, boşluklar) ===== */
+.ar-nav{display:flex;justify-content:center;gap:.6rem;margin:-.4rem 0 1.4rem}
+.ar-nav .ar-arrow{position:static;display:none;width:2.6rem;height:2.6rem;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12);backdrop-filter:none}
+@media(min-width:900px){.ar-nav .ar-arrow:not([hidden]){display:flex}}
+#hizmetler{margin-top:1.5rem}
+.faq-acc{display:grid;gap:.55rem}
+.faq-d{border:1px solid #e2e8f0;border-radius:1rem;background:#fff;overflow:hidden}
+.faq-d[open]{border-color:#9bdcd2;background:#f3fbf9}
+.faq-d summary{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.95rem 1rem;min-height:52px;cursor:pointer;list-style:none;font-weight:700;font-size:.98rem;color:#0e1a2c;line-height:1.4}
+.faq-d summary::-webkit-details-marker{display:none}
+.faq-d summary::after{content:"+";flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:#ecf8f5;color:#0f6b67;font-size:1.2rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.faq-d[open] summary::after{content:"\2212";background:#0f6b67;color:#fff}
+.faq-d p{margin:0;padding:0 1rem 1rem;font-size:.93rem;line-height:1.65;color:#475569}

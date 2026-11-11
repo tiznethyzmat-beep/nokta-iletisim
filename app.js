@@ -475,10 +475,12 @@ const DB = {
       DB.listen();
       startLive();
       startReviewsAdmin();
+      startRequestsAdmin();
       closeModal('modal-login');
     } else {
       if (stopListening) { stopListening(); stopListening = null; }
       stopReviewsAdmin();
+      stopRequestsAdmin();
       stopLive();
       ticketsCache = [];
       resetAdminUi();
@@ -908,6 +910,34 @@ function startReviewsAdmin() {
   }, () => { box.innerHTML = '<p class="rva-empty">Yorumlar okunamadı. Firestore kurallarını yayınladınız mı?</p>'; });
 }
 function approveReview(id, v) { fbDb.collection('reviews').doc(id).update({ ok: !!v }).catch(() => alert('Kaydedilemedi. Lütfen tekrar deneyin.')); }
+// ===== Servis talepleri (siteden gelenler) =====
+let rqAdminUnsub = null;
+function startRequestsAdmin() {
+  const box = document.getElementById('admin-requests'); if (!box || !fbDb || rqAdminUnsub) return;
+  rqAdminUnsub = fbDb.collection('requests').orderBy('ts', 'desc').onSnapshot(snap => {
+    const docs = snap.docs.slice().sort((p, q) => (p.data().st !== 'yeni') - (q.data().st !== 'yeni') || (q.data().ts || 0) - (p.data().ts || 0));
+    const fresh = docs.filter(d => d.data().st === 'yeni').length;
+    const cnt = document.getElementById('rq-count'); if (cnt) cnt.textContent = fresh ? '(' + fresh + ' yeni)' : (snap.size ? '(' + snap.size + ')' : '');
+    box.innerHTML = snap.empty
+      ? '<p class="rva-empty">Henüz servis talebi yok.</p>'
+      : docs.map(d => {
+        const x = d.data(), isNew = x.st === 'yeni', id = esc(d.id), tel = digits(x.p || '');
+        const wa = 'https://wa.me/' + waNumber(x.p || '') + '?text=' + encodeURIComponent('Merhaba ' + (x.n || '') + ', Nokta İletişim. ' + (x.d || 'Cihazınız') + ' için servis talebinizi aldık.');
+        return '<div class="rva-item' + (isNew ? ' pending' : '') + '"><div class="rva-body"><span class="rva-badge ' + (isNew ? 'wait' : 'live') + '">' + (isNew ? 'Yeni talep' : 'İşlendi') + '</span>'
+          + '<p><b>' + esc(x.n) + '</b> · ' + esc(x.d) + '</p><p>' + esc(x.m) + '</p><small>' + esc(x.p) + ' · ' + rvDate(x.ts) + '</small></div><div class="rva-btns">'
+          + '<a class="rva-ok" href="tel:' + esc(tel) + '"><i class="fa-solid fa-phone"></i> Ara</a>'
+          + '<a class="rva-ok" href="' + wa + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>'
+          + (isNew ? '<button type="button" class="rva-ok" onclick="setRequestState(\'' + id + '\', \'islendi\')"><i class="fa-solid fa-check"></i> İşlendi</button>' : '<button type="button" class="rva-hide" onclick="setRequestState(\'' + id + '\', \'yeni\')"><i class="fa-solid fa-rotate-left"></i> Geri al</button>')
+          + '<button type="button" class="rva-del" onclick="deleteRequest(\'' + id + '\')"><i class="fa-solid fa-trash"></i> Sil</button></div></div>';
+      }).join('');
+  }, () => { box.innerHTML = '<p class="rva-empty">Talepler okunamadı. Firestore kurallarını yayınladınız mı?</p>'; });
+}
+function stopRequestsAdmin() { if (rqAdminUnsub) { rqAdminUnsub(); rqAdminUnsub = null; } }
+function setRequestState(id, st) { fbDb.collection('requests').doc(id).update({ st: st }).catch(() => alert('Kaydedilemedi. Lütfen tekrar deneyin.')); }
+function deleteRequest(id) {
+  if (!confirm('Bu servis talebi silinsin mi? Bu işlem geri alınamaz.')) return;
+  fbDb.collection('requests').doc(id).delete().catch(() => alert('Silinemedi. Lütfen tekrar deneyin.'));
+}
 function stopReviewsAdmin() { if (rvAdminUnsub) { rvAdminUnsub(); rvAdminUnsub = null; } }
 function deleteReview(id) {
   if (!confirm('Bu yorum silinsin mi? Bu işlem geri alınamaz.')) return;
@@ -974,6 +1004,14 @@ function handleBookingSubmit(e) {
   const phone = document.getElementById('book-phone').value;
   const device = document.getElementById('book-device').value;
   const problem = document.getElementById('book-problem').value;
+
+  // Talebi panelde de sakla (WhatsApp açılmasa/gönderilmese bile talep kaybolmaz)
+  try {
+    if (typeof fbDb !== 'undefined' && fbDb) {
+      const rid = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => (b % 36).toString(36)).join('');
+      fbDb.collection('requests').doc(rid).set({ n: name.trim().slice(0, 80), p: phone.trim().slice(0, 20), d: device.trim().slice(0, 100), m: problem.trim().slice(0, 600), ts: Date.now(), st: 'yeni' }).catch(err => console.warn('Talep kaydedilemedi', err));
+    }
+  } catch (err) { console.warn('Talep kaydedilemedi', err); }
 
   const mesaj = encodeURIComponent(`Merhaba Nokta İletişim,\n- *Müşteri:* ${name}\n- *Tel:* ${phone}\n- *Cihaz:* ${device}\n- *Arıza:* ${problem}\n- Cihazı mağazaya kendim getireceğim, kendim teslim alacağım.`);
   const waUrl = `https://wa.me/${OFFICIAL_WA}?text=${mesaj}`;
@@ -1105,8 +1143,8 @@ function setFilter(v) { document.getElementById('admin-status-filter').value = v
 // Panel sekmeleri: Özet / Kayıtlar / Sistem
 function setPanelTab(t) {
   if (!document.getElementById('tab-ozet')) return;
-  if (!['ozet', 'kayit', 'yorum', 'sistem'].includes(t)) t = 'ozet';
-  ['ozet', 'kayit', 'yorum', 'sistem'].forEach(k => document.getElementById('tab-' + k).classList.toggle('hidden', k !== t));
+  if (!['ozet', 'kayit', 'talep', 'yorum', 'sistem'].includes(t)) t = 'ozet';
+  ['ozet', 'kayit', 'talep', 'yorum', 'sistem'].forEach(k => document.getElementById('tab-' + k).classList.toggle('hidden', k !== t));
   document.querySelectorAll('#panel-tabs .ptab').forEach(b => b.classList.toggle('ptab-on', b.dataset.ptab === t));
   try { localStorage.setItem('nokta_ptab', t); } catch (e) {}
 }
@@ -1326,7 +1364,7 @@ function renderReadyBox(all) {
 // Teslim bekleyen cihaz için hatırlatma mesajı
 function buildReminderMsg(t) {
   const d = daysReady(t), link = SITE_URL + '/?kod=' + encodeURIComponent(t.id);
-  return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız ${d} gündür teslime hazır ✅\nMağazamızdan servis fişinizle teslim alabilirsiniz (her gün 10:00–20:00).\nDurumu görmek için: ${link}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
+  return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız ${d} gündür teslime hazır ✅\nMağazamıza gelip teslim alabilirsiniz (her gün 10:00–20:00).\nDurumu görmek için: ${link}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
 }
 
 // Müşteriye gidecek WhatsApp metni (duruma göre)
@@ -1335,7 +1373,7 @@ function buildNotifyMsg(t, st) {
   if (t.status === 'hazir') {
     const u = Number(t.price) || 0;
     const rev = GOOGLE_REVIEW_URL || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Nokta İletişim Kırklareli');
-    return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız *teslime hazırdır* ✅\nServis fişinizle mağazamızdan teslim alabilirsiniz.${u ? '\nÜcret: ' + u + ' TL' : ''}\n\nGoogle'da kısa bir yorum yazarsanız çok seviniriz 🙏\n${rev}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
+    return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınızın onarımı tamamlandı, *teslime hazırdır* ✅\nMağazamıza gelip teslim alabilirsiniz (her gün 10:00–20:00).${u ? '\nÜcret: ' + u + ' TL' : ''}\n\nGoogle'da kısa bir yorum yazarsanız çok seviniriz 🙏\n${rev}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;
   }
   if (t.status === 'teslim') {
     return `Sayın ${t.name}, ${t.id} kodlu ${t.device} cihazınız teslim edilmiştir. Bizi tercih ettiğiniz için teşekkür ederiz 🙏\n\nHizmetimizden memnun kaldıysanız kısa bir Google yorumu yazarsanız çok seviniriz:\n${GOOGLE_REVIEW_URL}\n\nNokta İletişim · ${SHOP.phoneDisplay}`;

@@ -897,3 +897,42 @@ footer a{display:inline-block;padding:.4rem .1rem}
 .faq-d summary::after{content:"+";flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:#ecf8f5;color:#0f6b67;font-size:1.2rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 .faq-d[open] summary::after{content:"\2212";background:#0f6b67;color:#fff}
 .faq-d p{margin:0;padding:0 1rem 1rem;font-size:.93rem;line-height:1.65;color:#475569}
+
+/* ===== v61: SSS — Apple stili (ince çizgi, büyük yazı, fareyle mavi, + işareti dönüp × olur) ===== */
+.faq-acc{display:block;gap:0}
+.faq-d,#faq-list>details{margin:0 !important;border:0 !important;border-bottom:1px solid #d2d2d7 !important;border-radius:0 !important;background:transparent !important;overflow:visible;padding:0 !important}
+.faq-acc .faq-d:first-child{border-top:1px solid #d2d2d7 !important}
+.faq-d summary,#faq-list>details summary{display:flex;justify-content:space-between;align-items:center;gap:1.2rem;padding:1.25rem .2rem !important;min-height:64px;cursor:pointer;list-style:none;font-weight:600 !important;font-size:clamp(1.02rem,2.4vw,1.28rem) !important;line-height:1.35;letter-spacing:-.012em;color:#1d1d1f;transition:color .18s ease}
+.faq-d summary::-webkit-details-marker,#faq-list>details summary::-webkit-details-marker{display:none}
+.faq-d summary::after,#faq-list>details summary::after,#faq-list>details[open] summary::after,.faq-d[open] summary::after{content:"+" !important;flex:none;width:auto !important;height:auto !important;border-radius:0 !important;background:transparent !important;color:#6e6e73 !important;font-size:1.9rem !important;font-weight:300 !important;line-height:1;display:block !important;transition:transform .25s ease,color .18s ease}
+.faq-d[open] summary::after,#faq-list>details[open] summary::after{transform:rotate(45deg);color:#0071e3 !important}
+.faq-d[open] summary,#faq-list>details[open] summary{color:#0071e3}
+@media (hover:hover){
+  .faq-d summary:hover,#faq-list>details summary:hover{color:#0071e3}
+  .faq-d summary:hover::after,#faq-list>details summary:hover::after{color:#0071e3 !important}
+}
+.faq-d summary:focus-visible,#faq-list>details summary:focus-visible{outline:2px solid #0071e3;outline-offset:2px;border-radius:.5rem}
+.faq-d p,#faq-list>details p{margin:0 !important;padding:0 2.6rem 1.35rem .2rem !important;font-size:1rem;line-height:1.65;color:#515154 !important;animation:faqIn .22s ease}
+@keyframes faqIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.faq-d p,#faq-list>details p{animation:none}}
+
+.sale-faq .faq-d:first-of-type{border-top:1px solid #d2d2d7 !important}.sale-faq h2{margin-bottom:.8rem}
+
+/* ===== v63: kartlar ve bağlantılar için Apple tarzı hover (yalnız fareli cihazlar), geniş ekran hizalama ===== */
+.cat-card,.acc-card,.rev-card,.ar-btn,.ar-nav .ar-arrow,.acc-cat{transition:color .18s ease,background-color .18s ease,border-color .18s ease,box-shadow .2s ease,transform .2s ease}
+@media (hover:hover) and (pointer:fine){
+  .cat-card:hover,.acc-card:hover,.acc-cat:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(14,26,44,.55);border-color:#b9d7f5}
+  .cat-card:hover strong,.acc-card:hover h3,.acc-cat:hover h3{color:#0071e3}
+  #yorumlar .rev-card:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(0,0,0,.05),0 18px 40px rgba(0,0,0,.10)}
+  .ar-btn-dark:hover{background:#000;transform:translateY(-1px)}
+  #yorumlar .rv-details>summary:hover{background:#fff;color:#0062c4;box-shadow:0 4px 14px rgba(0,113,227,.18)}
+  .ar-nav .ar-arrow:hover{background:#0071e3;color:#fff}
+  header nav a:hover{color:#5eead4}
+  footer a:hover{color:#5eead4;text-decoration:underline}
+}
+@media(min-width:900px){
+  #view-sorgula>.max-w-3xl{max-width:none}
+  #view-sorgula>.max-w-3xl>.glass-card,#view-sorgula>.max-w-3xl>#search-result,#view-sorgula>.max-w-3xl>.bg-amber-50{max-width:48rem;margin-left:auto;margin-right:auto}
+}
+
+.gift-banner{margin-bottom:.9rem}

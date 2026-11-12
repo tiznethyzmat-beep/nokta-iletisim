@@ -968,4 +968,9 @@ body[data-page="sorgula"] .ar{background:transparent}
 body[data-page="sorgula"] footer{background:#161617 !important}
 @media (hover:hover) and (pointer:fine){body[data-page="sorgula"] .cat-card:hover strong{color:#0071e3}}
 
-body[data-page="sorgula"] .ar-btn-dark{background:#0071e3}body[data-page="sorgula"] .ar-btn-dark:hover{background:#0077ed}
+/* ===== v65: orta yol — Apple düzeni + marka turuncusu (yalnız ana düğmeler) ===== */
+body[data-page="sorgula"] .ap-btn-blue,body[data-page="sorgula"] .q-btn{background:#ee4a27;color:#fff}
+body[data-page="sorgula"] .ap-btn-blue:hover,body[data-page="sorgula"] .q-btn:hover{background:#d93f1d}
+body[data-page="sorgula"] .hero-accent{background:linear-gradient(90deg,#ff8a3d,#ff5a36);-webkit-background-clip:text;background-clip:text}
+body[data-page="sorgula"] #hero-banner{background:radial-gradient(900px 420px at 82% -20%,rgba(255,90,54,.26),transparent 60%),#0b0b0d}
+body[data-page="sorgula"] #search-input:focus{border-color:#ee4a27;box-shadow:0 0 0 4px rgba(238,74,39,.18)}

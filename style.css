@@ -936,3 +936,36 @@ footer a{display:inline-block;padding:.4rem .1rem}
 }
 
 .gift-banner{margin-bottom:.9rem}
+
+/* ===== v64: Apple teması — yalnız ana sayfa ===== */
+body[data-page="sorgula"]{background:#f5f5f7;background-image:none;color:#1d1d1f}
+body[data-page="sorgula"] header{background:rgba(22,22,23,.82) !important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08)}
+body[data-page="sorgula"] #hero-banner{background:radial-gradient(900px 420px at 82% -20%,rgba(0,113,227,.30),transparent 60%),#0b0b0d;border-bottom:0}
+body[data-page="sorgula"] #hero-banner::before{opacity:0}
+body[data-page="sorgula"] #hero-banner h1{font-weight:700;letter-spacing:-.03em}
+.hero-accent{background:linear-gradient(90deg,#2997ff,#5ac8fa);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.ap-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:46px;padding:0 1.5rem;border-radius:999px;font-weight:600;font-size:.95rem;letter-spacing:-.005em;white-space:nowrap;border:0;cursor:pointer;transition:background-color .18s ease,transform .18s ease}
+.ap-btn-blue{background:#0071e3;color:#fff}.ap-btn-blue:hover{background:#0077ed}
+.ap-btn-gray{background:#e8e8ed;color:#1d1d1f}.ap-btn-gray:hover{background:#dcdce1}
+.ap-btn-ghost{background:rgba(255,255,255,.14);color:#fff}.ap-btn-ghost:hover{background:rgba(255,255,255,.24)}
+.ap-btn-ghost i{color:#fff !important}
+body[data-page="sorgula"] .glass-card{background:#fff;border:0;border-radius:1.6rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 28px rgba(0,0,0,.05)}
+body[data-page="sorgula"] main h2{letter-spacing:-.025em;color:#1d1d1f}
+body[data-page="sorgula"] #search-input{background:#f5f5f7;border:1px solid transparent;border-radius:999px;padding-left:2.9rem}
+body[data-page="sorgula"] #search-input:focus{border-color:#0071e3;box-shadow:0 0 0 4px rgba(0,113,227,.18)}
+body[data-page="sorgula"] #view-sorgula .bg-amber-50{background:#fff;border:0;color:#1d1d1f;border-radius:1.4rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 22px rgba(0,0,0,.04)}
+body[data-page="sorgula"] #view-sorgula .bg-amber-50 i{color:#86868b}
+body[data-page="sorgula"] #view-sorgula .bg-amber-50 a{color:#0071e3;text-decoration:none}
+body[data-page="sorgula"] a.gift-banner{background:#fff;color:#1d1d1f;border-radius:1.4rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 22px rgba(0,0,0,.04)}
+body[data-page="sorgula"] .gift-banner p{color:#6e6e73}
+body[data-page="sorgula"] .gb-ic{background:#f5f5f7;color:#0071e3}
+body[data-page="sorgula"] .gb-btn{background:transparent;color:#0071e3;padding:.55rem .2rem}
+body[data-page="sorgula"] .cat-card .cat-ic,body[data-page="sorgula"] .cat-ic{background:#f5f5f7 !important;color:#0071e3 !important}
+body[data-page="sorgula"] .q-btn{background:#0071e3;border-radius:999px;box-shadow:none;font-weight:600}
+body[data-page="sorgula"] .q-btn:hover{background:#0077ed}
+body[data-page="sorgula"] .text-sky-700{color:#0071e3}
+body[data-page="sorgula"] .ar{background:transparent}
+body[data-page="sorgula"] footer{background:#161617 !important}
+@media (hover:hover) and (pointer:fine){body[data-page="sorgula"] .cat-card:hover strong{color:#0071e3}}
+
+body[data-page="sorgula"] .ar-btn-dark{background:#0071e3}body[data-page="sorgula"] .ar-btn-dark:hover{background:#0077ed}
